@@ -123,7 +123,7 @@ Encryption: None (apart from the underlying TLS layer)
 {  
    "type": "server-hello",
    "key": "debc3a6c9a630f27eae6bc3fd962925bdeb63844c09103f609bf7082bc383610",
-   "m-cookie": "af354da383bba00507fa8f289a20308a"
+   "my-cookie": "af354da383bba00507fa8f289a20308a"
 }
 ```
 
@@ -142,15 +142,15 @@ Encryption: None (apart from the underlying TLS layer)
 
 #### client-auth
 
-Both initiator and responder send this packet type. It contains the repeated cookie (*y-cookie*) that the server sent along with the [server-hello] and a hex encoded cookie the client generates (*m-cookie*).
+Both initiator and responder send this packet type. It contains the repeated cookie (*your-cookie*) that the server sent along with the [server-hello] and a hex encoded cookie the client generates (*my-cookie*).
 
 Encryption: NaCl Box (Server's Session Public Key, Client's Permanent Private Key)
 
 ```
 {  
    "type": "client-auth",
-   "y-cookie": "af354da383bba00507fa8f289a20308a",
-   "m-cookie": "18b96fd5a151eae23e8b5a1aed2fe30d"
+   "your-cookie": "af354da383bba00507fa8f289a20308a",
+   "my-cookie": "18b96fd5a151eae23e8b5a1aed2fe30d"
 }
 ```
 
@@ -163,7 +163,7 @@ Encryption: NaCl Box (Server's Session Private Key, Client's Permanent Public Ke
 ```
 {  
    "type": "server-auth",
-   "y-cookie": "18b96fd5a151eae23e8b5a1aed2fe30d",
+   "your-cookie": "18b96fd5a151eae23e8b5a1aed2fe30d",
    "responders": [  
       "02",
       "03"
@@ -239,7 +239,7 @@ Encryption: NaCl Box (Sender's Private Permanent Key, Receiver's Public Permanen
 {  
    "type": "key",
    "key": "bbbf470d283a9a4a0828e3fb86340fcbd19efe75f63a2e51ad0b16d20c3a0c02",
-   "m-cookie": "957c92f0feb9bae1b37cb7e0d9989073"
+   "my-cookie": "957c92f0feb9bae1b37cb7e0d9989073"
 }
 ```
 
@@ -252,7 +252,7 @@ Encryption: NaCl Box (Sender's Private Session Key, Receiver's Public Session Ke
 ```
 {  
    "type": "auth",
-   "y-cookie": "957c92f0feb9bae1b37cb7e0d9989073",
+   "your-cookie": "957c92f0feb9bae1b37cb7e0d9989073",
 }
 ```
 
