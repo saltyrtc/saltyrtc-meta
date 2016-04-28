@@ -93,7 +93,7 @@ In the following, we will describe and visualise the structure of the payload of
 ![Signalling Channel Packet Structure}](images/saltyrtc-signalling-packet.svg.png)
 
 1. A single byte that indicates the receiver or sender of the packet, depending on whether the packet is being sent (*to*) or has been received (*from*). The receiver byte will be explained in the table below. This byte is not encrypted.
-2. A serialised JSON object or a NaCl [Box] containing a serialised JSON object. The nonce of this box complies to the format described in the [Nonce] section. Which case applies is known to all parties at any time because the plaintext serialised JSON object is only needed during the handshake.
+2. A serialised MessagePack object or a NaCl [Box] containing a serialised MessagePack object. The nonce of this box complies to the format described in the [Nonce] section. Which case applies is known to all parties at any time because the plaintext serialised MessagePack object is only needed during the handshake.
 
 Table: Receiver Types and Values
 
@@ -111,7 +111,7 @@ The receivers *Server* and *Initiator* always have the same value. Because there
 
 ### Packet Types: Client-to-Server
 
-This section describes the various packet types that can be exchanged between server and client (e.g. the receiver byte is set to *from/to Server*). We will describe and provide an example for each packet type. The packets are UTF-8 encoded JSON objects.
+This section describes the various packet types that can be exchanged between server and client (e.g. the receiver byte is set to *from/to Server*). We will describe and provide an example for each packet type. The packets are serialised [MessagePack](http://msgpack.org/index.html) objects.
 
 #### server-hello
 
@@ -212,7 +212,7 @@ Encryption: NaCl Box (Server's Session Private Key, Client's Permanent Public Ke
 
 ### Packet Types: Peer-to-Peer
 
-This section describes the various packet types that can be exchanged between an initiator and a responder (e.g. the receiver byte is set to *from/to Initiator* or *from/to Responder #x*). We will provide and describe an example for each packet type. The packets are UTF-8 encoded JSON objects.
+This section describes the various packet types that can be exchanged between an initiator and a responder (e.g. the receiver byte is set to *from/to Initiator* or *from/to Responder #x*). We will provide and describe an example for each packet type. The packets are serialised [MessagePack](http://msgpack.org/index.html) objects.
 
 Note: The packet payload cannot be decrypted by the server because different NaCl keys will be used.
 
