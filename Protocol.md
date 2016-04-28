@@ -173,7 +173,7 @@ Encryption: NaCl Box (Server's Session Private Key, Client's Permanent Public Ke
 
 #### new-responder
 
-When a new responder has completed the server's authentication process and an initiator is connected, the server will send this message to the initiator. It contains the hex encoded identity (*id*) of the newly connected responder.
+When a new responder has completed the server's authentication process and an initiator is connected, the server will send this message to the initiator. It contains the assigned receiver byte (*id*) of the newly connected responder.
 
 Encryption: NaCl Box (Server's Session Private Key, Client's Permanent Public Key)
 
@@ -186,7 +186,7 @@ Encryption: NaCl Box (Server's Session Private Key, Client's Permanent Public Ke
 
 #### drop-responder
 
-After the initiator is authenticated towards the server, he may request that one or more responders shall be dropped from the server. The *id* field contains the hex encoded identity of a responder.
+After the initiator is authenticated towards the server, he may request that one or more responders shall be dropped from the server. The *id* field contains the assigned receiver byte of a responder.
 
 Encryption: NaCl Box (Server's Session Private Key, Client's Permanent Public Key)
 
