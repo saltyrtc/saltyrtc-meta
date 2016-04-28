@@ -34,7 +34,7 @@ The shared secret will be derived from the public NaCl key of one peer and the p
 
 Nonces are sequences of 24 bytes that must only be used once per shared secret. A previously generated [Cookie] occupies the first 16 bytes of outgoing nonces. The same applies to the received cookie for incoming nonces. The last 4 bytes represent a [Sequence Number] to detect replay attacks. Because session keys will be used for different channels, and therefore sequence numbers will be counted separately for these channels, there are 4 random bytes called [Channel Number] in between the cookie and the sequence number. These random bytes are generated once and are unique for each channel that has its own sequence number counter.
 
-![SaltyRTC Nonce Structure}](./images/saltyrtc-nonce.svg)
+![SaltyRTC Nonce Structure}](images/saltyrtc-nonce.svg.png)
 
 Only the authentication token uses a random nonce (e.g. 24 cryptographically secure random bytes) instead of the described format above. In this case, replay attacks can still be detected because the authentication token is only valid for a single successful decryption attempt.
 
@@ -66,7 +66,7 @@ As the signalling channel has been implemented using WebSocket, we can specify o
 
 In figure \ref{saltyrtc-architecture}, we have illustrated the architecture of SaltyRTC. Before SaltyRTC will be explained in detail, we will provide a basic overview of each section from top to bottom:
 
-![SaltyRTC Architecture](./images/saltyrtc-architecture.svg)
+![SaltyRTC Architecture](images/saltyrtc-architecture.svg.png)
 
 We have used the *Web API* to develop the browser version of SaltyRTC and the native Android library (which is not visible in figure \ref{webrtc-arch} but basically wraps the C++ API) to build the Android version of SaltyRTC. While the APIs are not that far apart from each other, the languages, **Java** and **JavaScript**, are not alike, so two more or less similar library versions had to be developed.
 
@@ -90,7 +90,7 @@ The signalling protocol has been designed in a way that the channel itself does 
 
 In the following, we will describe and visualise the structure of the payload of the WebSocket packet:
 
-![Signalling Channel Packet Structure}](./images/saltyrtc-signalling-packet.svg)
+![Signalling Channel Packet Structure}](images/saltyrtc-signalling-packet.svg.png)
 
 1. A single byte that indicates the receiver or sender of the packet, depending on whether the packet is being sent (*to*) or has been received (*from*). The receiver byte will be explained in the table below. This byte is not encrypted.
 2. A serialised JSON object or a NaCl [Box] containing a serialised JSON object. The nonce of this box complies to the format described in the [Nonce] section. Which case applies is known to all parties at any time because the plaintext serialised JSON object is only needed during the handshake.
@@ -324,7 +324,7 @@ The grey dotted arrow in figure \ref{saltyrtc-signalling-buildup} indicates that
 
 A green arrow indicates that the message payloads are NaCl public-key encrypted between server and initiator/responder. Black arrows mark unencrypted messages (although this is a bit misleading because these messages are still TLS encrypted).
 
-![SaltyRTC Signalling Channel Server Authentication](./images/saltyrtc-signalling-buildup.svg)
+![SaltyRTC Signalling Channel Server Authentication](images/saltyrtc-signalling-buildup.svg.png)
 
 #### Initiator
 
@@ -349,7 +349,7 @@ Now, the peers need to authenticate themselves towards each other and announce t
 
 The orange arrow in the figure expresses a payload that is encrypted by the authentication token. A green arrow indicates that the message payloads are encrypted by the peers permanent keys. A blue arrow marks message payloads that have been encrypted with the peers session keys.
 
-![SaltyRTC Signalling Channel Peer Authentication](./images/saltyrtc-signalling-auth.svg)
+![SaltyRTC Signalling Channel Peer Authentication](images/saltyrtc-signalling-auth.svg.png)
 
 1. The responder starts by sending his public permanent key encrypted by the authentication token to the initiator. In case that both peers have stored each other's permanent keys as trusted keys, this step will be skipped and no authentication token is required.
 2. A session key will be generated and sent by the initiator, accompanied by a cookie.
@@ -372,7 +372,7 @@ When the WebRTC peer connection has been established, initiator or responder may
 
 In the following, we will describe and visualise the structure of the payload of the data channel packet:
 
-![Data Channel Packet Structure](./images/saltyrtc-dc-packet.svg)
+![Data Channel Packet Structure](images/saltyrtc-dc-packet.svg.png)
 
 1. A single byte that indicates whether there are more fragments (any value but 0x00) or the message is complete. This byte is not encrypted.
 2. A part of or a whole NaCl [Box] containing arbitrary data. The nonce of this box complies to the format described in the [Nonce] section. Fragmented boxes will be reassembled when they are complete.
