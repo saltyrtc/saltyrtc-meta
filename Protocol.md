@@ -30,6 +30,14 @@ The session key is a NaCl key pair which is only valid for a single peer-to-peer
 
 The shared secret will be derived from the public NaCl key of one peer and the private NaCl key of the other key. To understand the composition of the nonce, it is vital to know that both peers use the same sequence of bytes to encrypt and decrypt data.
 
+### (NaCl) Box
+
+A NaCl box contains the concatenation of a 24 bytes **Nonce** and the encrypted and authenticated message (that is the *ciphertext*).
+
+``Box := Nonce || Ciphertext``
+
+The ciphertext is being created by the ``crypto_box`` (``crypto_secretbox`` for secret-key encryption) function and the ciphertext can be decrypted by using the ``crypto_box_open`` (``crypto_secretbox_open`` for secret-key encryption) function. Both mentioned functions are defined by the [public-key](https://nacl.cr.yp.to/box.html) and the [secret-key](https://nacl.cr.yp.to/secretbox.html) cryptography interface of the [Networking and Cryptography library](https://nacl.cr.yp.to).
+
 ### Nonce
 
 Nonces are sequences of 24 bytes that MUST only be used once per shared secret. A previously generated **Cookie** occupies the first 16 bytes of outgoing nonces. The same applies to the received cookie for incoming nonces. The last 4 bytes represent a **Sequence Number** to detect replay attacks. Because session keys will be used for different channels, and therefore sequence numbers will be counted separately for these channels, there are 4 random bytes called **Channel Number** in between the cookie and the sequence number. These random bytes are generated once and MUST be unique for each channel (including the signalling channel) that has its own sequence number counter.
@@ -104,7 +112,7 @@ In the following, we will describe and visualise the structure of the payload of
 | ...                    | ...       |
 | from/to Responder #254 | 0xff      |
 
-With the receiver byte, the server and the peers can determine which key has to be used to decrypt the NaCl box and how to validate the nonce. In addition, the server requires this byte to determine whether the packet needs to be relayed to the other peer or is directed at the server. Before the authentication of a specific client is complete, the only receiver byte the client may use is *Server*. In addition, *Responders* SHALL NOT communicate with other *Responders*.
+With the receiver byte, the server and the peers can determine which key has to be used to decrypt the ciphertext and validate the nonce of the NaCl *Box*. In addition, the server requires this byte to determine whether the packet needs to be relayed to the other peer or is directed at the server. Before the authentication of a specific client is complete, the only receiver byte the client may use is *Server*. In addition, *Responders* SHALL NOT communicate with other *Responders*.
 
 The receivers *Server* and *Initiator* always have the same value. Because there can be multiple *Responders* connected to the same signalling channel at the same time, each successful authentication of a responder towards the server requires an identifier. The maximum amount of connected clients on a path is 255.
 
@@ -130,7 +138,7 @@ Encryption: None (apart from the underlying TLS layer)
 
 In case that the client is a responder, the client will answer to a **server-hello** with his public permanent key (32 bytes). The initiator will not send this packet type to the server. Thereby, the server can differentiate between initiator and responder.
 
-Note: Because responders will send a plaintext **client-hello** and initiators will send an encrypted **client-auth**, the server MUST be able to handle both cases. Although it may not be the most straightforward way in all programming languages, this requires trying one of the cases (e.g. unpacking a plaintext MessagePack object) and falling back to the other case (e.g. decrypting a ciphertext and unpacking a MessagePack object) on error.
+Note: Because responders will send a plaintext **client-hello** and initiators will send an encrypted **client-auth**, the server MUST be able to handle both cases. Although it may not be the most straightforward way in all programming languages, this requires trying one of the cases (e.g. unpacking a plaintext MessagePack object) and falling back to the other case (e.g. decrypting a NaCl **Box** and unpacking a MessagePack object) on error.
 
 Encryption: None (apart from the underlying TLS layer)
 
@@ -145,7 +153,7 @@ Encryption: None (apart from the underlying TLS layer)
 
 Both initiator and responder send this packet type. It contains the repeated cookie (*your-cookie*, 16 bytes) that the server sent along with the **server-hello** and a cookie the client generates (*my-cookie*, 16 bytes). The client MUST ensure that the cookie values are different before the packet is being sent. In the unlikely event that the client generates the same cookie, the client SHALL generate new cookies until the cookies do not match anymore. In addition, the server MUST validate that the cookie values are different after the message has been received. If the cookies are identical, the server MUST terminate the connection to the client.
 
-Encryption: NaCl Box (Server's Session Public Key, Client's Permanent Private Key)
+Encryption: NaCl public-key (Server's Session Public Key, Client's Permanent Private Key)
 
 ```
 {  
@@ -157,9 +165,9 @@ Encryption: NaCl Box (Server's Session Public Key, Client's Permanent Private Ke
 
 #### server-auth
 
-To complete the authentication process, the server repeats the cookie (16 bytes) that the client sent in the **client-auth** packet. The additional field *responders* contains a list of identities (containing integers where 0x01 < value <= 0xff for each integer in the list) of responders that have authenticated themselves towards the server. Both initiator and responder will receive this packet. The *responders* field MUST be included in the packet that is intended for the initiator. Otherwise the *responders* field SHALL NOT be included in the message.
+To complete the authentication process, the server repeats the cookie (16 bytes) that the client sent in the **client-auth** packet. The additional field *responders* contains a list of identities (containing integers where ``0x01 < value <= 0xff`` for each integer in the list) of responders that have authenticated themselves towards the server. Both initiator and responder will receive this packet. The *responders* field MUST be included in the packet that is intended for the initiator. Otherwise the *responders* field SHALL NOT be included in the message.
 
-Encryption: NaCl Box (Server's Session Private Key, Client's Permanent Public Key)
+Encryption: NaCl public-key (Server's Session Private Key, Client's Permanent Public Key)
 
 ```
 {  
@@ -176,7 +184,7 @@ Encryption: NaCl Box (Server's Session Private Key, Client's Permanent Public Ke
 
 When a new responder has completed the server's authentication process and an initiator is connected, the server will send this message to the initiator. It contains the assigned receiver byte (*id*, an integer where 0x01 < *id* <= 0xff) of the newly connected responder.
 
-Encryption: NaCl Box (Server's Session Private Key, Client's Permanent Public Key)
+Encryption: NaCl public-key (Server's Session Private Key, Client's Permanent Public Key)
 
 ```
 {  
@@ -189,7 +197,7 @@ Encryption: NaCl Box (Server's Session Private Key, Client's Permanent Public Ke
 
 After the initiator is authenticated towards the server, the initiator MAY request that one or more responders SHALL be dropped from the server. The *id* field contains the assigned receiver byte of a responder (where 0x01 < *id* <= 0xff).
 
-Encryption: NaCl Box (Server's Session Private Key, Client's Permanent Public Key)
+Encryption: NaCl public-key (Server's Session Private Key, Client's Permanent Public Key)
 
 ```
 {  
@@ -202,7 +210,7 @@ Encryption: NaCl Box (Server's Session Private Key, Client's Permanent Public Ke
 
 In case that the server could not relay a message from one peer to another peer, the server will send this message to the client who originally sent the message. The whole original message (including the receiver byte) SHALL be hashed by the server using SHA-256 and included in the *hash* field (32 bytes). Thereby, the client is able to correlate the **send-error** messages' hash to a specific message.
 
-Encryption: NaCl Box (Server's Session Private Key, Client's Permanent Public Key)
+Encryption: NaCl public-key (Server's Session Private Key, Client's Permanent Public Key)
 
 ```
 {  
@@ -221,7 +229,7 @@ Note: The packet payload cannot be decrypted by the server because the shared se
 
 The responder sends his public permanent key (32 bytes) to the initiator. In case that both peers have stored each other’s permanent keys as trusted keys, this packet SHALL be skipped.
 
-Encryption: NaCl Box (Authentication Token)
+Encryption: NaCl secret-key (Authentication Token)
 
 ```
 {  
@@ -234,7 +242,7 @@ Encryption: NaCl Box (Authentication Token)
 
 The peer (initiator or responder) announces his public session key (32 bytes) accompanied by a random cookie (16 bytes). Both peers MUST send this packet to each other.
 
-Encryption: NaCl Box (Sender's Private Permanent Key, Receiver's Public Permanent Key)
+Encryption: NaCl public-key (Sender's Private Permanent Key, Receiver's Public Permanent Key)
 
 ```
 {  
@@ -248,7 +256,7 @@ Encryption: NaCl Box (Sender's Private Permanent Key, Receiver's Public Permanen
 
 The peer (initiator or responder) who received a previously sent **key** packet, repeats the received cookie (16 bytes). Both peers MUST send this packet to each other. Each peer MUST ensure that the cookie values are different before the packet is being sent. In the unlikely event that the peer generates the same cookie, the peer SHALL generate new cookies until the cookies do not match anymore. In addition, the peer who receives this packet MUST validate that the resulting cookie values are different. If the cookies are identical, an initiator SHALL drop the corresponding responder and a responder MUST disconnect from the WebSocket path.
 
-Encryption: NaCl Box (Sender's Private Session Key, Receiver's Public Session Key)
+Encryption: NaCl public-key (Sender's Private Session Key, Receiver's Public Session Key)
 
 ```
 {  
@@ -261,7 +269,7 @@ Encryption: NaCl Box (Sender's Private Session Key, Receiver's Public Session Ke
 
 The initiator sends the WebRTC *offer* SDP message (a UTF-8 encoded string) in the *sdp* field along with a *session*. This *session* is a sequence of 16 random bytes that needs to be provided in further messages from both peers. With this field, the WebRTC session is identifiable.
 
-Encryption: NaCl Box (Sender's Private Session Key, Receiver's Public Session Key)
+Encryption: NaCl public-key (Sender's Private Session Key, Receiver's Public Session Key)
 
 ```
 {  
@@ -275,7 +283,7 @@ Encryption: NaCl Box (Sender's Private Session Key, Receiver's Public Session Ke
 
 As soon as the responder received and processed an **offer** packet, he SHALL send the WebRTC *answer* SDP message (a UTF-8 encoded string) in the *sdp* field to the initiator.
 
-Encryption: NaCl Box (Sender's Private Session Key, Receiver's Public Session Key)
+Encryption: NaCl public-key (Sender's Private Session Key, Receiver's Public Session Key)
 
 ```
 {  
@@ -291,7 +299,7 @@ Both peers MAY send WebRTC *ICE candidates* at any time after **offer** and **an
 
 Note: Clients (especially browser clients) SHOULD buffer candidates for 10 ms and send the bundled candidates as a list to prevent sending many consecutive messages.
 
-Encryption: NaCl Box (Sender's Private Session Key, Receiver's Public Session Key)
+Encryption: NaCl public-key (Sender's Private Session Key, Receiver's Public Session Key)
 
 ```
 {  
@@ -308,7 +316,7 @@ Encryption: NaCl Box (Sender's Private Session Key, Receiver's Public Session Ke
 
 Initiator and responder may request that a WebRTC session shall be restarted. This packet type MAY be used after the session keys have been exchanged and the cookies have been repeated.
 
-Encryption: NaCl Box (Sender's Private Session Key, Receiver's Public Session Key)
+Encryption: NaCl public-key (Sender's Private Session Key, Receiver's Public Session Key)
 
 ```
 {  
@@ -381,7 +389,7 @@ In the following, we will describe and visualise the structure of the payload of
 ![Data Channel Packet Structure](images/saltyrtc-dc-packet.svg.png)
 
 1. A single byte that indicates whether there are more fragments (any value but 0x00) or the message is complete. This byte is not encrypted.
-2. A part of or a whole NaCl Box containing arbitrary data. The nonce of this box complies to the format described in the **Nonce** section. Fragmented boxes will be reassembled when they are complete.
+2. A part of or a whole NaCl **Box** containing arbitrary data. The nonce of this box complies to the format described in the **Nonce** section. Fragmented boxes will be reassembled when they are complete.
 
 Note: Currently, the WebRTC library from Google only supports sending messages up to 16 KB. [@webrtc-org-chrome] To avoid data loss, messages greater than 16 KB have to be fragmented. Once this issue is resolved, the fragment byte will be removed. A negative side effect of this temporary and very simple fragmenting solution is that, until the fragment byte is removed, SaltyRTC only supports ordered and reliable data channels.
 
