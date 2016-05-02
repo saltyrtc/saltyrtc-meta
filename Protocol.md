@@ -338,7 +338,7 @@ A green arrow indicates that the message payloads are NaCl public-key encrypted 
 2. Because both public keys have been exchanged, the initiator can now repeat the server's cookie and send his own cookie in an encrypted message.
 3. To complete the authentication process, the server repeats the initiator's cookie.
 
-The initiator does not need to send his public permanent key because the key has already been provided as the WebSocket path. Therefore, the initiator can directly send NaCl public-key encrypted payloads while the responder still needs to send his public permanent key. As the initiator has the privilege to disconnect responders from the signalling channel, this authentication procedure proofs towards the server that the initiator has the private key to the path he connected to.
+The initiator does not need to send his public permanent key because the key has already been provided as the WebSocket path. Therefore, the initiator can directly send NaCl public-key encrypted payloads while the responder still needs to send his public permanent key. As the initiator has the privilege to disconnect responders from the signalling channel, this authentication procedure proves towards the server that the initiator has the private key to the path he connected to.
 
 #### Responder
 
