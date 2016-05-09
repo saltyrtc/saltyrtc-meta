@@ -153,7 +153,7 @@ Encryption: None (apart from the underlying TLS layer)
 
 Both initiator and responder send this packet type. It contains the repeated cookie (*your-cookie*, 16 bytes) that the server sent along with the **server-hello** and a cookie the client generates (*my-cookie*, 16 bytes). The client MUST ensure that the cookie values are different before the packet is being sent. In the unlikely event that the client generates the same cookie, the client SHALL generate new cookies until the cookies do not match anymore. In addition, the server MUST validate that the cookie values are different after the message has been received. If the cookies are identical, the server MUST terminate the connection to the client.
 
-Encryption: NaCl public-key (Server's Session Public Key, Client's Permanent Private Key)
+Encryption: NaCl public-key encryption (Server's Session Public Key, Client's Permanent Private Key)
 
 ```
 {  
@@ -167,7 +167,7 @@ Encryption: NaCl public-key (Server's Session Public Key, Client's Permanent Pri
 
 To complete the authentication process, the server repeats the cookie (16 bytes) that the client sent in the **client-auth** packet. The additional field *responders* contains a list of identities (containing integers where ``0x01 < value <= 0xff`` for each integer in the list) of responders that have authenticated themselves towards the server. Both initiator and responder will receive this packet. The *responders* field MUST be included in the packet that is intended for the initiator. Otherwise the *responders* field SHALL NOT be included in the message.
 
-Encryption: NaCl public-key (Server's Session Private Key, Client's Permanent Public Key)
+Encryption: NaCl public-key encryption (Server's Session Private Key, Client's Permanent Public Key)
 
 ```
 {  
@@ -184,7 +184,7 @@ Encryption: NaCl public-key (Server's Session Private Key, Client's Permanent Pu
 
 When a new responder has completed the server's authentication process and an initiator is connected, the server will send this message to the initiator. It contains the assigned receiver byte (*id*, an integer where 0x01 < *id* <= 0xff) of the newly connected responder.
 
-Encryption: NaCl public-key (Server's Session Private Key, Client's Permanent Public Key)
+Encryption: NaCl public-key encryption (Server's Session Private Key, Client's Permanent Public Key)
 
 ```
 {  
@@ -197,7 +197,7 @@ Encryption: NaCl public-key (Server's Session Private Key, Client's Permanent Pu
 
 After the initiator is authenticated towards the server, the initiator MAY request that one or more responders SHALL be dropped from the server. The *id* field contains the assigned receiver byte of a responder (where 0x01 < *id* <= 0xff).
 
-Encryption: NaCl public-key (Server's Session Private Key, Client's Permanent Public Key)
+Encryption: NaCl public-key encryption (Server's Session Private Key, Client's Permanent Public Key)
 
 ```
 {  
@@ -210,7 +210,7 @@ Encryption: NaCl public-key (Server's Session Private Key, Client's Permanent Pu
 
 In case that the server could not relay a message from one peer to another peer, the server will send this message to the client who originally sent the message. The whole original message (including the receiver byte) SHALL be hashed by the server using SHA-256 and included in the *hash* field (32 bytes). Thereby, the client is able to correlate the **send-error** messages' hash to a specific message.
 
-Encryption: NaCl public-key (Server's Session Private Key, Client's Permanent Public Key)
+Encryption: NaCl public-key encryption (Server's Session Private Key, Client's Permanent Public Key)
 
 ```
 {  
@@ -229,7 +229,7 @@ Note: The packet payload cannot be decrypted by the server because the shared se
 
 The responder sends his public permanent key (32 bytes) to the initiator. In case that both peers have stored each other’s permanent keys as trusted keys, this packet SHALL be skipped.
 
-Encryption: NaCl secret-key (Authentication Token)
+Encryption: NaCl secret-key encryption (Authentication Token)
 
 ```
 {  
@@ -242,7 +242,7 @@ Encryption: NaCl secret-key (Authentication Token)
 
 The peer (initiator or responder) announces his public session key (32 bytes) accompanied by a random cookie (16 bytes). Both peers MUST send this packet to each other.
 
-Encryption: NaCl public-key (Sender's Private Permanent Key, Receiver's Public Permanent Key)
+Encryption: NaCl public-key encryption (Sender's Private Permanent Key, Receiver's Public Permanent Key)
 
 ```
 {  
@@ -256,7 +256,7 @@ Encryption: NaCl public-key (Sender's Private Permanent Key, Receiver's Public P
 
 The peer (initiator or responder) who received a previously sent **key** packet, repeats the received cookie (16 bytes). Both peers MUST send this packet to each other. Each peer MUST ensure that the cookie values are different before the packet is being sent. In the unlikely event that the peer generates the same cookie, the peer SHALL generate new cookies until the cookies do not match anymore. In addition, the peer who receives this packet MUST validate that the resulting cookie values are different. If the cookies are identical, an initiator SHALL drop the corresponding responder and a responder MUST disconnect from the WebSocket path.
 
-Encryption: NaCl public-key (Sender's Private Session Key, Receiver's Public Session Key)
+Encryption: NaCl public-key encryption (Sender's Private Session Key, Receiver's Public Session Key)
 
 ```
 {  
@@ -269,7 +269,7 @@ Encryption: NaCl public-key (Sender's Private Session Key, Receiver's Public Ses
 
 The initiator sends the WebRTC *offer* SDP message (a UTF-8 encoded string) in the *sdp* field along with a *session*. This *session* is a sequence of 16 random bytes that needs to be provided in further messages from both peers. With this field, the WebRTC session is identifiable.
 
-Encryption: NaCl public-key (Sender's Private Session Key, Receiver's Public Session Key)
+Encryption: NaCl public-key encryption (Sender's Private Session Key, Receiver's Public Session Key)
 
 ```
 {  
@@ -283,7 +283,7 @@ Encryption: NaCl public-key (Sender's Private Session Key, Receiver's Public Ses
 
 As soon as the responder received and processed an **offer** packet, he SHALL send the WebRTC *answer* SDP message (a UTF-8 encoded string) in the *sdp* field to the initiator.
 
-Encryption: NaCl public-key (Sender's Private Session Key, Receiver's Public Session Key)
+Encryption: NaCl public-key encryption (Sender's Private Session Key, Receiver's Public Session Key)
 
 ```
 {  
@@ -299,7 +299,7 @@ Both peers MAY send WebRTC *ICE candidates* at any time after **offer** and **an
 
 Note: Clients (especially browser clients) SHOULD buffer candidates for 10 ms and send the bundled candidates as a list to prevent sending many consecutive messages.
 
-Encryption: NaCl public-key (Sender's Private Session Key, Receiver's Public Session Key)
+Encryption: NaCl public-key encryption (Sender's Private Session Key, Receiver's Public Session Key)
 
 ```
 {  
@@ -316,7 +316,7 @@ Encryption: NaCl public-key (Sender's Private Session Key, Receiver's Public Ses
 
 Initiator and responder may request that a WebRTC session shall be restarted. This packet type MAY be used after the session keys have been exchanged and the cookies have been repeated.
 
-Encryption: NaCl public-key (Sender's Private Session Key, Receiver's Public Session Key)
+Encryption: NaCl public-key encryption (Sender's Private Session Key, Receiver's Public Session Key)
 
 ```
 {  
