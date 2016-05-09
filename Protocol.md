@@ -180,6 +180,18 @@ Encryption: NaCl public-key encryption (Server's Session Private Key, Client's P
 }
 ```
 
+#### new-initiator
+
+As soon as an initiator has completed the server's authentication process, this packet will be sent to all responders. Responders MUST send a **token** or **key** message as soon as they receive this message.
+
+Encryption: NaCl public-key encryption (Server's Session Private Key, Client's Permanent Public Key)
+
+```
+{  
+   "type": "new-initiator"
+}
+```
+
 #### new-responder
 
 When a new responder has completed the server's authentication process and an initiator is connected, the server will send this message to the initiator. It contains the assigned receiver byte (*id*, an integer where 0x01 < *id* <= 0xff) of the newly connected responder.
