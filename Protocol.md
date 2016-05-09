@@ -165,7 +165,7 @@ Encryption: NaCl public-key encryption (Server's Session Public Key, Client's Pe
 
 #### server-auth
 
-To complete the authentication process, the server repeats the cookie (16 bytes) that the client sent in the **client-auth** packet. The additional field *responders* contains a list of identities (containing integers where ``0x01 < value <= 0xff`` for each integer in the list) of responders that have authenticated themselves towards the server. Both initiator and responder will receive this packet. The *responders* field MUST be included in the packet that is intended for the initiator. Otherwise the *responders* field SHALL NOT be included in the message.
+To complete the authentication process, the server repeats the cookie (16 bytes) that the client sent in the **client-auth** packet. Both initiator and responder will receive this packet.
 
 Encryption: NaCl public-key encryption (Server's Session Private Key, Client's Permanent Public Key)
 
@@ -173,12 +173,17 @@ Encryption: NaCl public-key encryption (Server's Session Private Key, Client's P
 {  
    "type": "server-auth",
    "your-cookie": b"18b96fd5a151eae23e8b5a1aed2fe30d",
+   "initiator-connected": true|false,
    "responders": [  
       0x02,
       0x03
    ]
 }
 ```
+
+For the initiator, the additional field *responders* MUST be part of the packet and contain a list of identities (containing integers where ``0x01 < value <= 0xff`` for each integer in the list) of responders that have authenticated themselves towards the server. For responders, the *responders* field SHALL NOT be part of the packet.
+
+For responders, the additional field *initiator-connected* MUST be part of the packet and contain a boolean whether an initiator is currently connected or not. In case an initiator is connected, the responder MUST send a **token** or **key** message to the initiator. For the initiator, the *initiator-connected* field SHALL NOT be part of the packet.
 
 #### new-initiator
 
