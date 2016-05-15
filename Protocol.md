@@ -52,11 +52,11 @@ The cookie is being used for two things at the same time. First of all, it resem
 
 ### Channel Number
 
-This number is unique for each channel that may be used with the same cookie but with a different sequence number counter. As part of the nonce, its only purpose is to ensure that no nonce is being used more than once with the same shared secret.
+This number is unique for each channel that may be used with the same cookie but with a different sequence number counter. As part of the nonce, its only purpose is to ensure that no nonce is being used more than once with the same shared secret. The channel number MAY be chosen randomly but MUST remain unique per cookie.
 
 ### Sequence Number
 
-The sequence number plays a vital role as part of the nonce. It is mainly used to detect replay attacks. Because the sequence number MUST be incremented with each packet sent on its channel, it also ensures that no nonce is being used repeatedly. If incrementing the current 32-bit sequence number would cause an integer overflow, a new unique **Channel Number** MUST be generated and the sequence number MUST be reset to zero.
+The unsigned 32-bit sequence number in network byte order plays a vital role as part of the nonce. It is mainly used to detect replay attacks. Because the sequence number MUST be incremented with each encrypted packet sent on its channel, it also ensures that no nonce is being used repeatedly. If incrementing the current 32-bit sequence number would cause an integer overflow, a new unique **Channel Number** MUST be generated and the sequence number MUST be reset to zero.
 
 ### Initiator
 
