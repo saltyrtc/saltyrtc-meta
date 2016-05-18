@@ -130,7 +130,7 @@ Encryption: None (apart from the underlying TLS layer)
 {  
    "type": "server-hello",
    "key": b"debc3a6c9a630f27eae6bc3fd962925bdeb63844c09103f609bf7082bc383610",
-   "my-cookie": b"af354da383bba00507fa8f289a20308a"
+   "my_cookie": b"af354da383bba00507fa8f289a20308a"
 }
 ```
 
@@ -151,15 +151,15 @@ Encryption: None (apart from the underlying TLS layer)
 
 #### client-auth
 
-Both initiator and responder send this packet type. It contains the repeated cookie (*your-cookie*, 16 bytes) that the server sent along with the **server-hello** and a cookie the client generates (*my-cookie*, 16 bytes). The client MUST ensure that the cookie values are different before the packet is being sent. In the unlikely event that the client generates the same cookie, the client SHALL generate new cookies until the cookies do not match anymore. In addition, the server MUST validate that the cookie values are different after the message has been received. If the cookies are identical, the server MUST terminate the connection to the client.
+Both initiator and responder send this packet type. It contains the repeated cookie (*your_cookie*, 16 bytes) that the server sent along with the **server-hello** and a cookie the client generates (*my_cookie*, 16 bytes). The client MUST ensure that the cookie values are different before the packet is being sent. In the unlikely event that the client generates the same cookie, the client SHALL generate new cookies until the cookies do not match anymore. In addition, the server MUST validate that the cookie values are different after the message has been received. If the cookies are identical, the server MUST terminate the connection to the client.
 
 Encryption: NaCl public-key encryption (Server's Session Public Key, Client's Permanent Private Key)
 
 ```
 {  
    "type": "client-auth",
-   "your-cookie": b"af354da383bba00507fa8f289a20308a",
-   "my-cookie": b"18b96fd5a151eae23e8b5a1aed2fe30d"
+   "your_cookie": b"af354da383bba00507fa8f289a20308a",
+   "my_cookie": b"18b96fd5a151eae23e8b5a1aed2fe30d"
 }
 ```
 
@@ -172,8 +172,8 @@ Encryption: NaCl public-key encryption (Server's Session Private Key, Client's P
 ```
 {  
    "type": "server-auth",
-   "your-cookie": b"18b96fd5a151eae23e8b5a1aed2fe30d",
-   "initiator-connected": true|false,
+   "your_cookie": b"18b96fd5a151eae23e8b5a1aed2fe30d",
+   "initiator_connected": true|false,
    "responders": [  
       0x02,
       0x03
@@ -183,7 +183,7 @@ Encryption: NaCl public-key encryption (Server's Session Private Key, Client's P
 
 For the initiator, the additional field *responders* MUST be part of the packet and contain a list of identities (containing integers where ``0x01 < value <= 0xff`` for each integer in the list) of responders that have authenticated themselves towards the server. For responders, the *responders* field SHALL NOT be part of the packet.
 
-For responders, the additional field *initiator-connected* MUST be part of the packet and contain a boolean whether an initiator is currently connected or not. In case an initiator is connected, the responder MUST send a **token** or **key** message to the initiator. For the initiator, the *initiator-connected* field SHALL NOT be part of the packet.
+For responders, the additional field *initiator_connected* MUST be part of the packet and contain a boolean whether an initiator is currently connected or not. In case an initiator is connected, the responder MUST send a **token** or **key** message to the initiator. For the initiator, the *initiator_connected* field SHALL NOT be part of the packet.
 
 #### new-initiator
 
@@ -265,7 +265,7 @@ Encryption: NaCl public-key encryption (Sender's Private Permanent Key, Receiver
 {  
    "type": "key",
    "key": b"bbbf470d283a9a4a0828e3fb86340fcbd19efe75f63a2e51ad0b16d20c3a0c02",
-   "my-cookie": b"957c92f0feb9bae1b37cb7e0d9989073"
+   "my_cookie": b"957c92f0feb9bae1b37cb7e0d9989073"
 }
 ```
 
@@ -278,7 +278,7 @@ Encryption: NaCl public-key encryption (Sender's Private Session Key, Receiver's
 ```
 {  
    "type": "auth",
-   "your-cookie": b"957c92f0feb9bae1b37cb7e0d9989073",
+   "your_cookie": b"957c92f0feb9bae1b37cb7e0d9989073",
 }
 ```
 
