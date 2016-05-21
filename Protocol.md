@@ -56,7 +56,7 @@ This number is unique for each channel that may be used with the same cookie but
 
 ### Sequence Number
 
-The unsigned 32-bit sequence number in network byte order plays a vital role as part of the nonce. It is mainly used to detect replay attacks. Because the sequence number MUST be incremented with each encrypted packet sent on its channel, it also ensures that no nonce is being used repeatedly. If incrementing the current 32-bit sequence number would cause an integer overflow, a new unique **Channel Number** MUST be generated and the sequence number MUST be reset to zero.
+The unsigned 32-bit sequence number in network byte order plays a vital role as part of the nonce. It is mainly used to detect replay attacks. Because the sequence number MUST be incremented with each encrypted packet sent on its channel, it also ensures that no nonce is being used repeatedly. The sequence number MUST be initialized to 0. If incrementing the current 32-bit sequence number would cause an integer overflow, a new unique **Channel Number** MUST be generated and the sequence number MUST be reset to zero.
 
 ### Initiator
 
