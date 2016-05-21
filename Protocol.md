@@ -122,21 +122,22 @@ This section describes the various packet types that can be exchanged between se
 
 #### server-hello
 
-This is the first message that occurs on the signalling channel. The server generates and sends his public key (32 bytes)  alongside a cookie (16 bytes) to the client.
+This is the first message that occurs on the signalling channel. The server generates and sends his public key (32 bytes) client. The random cookie is implicitly sent as part of the nonce.
 
 Encryption: None (apart from the underlying TLS layer)
 
 ```
 {  
    "type": "server-hello",
-   "key": b"debc3a6c9a630f27eae6bc3fd962925bdeb63844c09103f609bf7082bc383610",
-   "my_cookie": b"af354da383bba00507fa8f289a20308a"
+   "key": b"debc3a6c9a630f27eae6bc3fd962925bdeb63844c09103f609bf7082bc383610"
 }
 ```
 
 #### client-hello
 
 In case that the client is a responder, the client will answer to a **server-hello** with his public permanent key (32 bytes). The initiator will not send this packet type to the server. Thereby, the server can differentiate between initiator and responder.
+
+The responder MUST ensure that the cookie values are different before the packet is being sent. In the unlikely event that the responder generates the same cookie, the responder SHALL generate new cookies until the cookies do not match anymore. In addition, the server MUST validate that the cookie values are different after the message has been received. If the cookies are identical, the server MUST terminate the connection to the responder.
 
 Note: Because responders will send a plaintext **client-hello** and initiators will send an encrypted **client-auth**, the server MUST be able to handle both cases. Although it may not be the most straightforward way in all programming languages, this requires trying one of the cases (e.g. unpacking a plaintext MessagePack object) and falling back to the other case (e.g. decrypting a NaCl **Box** and unpacking a MessagePack object) on error.
 
@@ -151,7 +152,9 @@ Encryption: None (apart from the underlying TLS layer)
 
 #### client-auth
 
-Both initiator and responder send this packet type. It contains the repeated cookie (*your_cookie*, 16 bytes) that the server sent along with the **server-hello** and a cookie the client generates (*my_cookie*, 16 bytes). The client MUST ensure that the cookie values are different before the packet is being sent. In the unlikely event that the client generates the same cookie, the client SHALL generate new cookies until the cookies do not match anymore. In addition, the server MUST validate that the cookie values are different after the message has been received. If the cookies are identical, the server MUST terminate the connection to the client.
+Both initiator and responder send this packet type. It contains the repeated cookie (*your_cookie*, 16 bytes) that the server sent along with the **server-hello** as part of the nonce. A cookie the client has generated is implicitly sent as part of the nonce.
+
+As well as the responder for the **client-hello** message, the initiator MUST ensure that the cookie values are different before the packet is being sent. In the unlikely event that the initiator generates the same cookie, the initiator SHALL generate new cookies until the cookies do not match anymore. In addition, the server MUST validate that the cookie values are different after the message has been received. If the cookies are identical, the server MUST terminate the connection to the initiator.
 
 Encryption: NaCl public-key encryption (Server's Session Public Key, Client's Permanent Private Key)
 
@@ -159,13 +162,12 @@ Encryption: NaCl public-key encryption (Server's Session Public Key, Client's Pe
 {  
    "type": "client-auth",
    "your_cookie": b"af354da383bba00507fa8f289a20308a",
-   "my_cookie": b"18b96fd5a151eae23e8b5a1aed2fe30d"
 }
 ```
 
 #### server-auth
 
-To complete the authentication process, the server repeats the cookie (16 bytes) that the client sent in the **client-auth** packet. Both initiator and responder will receive this packet.
+To complete the authentication process, the server repeats the cookie (*your_cookie*, 16 bytes) that the client sent in the **client-auth** message as part of the nonce. Both initiator and responder will receive this packet.
 
 Encryption: NaCl public-key encryption (Server's Session Private Key, Client's Permanent Public Key)
 
@@ -240,12 +242,13 @@ Encryption: NaCl public-key encryption (Server's Session Private Key, Client's P
 
 This section describes the various packet types that can be exchanged between an initiator and a responder (e.g. the receiver byte is set to *from/to Initiator* or *from/to Responder #x*). The packets are serialised [MessagePack](http://msgpack.org/index.html) objects. We will provide an example for each packet type in an extended JSON format where a string value denoted with 'b' indicates that the content is binary data. For ease of reading, binary data of the examples is represented as a hex-encoded string. However, binary data SHALL NOT be hex-encoded in implementations. Unless otherwise noted, all non-binary strings MUST be interpreted as UTF-8 encoded strings.
 
+The cookies of the peers MUST be different. In the unlikely event that a peer used the same cookie as the other peer, the WebSocket connection MUST be closed (TODO: close code) as the cookie has been permanently defined during the handshake with the server and cannot be changed anymore.
+
 Note: The packet payload cannot be decrypted by the server because the shared secret will be different.
 
 #### token
 
 The responder sends his public permanent key (32 bytes) to the initiator. In case that both peers have stored each other’s permanent keys as trusted keys, this packet SHALL be skipped.
-
 Encryption: NaCl secret-key encryption (Authentication Token)
 
 ```
@@ -257,7 +260,7 @@ Encryption: NaCl secret-key encryption (Authentication Token)
 
 #### key
 
-The peer (initiator or responder) announces his public session key (32 bytes) accompanied by a random cookie (16 bytes). Both peers MUST send this packet to each other.
+The peer (initiator or responder) announces his public session key (32 bytes) accompanied by an implicitly sent random cookie as part of the nonce. Both peers MUST send this packet to each other.
 
 Encryption: NaCl public-key encryption (Sender's Private Permanent Key, Receiver's Public Permanent Key)
 
@@ -265,13 +268,12 @@ Encryption: NaCl public-key encryption (Sender's Private Permanent Key, Receiver
 {  
    "type": "key",
    "key": b"bbbf470d283a9a4a0828e3fb86340fcbd19efe75f63a2e51ad0b16d20c3a0c02",
-   "my_cookie": b"957c92f0feb9bae1b37cb7e0d9989073"
 }
 ```
 
 #### auth
 
-The peer (initiator or responder) who received a previously sent **key** packet, repeats the received cookie (16 bytes). Both peers MUST send this packet to each other. Each peer MUST ensure that the cookie values are different before the packet is being sent. In the unlikely event that the peer generates the same cookie, the peer SHALL generate new cookies until the cookies do not match anymore. In addition, the peer who receives this packet MUST validate that the resulting cookie values are different. If the cookies are identical, an initiator SHALL drop the corresponding responder and a responder MUST disconnect from the WebSocket path.
+The peer (initiator or responder) who received a previously sent **key** packet, repeats the received cookie (16 bytes) as part of the nonce. Both peers MUST send this packet to each other. Each peer MUST ensure that the cookie values are different before the packet is being sent.
 
 Encryption: NaCl public-key encryption (Sender's Private Session Key, Receiver's Public Session Key)
 
