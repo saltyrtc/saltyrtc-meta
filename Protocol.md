@@ -112,7 +112,7 @@ Contains the SaltyRTC address of the sender.
 
 Destination: 1 byte
 
-Contains the SaltyRTC address of the destination.
+Contains the SaltyRTC address of the receiver.
 
 Overflow Number: 2 byte
 
