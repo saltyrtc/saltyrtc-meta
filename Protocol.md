@@ -121,8 +121,16 @@ combination with the sequence number.
 
 Sequence Number: 4 byte
 
-Contains the 32 bit unsigned sequence number. Starts with `0` and
-MUST be incremented by `1` for each message.
+Contains the 32 bit unsigned sequence number. Starts with a
+cryptographically secure random number and MUST be incremented by `1`
+for each message.
+
+Note: The overflow and the sequence number have been defined separately
+considering that some programming languages do not have a native 48 bit
+unsigned integer type. However, treating the overflow and the sequence
+number as a single 48 bit unsigned integer is possible and supported by
+this protocol. In further sections, the combined number will be called
+*Combined Sequence Number*.
 
 ---
 
@@ -152,20 +160,30 @@ Furthermore, a peer checks that the source address is sane:
 In case this is the first message received from the sending peer, the
 peer:
 
-* MUST check that the sequence number is `0`, and
+* MUST check that the overflow number is `0` (or the leading 16 bits of
+  the combined sequence number are `0`, in code:
+  `(csn & 0xffff00000000) >> 32 == 0`) and,
 * if the peer has already sent a message to the sender, MUST check that
   the sender's cookie is different than its own cookie, and
-* MUST store cookie and overflow number for checks on further messages.
+* MUST store cookie, overflow number and sequence number (or the
+  combined sequence number) for checks on further messages.
 
 Afterwards, a peer MUST check that the 16 byte cookie of the sender has
-not changed. Furthermore, the peer MUST check that:
+not changed.  
+If the peer does not make use of the combined sequence number it does
+the following checks:
 
-* in case incrementing the sequence number would not overflow that
-  number, the sequence number MUST have been incremented and the
+* In case incrementing the sequence number would not overflow that
+  number, the sequence number MUST be incremented by `1` and the
   overflow number MUST remain the same.
-* in case incrementing the sequence number would overflow, the sequence
-  number MUST be `0` and the overflow number MUST be increased by one
-  modulus 65535.
+* In case incrementing the sequence number would overflow, the sequence
+  number MUST be `0` and the overflow number MUST be increased by `1`.
+* The overflow number SHALL NOT reset to `0` if it was greater than `0`
+  before.
+
+In case that the peer does make use of the combined sequence number, it
+MUST check that the combined sequence number has not reset to `0` if it
+was greater than `0` before.
 
 In case that any check fails, the peer MUST close the connection with a
 close code of `3001` (*Protocol Error*) unless otherwise stated.
