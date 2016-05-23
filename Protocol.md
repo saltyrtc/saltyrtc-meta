@@ -136,7 +136,7 @@ Contains the SaltyRTC address of the receiver.
 Overflow Number: 2 byte
 
 This field contains the 16 bit unsigned overflow number used in
-combination with the sequence number.
+combination with the sequence number. Starts with `0`.
 
 Sequence Number: 4 byte
 
