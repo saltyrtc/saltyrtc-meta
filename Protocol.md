@@ -28,15 +28,34 @@ document are to be interpreted as described in
 
 ## Client
 
-TODO
-
-## Peer
-
-TODO
+A SaltyRTC compliant client. The client uses the SaltyRTC signalling
+channel to establish a WebRTC or ORTC peer-to-peer connection.
 
 ## Server
 
-TODO
+A SaltyRTC compliant server. The server provides the signalling channel
+clients may communicate with one another.
+
+## Peer
+
+The term *peer* is being used for protocol descriptions that need to
+be followed by both SaltyRTC compliant clients and servers.
+
+## Initiator
+
+An initiator is a SaltyRTC compliant client who wants to establish a
+WebRTC or ORTC peer-to-peer connection to a responder.
+
+## Responder
+
+The responder is a SaltyRTC compliant client who wants to establish a
+WebRTC or ORTC peer-to-peer connection to an initiator.
+
+## Signalling Path
+
+A signalling path is a simple ASCII string and consists of the hex
+value of the initiators public permanent key. Initiator and responder
+connect to the same WebSocket path.
 
 ## MessagePack Object
 
@@ -45,7 +64,7 @@ TODO
 ## SaltyRTC Address
 
 The SaltyRTC address is a single byte that identifies a specific peer
-on a WebSocket path. It is being used to indicate to which peer a
+on a WebSocket path. It is being used to indicate to which client a
 SaltyRTC server should relay a message. In this document, the byte will
 be represented in hexadecimal notation (base 16) starting with `0x`.  
 The SaltyRTC server (`0x00`) and the initiator (`0x01`) have a static
@@ -283,4 +302,10 @@ enough randomness to ensure that a nonce is not being reused for a
 shared secret as long as the protocol is being followed closely. To
 ensure that nonces are unique per shared secret, peers communicating
 with one another must choose different cookies.
+
+## Overflow Number and Sequence Number
+
+Both the overflow number and the sequence number ensure that a nonce
+remains a *number used once*. Furthermore, in conjunction with the
+cookie, they are being used to mitigate replay attacks.
 
