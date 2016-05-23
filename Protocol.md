@@ -108,7 +108,21 @@ remain the same for an entire session.
 
 Source: 1 byte
 
-TODO
+Contains the SaltyRTC address of the sender.
+
+Destination: 1 byte
+
+Contains the SaltyRTC address of the destination.
+
+Overflow Number: 2 byte
+
+This field contains the 16 bit unsigned overflow number used in
+combination with the sequence number.
+
+Sequence Number: 4 byte
+
+Contains the 32 bit unsigned sequence number. Starts with `0` and
+MUST be incremented by `1` for each message.
 
 ---
 
@@ -244,11 +258,11 @@ TODO
 ## Cookie
 
 The cookie is being used for two things at the same time. It resembles
-a challenge that needs to be repeated by the other peer. A peer can
-thereby prove that he owns the private key for the public key he
-transmitted. Furthermore, it should contain enough randomness to ensure
-that a nonce is not being reused for a shared secret as long as the
-protocol is being followed closely. To ensure that nonces are unique
-per shared secret, peers communicating with one another must choose
-different cookies.
+a challenge that needs to be repeated by the other peer to mitigate 
+replay attacks. A peer can thereby prove that he owns the private key
+for the public key he transmitted. Furthermore, it should contain
+enough randomness to ensure that a nonce is not being reused for a
+shared secret as long as the protocol is being followed closely. To
+ensure that nonces are unique per shared secret, peers communicating
+with one another must choose different cookies.
 
