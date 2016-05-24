@@ -28,8 +28,8 @@ document are to be interpreted as described in
 
 ## Client
 
-A SaltyRTC compliant client. The client uses the SaltyRTC signalling
-channel to establish a WebRTC or ORTC peer-to-peer connection.
+A SaltyRTC compliant client. The client uses the signalling channel to
+establish a WebRTC or ORTC peer-to-peer connection.
 
 ## Server
 
@@ -155,26 +155,27 @@ this protocol. In further sections, the combined number will be called
 
 # Receiving a SaltyRTC Signalling Message
 
-When a SaltyRTC peer receives a SaltyRTC signalling message, it first
-checks that the message contains more than 24 byte. It checks that the
+When a peer receives a SaltyRTC signalling message, it first checks
+that the message contains more than 24 byte. It checks that the
 destination address is sane:
 
-* For a SaltyRTC server, a valid destination address may be in the
-  full range of `0x00..0xff`. Until the authentication process is
-  complete, the server SHALL NOT allow message relaying to other peers
-  (`0x01..0xff`). Furthermore, relaying is only allowed between an
-  initiator (`0x01`) and a responder (`0x02..0xff`).
-* A SaltyRTC client MUST check that the destination address targets
-  its assigned identity (or `0x00` during authentication).
+* A server MUST check that the destination address is `0x00` until the
+  sender is authenticated. In case that the sender is authenticated,
+  relaying is allowed between an initiator (`0x01`) and a responder
+  (`0x02..0xff`). A responders SHALL NOT be able to relay messages to
+  another responder.
+* A client MUST check that the destination address targets its
+  assigned identity (or `0x00` during authentication).
 
 Furthermore, a peer checks that the source address is sane:
 
-* For a SaltyRTC server, the sender SHALL use `0x00` before it has been
-  identified or a value in the range of `0x01..0xff`. The server MUST
-  check that the source identity is the previously assigned identity.
-* A SaltyRTC client MUST check that the sender's identity is different
-  to the one that the server has assigned to it. If the client has no
-  identity yet, the only valid source identity is `0x00`.
+* A server MUST check that the source address is `0x00` until a
+  specific identity has been assigned to the sender. In case that the
+  sender is authenticated, the server MUST check that the source
+  address equals the sender's assigned identity.
+* A client MUST check that the sender's identity is different to the
+  one that the server has assigned to it. If the client has no identity
+  yet, the only valid source identity is `0x00`.
 
 In case this is the first message received from the sending peer, the
 peer:
@@ -268,13 +269,13 @@ TODO.
 
 TODO.
 
-### Processing a 'offer' Message
+### Processing an 'offer' Message
 
 TODO. The message MUST be considered invalid in case ORTC has been
 negotiated and SHALL only be received by SaltyRTC clients in the role
 of the responder.
 
-### Processing a 'answer' Message
+### Processing an 'answer' Message
 
 TODO. The message MUST be considered invalid in case ORTC has been
 negotiated and SHALL only be received by SaltyRTC clients in the role
