@@ -182,7 +182,7 @@ peer:
 
 * MUST check that the overflow number is `0` (or the leading 16 bits of
   the combined sequence number are `0`, in code:
-  `(csn & 0xffff00000000) >> 32 == 0`) and,
+  `csn & 0xffff00000000 == 0`) and,
 * if the peer has already sent a message to the sender, MUST check that
   the sender's cookie is different than its own cookie, and
 * MUST store cookie, overflow number and sequence number (or the
