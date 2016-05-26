@@ -54,8 +54,8 @@ WebRTC or ORTC peer-to-peer connection to an initiator.
 ## Signalling Path
 
 A signalling path is a simple ASCII string and consists of the hex
-value of the initiators public permanent key. Initiator and responder
-connect to the same WebSocket path.
+value of the initiators public key. Initiator and responder connect
+to the same WebSocket path.
 
 ## MessagePack Object
 
@@ -190,9 +190,15 @@ peer:
 
 Afterwards, a peer MUST check that the 16 byte cookie of the sender has
 not changed.  
-If the peer does not make use of the combined sequence number it does
-the following checks:
 
+If the message is intended for the server (the destination address is
+`0x00`) or the message is being received by a client, the peer does the
+following checks:
+
+* In case that the peer does make use of the combined sequence number,
+  it MUST check that the combined sequence number has not reset to `0`
+  if it was greater than `0` before. Implementations that use the
+  combined sequence number SHALL ignore the following three checks.
 * In case incrementing the sequence number would not overflow that
   number, the sequence number MUST be incremented by `1` and the
   overflow number MUST remain the same.
@@ -200,10 +206,6 @@ the following checks:
   number MUST be `0` and the overflow number MUST be increased by `1`.
 * The overflow number SHALL NOT reset to `0` if it was greater than `0`
   before.
-
-In case that the peer does make use of the combined sequence number, it
-MUST check that the combined sequence number has not reset to `0` if it
-was greater than `0` before.
 
 In case that any check fails, the peer MUST close the connection with a
 close code of `3001` (*Protocol Error*) unless otherwise stated.
