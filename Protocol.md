@@ -61,17 +61,17 @@ to the same WebSocket path.
 
 TODO
 
-## SaltyRTC Address
+## Address
 
-The SaltyRTC address is a single byte that identifies a specific peer
-on a WebSocket path. It is being used to indicate to which client a
-SaltyRTC server should relay a message. In this document, the byte will
-be represented in hexadecimal notation (base 16) starting with `0x`.  
-The SaltyRTC server (`0x00`) and the initiator (`0x01`) have a static
-identifier. For responders, the SaltyRTC server will dynamically assign
+The address is a single byte that identifies a specific peer on a
+WebSocket path. It is being used to indicate to which client a server
+should relay a message. In this document, the byte will be represented
+in hexadecimal notation (base 16) starting with `0x`.  
+The server (`0x00`) and the initiator (`0x01`) have a static
+identifier. For responders, the server will dynamically assign
 identifiers (`0x02..0xff`).
 
-# SaltyRTC Signalling Message Structure
+# Signalling Message Structure
 
 SaltyRTC signalling messages are encoded in binary using
 network-oriented format (most significant byte first, also known as
