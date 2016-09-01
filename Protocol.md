@@ -4,10 +4,10 @@
 
 SaltyRTC is a protocol for WebRTC and ORTC which uses end-to-end
 encryption techniques based on the Networking and Cryptography library
-(NaCl) to set up a secure peer-to-peer connection. The protocol has
-been designed in a way that no third party needs to be trusted.
-Furthermore, it offers another security layer for WebRTC and ORTC
-Data Channels.
+(NaCl) and the WebSocket protocol to set up a secure peer-to-peer
+connection. The protocol has been designed in a way that no third party
+needs to be trusted. Furthermore, it offers another security layer for
+WebRTC and ORTC Data Channels.
 
 This document describes the protocol for both client (a peer wanting
 to set up a WebRTC or ORTC connection) and server (relays signalling
@@ -78,8 +78,8 @@ network-oriented format (most significant byte first, also known as
 *big-endian*). Unless otherwise noted, numeric constants are in decimal
 (base 10).
 
-All SaltyRTC signalling messages MUST start with a 24-byte nonce
-followed by either:
+All signalling messages MUST start with a 24-byte nonce followed by
+either:
 
 * an NaCl public-key authenticated encrypted MessagePack object,
 * an NaCl secret-key authenticated encrypted MessagePack object or
@@ -212,14 +212,29 @@ close code of `3001` (*Protocol Error*) unless otherwise stated.
 
 ## Processing Client-to-Server Messages
 
-The following messages are messages that will be exchanged between
-server and client. In case a client receives such a message from
-another client, the incident MUST be treated as a protocol violation
-error.
+This section describes the various messages that will be exchanged
+between server and client.
+
+The messages are serialised MessagePack objects. We will provide an
+example for each message in an extended JSON format where a string
+value denoted with 'b' indicates that the content is binary data.
+For ease of reading, binary data of the examples is represented as a
+hex-encoded string. However, binary data SHALL NOT be hex-encoded in
+implementations. Unless otherwise noted, all non-binary strings MUST
+be interpreted as UTF-8 encoded strings. Furthermore, field values
+SHALL NOT be *null*.
+
+In case a client receives such a message from another client, the
+incident MUST be treated as a protocol violation error.
+
+Messages SHALL NOT be repeated.
 
 ### Processing a 'server-hello' Message
 
-TODO. The message SHALL only be received by SaltyRTC clients.
+The server sends a public key (32 bytes) to the client.
+The message SHALL only be received by SaltyRTC clients. It is being
+sent by the server after a client connected to the server using a
+valid signalling path. The message is not end-to-end encrypted.
 
 ### Processing a 'client-hello' Message
 
