@@ -228,7 +228,7 @@ implementations. Unless otherwise noted, all non-binary strings MUST
 be interpreted as UTF-8 encoded strings. Furthermore, field values
 SHALL NOT be *null*.
 
-In case a client receives such a message from another client, the
+In case a client receives an invalid message from another client, the
 incident MUST be treated as a protocol violation error.
 
 Messages SHALL NOT be repeated.
