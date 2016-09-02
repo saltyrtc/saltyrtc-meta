@@ -71,9 +71,27 @@ The server (`0x00`) and the initiator (`0x01`) have a static
 identifier. For responders, the server will dynamically assign
 identifiers (`0x02..0xff`).
 
-# WebSocket Security
+# WebSocket
+
+The SaltyRTC protocol has been designed to work on top of the WebSocket
+protocol. For more information about the WebSocket protocol, see
+RFC 6455.
+
+## Security Recommendation
 
 Although the SaltyRTC protocol takes many security measures to prevent eavesdropping, it is still highly RECOMMENDED to use WebSocket in its *secure* mode (e.g. provide a valid certificate). This measure will make sure that the signalling path is hidden from eavesdroppers and generally hardens the protocol against potential attacks.
+
+## Subprotocol
+
+It is REQUIRED to provide the following subprotocol when connecting to
+a server:
+
+`v0.saltyrtc.org`
+
+Only if the server chose the subprotocol above, this protocol
+SHALL be applied.
+
+TODO: Switch to `v1` as soon as the spec has been reviewed.
 
 # Signalling Message Structure
 
