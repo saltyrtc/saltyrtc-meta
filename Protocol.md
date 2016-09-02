@@ -89,7 +89,10 @@ a server:
 `v0.saltyrtc.org`
 
 Only if the server chose the subprotocol above, this protocol
-SHALL be applied.
+SHALL be applied. If another shared subprotocol that is not related to 
+SaltyRTC has been found, continue with that subprotocol. Otherwise, 
+close the connection to the server with a close code of `1002` (No 
+Shared Subprotocol Found).
 
 TODO: Switch to `v1` as soon as the spec has been reviewed.
 
@@ -292,8 +295,9 @@ SaltyRTC clients.
 ## Processing Peer-to-Peer Messages
 
 The following messages are messages that will be exchanged between two
-SaltyRTC clients (peers). In case a server receives such a message from
-a client, the incident MUST be treated as a protocol violation error.
+SaltyRTC clients (peers). A SaltyRTC server has to relay these messages.
+
+In case a server receives such a message from a client and the destination address is set to the server's address (`0x00`), the incident MUST be treated as a protocol violation error by the server.
 
 ### Processing a 'token' Message
 
@@ -327,6 +331,25 @@ TODO: Explain difference when using WebRTC vs. ORTC.
 ### Processing a 'restart' Message
 
 TODO
+
+# Errors
+
+## Protocol Violation Error
+
+A protocol violation error MUST be treated by closing the connection 
+with a close code of `3001` (*Protocol Error*) unless otherwise stated.
+
+# Close Code Enumeration
+
+The following close codes are being used by the protocol:
+
+- 1001: Going Away
+- 1002: No Shared Subprotocol Found
+- 3000: Path Full
+- 3001: Protocol Error
+- 3002: Internal Error
+- 3003: Handover of the Signalling Channel
+- 3004: Dropped by Initiator
 
 ---
 
