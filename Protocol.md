@@ -286,6 +286,13 @@ responder. The initiator SHALL skip this message. The responder MUST
 set a public key (32 bytes) in the *key* field of this message. The 
 message is not end-to-end encrypted.
 
+Note that the server does not know whether the client will send a 
+'client-hello' message (the client is a responder) or a 'client-auth' 
+message (the client is the initiator). Therefore, the server MUST be 
+prepared to handle both message types at that particular point in the 
+message flow. This is also the intended way to differentiate between 
+initiator and responder.
+
 ```
 {
   "type": "client-hello",
