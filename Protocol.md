@@ -252,7 +252,7 @@ For ease of reading, binary data of the examples is represented as a
 hex-encoded string. However, binary data SHALL NOT be hex-encoded in
 implementations. Unless otherwise noted, all non-binary strings MUST
 be interpreted as UTF-8 encoded strings. Furthermore, field values
-SHALL NOT be *null*.
+SHALL NOT be *null*. The *type* field is REQUIRED for all messages.
 
 In case a client receives an invalid message from another client, the
 incident MUST be treated as a protocol violation error.
@@ -268,8 +268,8 @@ TODO
 This message is being sent by the server after a client connected to 
 the server using a valid signalling path. The server MUST generate a 
 new cryptographically secure random NaCl key pair for each client. The 
-public key of that key pair MUST be sent in the payload of this 
-message. This message is not end-to-end encrypted.
+public key of that key pair MUST be set in the *key* field of this 
+message. The message is not end-to-end encrypted.
 
 ```
 {
@@ -282,9 +282,9 @@ message. This message is not end-to-end encrypted.
 
 As soon as the client has received the 'server-hello' message, it MUST 
 ONLY respond with this message in case the client takes the role of a 
-responder. The initiator SHALL skip this message. The responder sends 
-a public key (32 bytes) to the server in the payload of this message. 
-This message is not end-to-end encrypted.
+responder. The initiator SHALL skip this message. The responder MUST 
+set a public key (32 bytes) in the *key* field of this message. The 
+message is not end-to-end encrypted.
 
 ```
 {
