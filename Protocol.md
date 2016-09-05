@@ -178,6 +178,10 @@ this protocol. In further sections, the combined number will be called
 
 ---
 
+# Sending a SaltyRTC Signalling Message
+
+TODO
+
 # Receiving a SaltyRTC Signalling Message
 
 When a peer receives a SaltyRTC signalling message, it first checks
@@ -235,7 +239,7 @@ following checks:
 In case that any check fails, the peer MUST close the connection with a
 close code of `3001` (*Protocol Error*) unless otherwise stated.
 
-## Processing Client-to-Server Messages
+# Client-to-Server Messages
 
 This section describes the various messages that will be exchanged
 between server and client.
@@ -254,11 +258,11 @@ incident MUST be treated as a protocol violation error.
 
 Messages SHALL NOT be repeated.
 
-### Message Flow
+## Message Flow
 
 TODO
 
-### Processing a 'server-hello' Message
+## 'server-hello' Message
 
 This message is being sent by the server after a client connected to the server using a valid signalling path. The server MUST generate a new cryptographically secure random NaCl key pair for each client. The public key of that key pair MUST be sent in the payload of this message. This message is not end-to-end encrypted.
 
@@ -269,7 +273,7 @@ This message is being sent by the server after a client connected to the server 
 }
 ```
 
-### Processing a 'client-hello' Message
+## 'client-hello' Message
 
 The client sends a public key (32 bytes) to the client.
 
@@ -278,54 +282,60 @@ sent by the server after a client connected to the server using a
 valid signalling path. The message is not end-to-end encrypted.
 TODO. The message SHALL only be received by SaltyRTC servers.
 
-### Processing a 'client-auth' Message
+## 'client-auth' Message
 
 TODO. The message SHALL only be received by SaltyRTC servers.
 
-### Processing a 'server-auth' Message
+## 'server-auth' Message
 
 TODO. The message SHALL only be received by SaltyRTC clients.
 
-### Processing a 'new-initiator' Message
+## 'new-initiator' Message
 
 This message does not require any special processing. It SHALL only be
 received by SaltyRTC clients in the role of a responder.
 
-### Processing a 'new-responder' Message
+## 'new-responder' Message
 
 TODO. It SHALL only be received by SaltyRTC clients in the role of the
 initiator.
 
-### Processing a 'drop-responder' Message
+## 'drop-responder' Message
 
 TODO. The message SHALL only be received by SaltyRTC servers.
 
-### Processing a 'send-error' Message
+## 'send-error' Message
 
 TODO: Change 'hash' to 'nonce'. The message SHALL only be received by
 SaltyRTC clients.
 
-## Processing Peer-to-Peer Messages
+# Path Communication
+
+TODO: Describe the server's task of relaying messages when clients are on the same path.
+
+# Peer-to-Peer Messages
 
 The following messages are messages that will be exchanged between two
 SaltyRTC clients (peers). A SaltyRTC server has to relay these messages.
 
 In case a server receives such a message from a client and the destination address is set to the server's address (`0x00`), the incident MUST be treated as a protocol violation error by the server.
 
-### Processing a 'token' Message
+## Message Flow
+
+## 'token' Message
 
 TODO. The message SHALL only be received by SaltyRTC clients in the
 role of the initiator.
 
-### Processing a 'key' Message
+## 'key' Message
 
 TODO.
 
-### Processing an 'auth' Message
+## 'auth' Message
 
 TODO.
 
-### Processing a 'restart' Message
+## 'restart' Message
 
 TODO
 
