@@ -181,6 +181,7 @@ this protocol. In further sections, the combined number will be called
 # Sending a SaltyRTC Signalling Message
 
 TODO
+Note: Cookie MUST be random cryptographically secure.
 
 # Receiving a SaltyRTC Signalling Message
 
@@ -264,7 +265,11 @@ TODO
 
 ## 'server-hello' Message
 
-This message is being sent by the server after a client connected to the server using a valid signalling path. The server MUST generate a new cryptographically secure random NaCl key pair for each client. The public key of that key pair MUST be sent in the payload of this message. This message is not end-to-end encrypted.
+This message is being sent by the server after a client connected to 
+the server using a valid signalling path. The server MUST generate a 
+new cryptographically secure random NaCl key pair for each client. The 
+public key of that key pair MUST be sent in the payload of this 
+message. This message is not end-to-end encrypted.
 
 ```
 {
@@ -275,12 +280,18 @@ This message is being sent by the server after a client connected to the server 
 
 ## 'client-hello' Message
 
-The client sends a public key (32 bytes) to the client.
+As soon as the client has received the 'server-hello' message, it MUST 
+ONLY respond with this message in case the client takes the role of a 
+responder. The initiator SHALL skip this message. The responder sends 
+a public key (32 bytes) to the server in the payload of this message. 
+This message is not end-to-end encrypted.
 
-The message SHALL only be received by SaltyRTC servers. It is being
-sent by the server after a client connected to the server using a
-valid signalling path. The message is not end-to-end encrypted.
-TODO. The message SHALL only be received by SaltyRTC servers.
+```
+{
+  "type": "client-hello",
+  "key": b"55e7dd57a01974ca31b6e588909b7b501cdc7694f21b930abb1600241b2ddb27"
+}
+```
 
 ## 'client-auth' Message
 
