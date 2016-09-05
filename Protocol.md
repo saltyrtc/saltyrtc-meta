@@ -254,15 +254,28 @@ incident MUST be treated as a protocol violation error.
 
 Messages SHALL NOT be repeated.
 
+### Message Flow
+
+TODO
+
 ### Processing a 'server-hello' Message
 
-The server sends a public key (32 bytes) to the client.
-The message SHALL only be received by SaltyRTC clients. It is being
-sent by the server after a client connected to the server using a
-valid signalling path. The message is not end-to-end encrypted.
+This message is being sent by the server after a client connected to the server using a valid signalling path. The server MUST generate a new cryptographically secure random NaCl key pair for each client. The public key of that key pair MUST be sent in the payload of this message. This message is not end-to-end encrypted.
+
+```
+{
+  "type": "server-hello",
+  "key": b"debc3a6c9a630f27eae6bc3fd962925bdeb63844c09103f609bf7082bc383610"
+}
+```
 
 ### Processing a 'client-hello' Message
 
+The client sends a public key (32 bytes) to the client.
+
+The message SHALL only be received by SaltyRTC servers. It is being
+sent by the server after a client connected to the server using a
+valid signalling path. The message is not end-to-end encrypted.
 TODO. The message SHALL only be received by SaltyRTC servers.
 
 ### Processing a 'client-auth' Message
