@@ -312,22 +312,6 @@ TODO.
 
 TODO.
 
-### Processing an 'offer' Message
-
-TODO. The message MUST be considered invalid in case ORTC has been
-negotiated and SHALL only be received by SaltyRTC clients in the role
-of the responder.
-
-### Processing an 'answer' Message
-
-TODO. The message MUST be considered invalid in case ORTC has been
-negotiated and SHALL only be received by SaltyRTC clients in the role
-of the initiator.
-
-### Processing a 'candidates' Message
-
-TODO: Explain difference when using WebRTC vs. ORTC.
-
 ### Processing a 'restart' Message
 
 TODO
