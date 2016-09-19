@@ -501,8 +501,7 @@ prepared to handle both message types at that particular point in the
 message flow. This is also the intended way to differentiate between 
 initiator and responder.
 
-The message is NaCl public-key encrypted by the server's public key 
-(sent in 'server-hello') and the client's permanent private key.
+The message SHALL NOT be end-to-end encrypted.
 
 ```
 {
@@ -519,9 +518,14 @@ MUST send this message to the server. The client MUST set the
 *your_cookie* field to the cookie the server has used in the nonce of 
 the 'server-hello' message.
 
-TODO: Server receives
+When the server receives a 'client-hello' message, it MUST check that 
+the cookie provided in the *your_cookie* field contains the cookie the 
+server has used in its previous and upcoming messages to that client.
 
-TODO: Encryption
+The message is NaCl public-key encrypted by the server's session key 
+pair (public key sent in 'server-hello') and the client's permanent 
+key pair (public key as part of the WebSocket path or sent in 'client-
+hello').
 
 ```
 {
