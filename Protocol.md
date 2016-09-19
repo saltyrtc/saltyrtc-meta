@@ -604,6 +604,9 @@ When a new initiator has authenticated itself towards the server on a path, the 
 
 A responder who receives a 'new-initiator' message MUST proceed with deleting all currently cached information about the previous initiator (such as cookie and sequence number(s)) and continue by sending a 'token' or 'key' client-to-client message described in the *Client-to-Client Messages* section.
 
+The message SHALL be NaCl public-key encrypted by the server's session 
+key pair and the client's permanent key pair.
+
 ```
 {
   "type": "new-initiator"
@@ -615,6 +618,9 @@ A responder who receives a 'new-initiator' message MUST proceed with deleting al
 As soon as a new responder has authenticated itself towards the server on path, the server MUST send this message to an authenticated initiator on the same path. The field *id* MUST be set to the assigned identity of the newly connected responder.
 
 An initiator who receives a 'new-responder' message SHALL validate that the *id* field contains a valid responder address (`0x02..0xff`). It SHOULD store the responder's identity in its internal list of responders.
+
+The message SHALL be NaCl public-key encrypted by the server's session 
+key pair and the client's permanent key pair.
 
 ## 'drop-responder' Message
 
