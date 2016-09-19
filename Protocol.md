@@ -479,7 +479,7 @@ of this message.
 A receiving client MUST check that the message contains a valid NaCl
 public key (the size of the key MUST be exactly 32 bytes).
 
-The message SHALL NOT be end-to-end encrypted.
+The message SHALL NOT be encrypted.
 
 ```
 {
@@ -505,7 +505,7 @@ prepared to handle both message types at that particular point in the
 message flow. This is also the intended way to differentiate between 
 initiator and responder.
 
-The message SHALL NOT be end-to-end encrypted.
+The message SHALL NOT be encrypted.
 
 ```
 {
@@ -540,12 +540,24 @@ in 'client-hello').
 
 ## 'server-auth' Message
 
-Once the server has received the 'client-auth' message, it SHALL reply with this message. Depending on the client's role, the server SHALL choose and assign an identity to the client by setting the destination address accordingly:
+Once the server has received the 'client-auth' message, it SHALL reply 
+with this message. Depending on the client's role, the server SHALL 
+choose and assign an identity to the client by setting the destination 
+address accordingly:
 
-* In case the client is the initiator, a previous initiator on the same path SHALL be dropped by closing its connection with a close code of `3004` (*Dropped by Initiator*) immediately. The new initiator SHALL be assigned the initiator address (`0x01`).
-* In case the client is a responder, the server SHALL choose a responder identity from the range `0x02..0xff`. If no identity can be assigned because each identity is being held by an authenticated responder, the server SHALL close the connection to the client with a close code of `3000` (*Path Full*).
+* In case the client is the initiator, a previous initiator on the 
+  same path SHALL be dropped by closing its connection with a close 
+  code of `3004` (*Dropped by Initiator*) immediately. The new 
+  initiator SHALL be assigned the initiator address (`0x01`).
+* In case the client is a responder, the server SHALL choose a 
+  responder identity from the range `0x02..0xff`. If no identity can 
+  be assigned because each identity is being held by an authenticated 
+  responder, the server SHALL close the connection to the client with 
+  a close code of `3000` (*Path Full*).
 
-After the procedure above has been followed, the client SHALL be marked as authenticated towards the server. The server MUST set the following fields:
+After the procedure above has been followed, the client SHALL be 
+marked as authenticated towards the server. The server MUST set the 
+following fields:
 
 * The *your_cookie* field SHALL contain the cookie the client has used 
   in its previous messages.
@@ -581,7 +593,8 @@ following checks depending on its role:
   'token' or 'key' client-to-client message described in the 
   *Client-to-Client Messages* section.
 
-After the procedure above has been followed by the client, it SHALL mark the server as authenticated.
+After the procedure above has been followed by the client, it SHALL 
+mark the server as authenticated.
 
 The message SHALL be NaCl public-key encrypted by the server's session 
 key pair and the client's permanent key pair.
@@ -600,12 +613,18 @@ key pair and the client's permanent key pair.
 
 ## 'new-initiator' Message
 
-When a new initiator has authenticated itself towards the server on a path, the server MUST send this message to all currently authenticated responders on the same path. No additional field needs to be set.
+When a new initiator has authenticated itself towards the server on a 
+path, the server MUST send this message to all currently authenticated 
+responders on the same path. No additional field needs to be set.
 
-A responder who receives a 'new-initiator' message MUST proceed with deleting all currently cached information about the previous initiator (such as cookie and sequence number(s)) and continue by sending a 'token' or 'key' client-to-client message described in the *Client-to-Client Messages* section.
+A responder who receives a 'new-initiator' message MUST proceed with 
+deleting all currently cached information about the previous initiator 
+(such as cookie and sequence number(s)) and continue by sending a 
+'token' or 'key' client-to-client message described in the *Client-to-
+Client Messages* section.
 
 The message SHALL be NaCl public-key encrypted by the server's session 
-key pair and the client's permanent key pair.
+key pair and the responder's permanent key pair.
 
 ```
 {
@@ -615,17 +634,55 @@ key pair and the client's permanent key pair.
 
 ## 'new-responder' Message
 
-As soon as a new responder has authenticated itself towards the server on path, the server MUST send this message to an authenticated initiator on the same path. The field *id* MUST be set to the assigned identity of the newly connected responder.
+As soon as a new responder has authenticated itself towards the server 
+on path, the server MUST send this message to an authenticated 
+initiator on the same path. The field *id* MUST be set to the assigned 
+identity of the newly connected responder.
 
-An initiator who receives a 'new-responder' message SHALL validate that the *id* field contains a valid responder address (`0x02..0xff`). It SHOULD store the responder's identity in its internal list of responders.
+An initiator who receives a 'new-responder' message SHALL validate 
+that the *id* field contains a valid responder address (`0x02..0xff`). 
+It SHOULD store the responder's identity in its internal list of 
+responders.
 
 The message SHALL be NaCl public-key encrypted by the server's session 
-key pair and the client's permanent key pair.
+key pair and the initiator's permanent key pair.
+
+```
+{
+  "type": "new-responder",
+  "id": 0x04
+}
+```
 
 ## 'drop-responder' Message
 
-TODO. The message SHALL only be received by SaltyRTC servers.
-TODO: Remove stored cookie & CSN
+At any time, an authenticated initiator MAY request to drop an 
+authenticated responder from the path the initiator is connected to by 
+sending this message. The initiator MUST include the *id* field and 
+set its value to the responder's identity the initiator wants to drop. 
+Before the message is being sent, the initiator SHALL delete all 
+currently cached information about that responder (such as cookie and 
+sequence number(s)).
+
+Upon receiving a 'drop-responder' message, the server MUST validate 
+that the messages has been received from an authenticated initiator. 
+The server MUST validate that the *id* field contains a valid 
+responder address (`0x02..0xff`). It proceeds by looking up the 
+WebSocket connection of the provided responder identity. If no 
+connection can be found, the message SHALL be silently discarded but 
+MAY generate an informational logging entry. If the WebSocket 
+connection has been found, the connection SHALL be closed with a close 
+code of `3004` (*Dropped by Initiator*).
+
+The message SHALL be NaCl public-key encrypted by the server's session 
+key pair and the initiator's permanent key pair.
+
+```
+{
+  "type": "drop-responder",
+  "id": 0x02
+}
+```
 
 ## 'send-error' Message
 
@@ -683,6 +740,7 @@ TODO.
 ## 'auth' Message
 
 TODO.
+.. initiator SHALL delete all currently cached information about the previously authenticated responder (such as cookie and sequence number(s)).
 
 # 'close' Message
 
