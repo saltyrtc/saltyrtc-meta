@@ -11,10 +11,6 @@ This repository contains various organisational information and a [protocol desc
 * Client repository names start with: ``saltyrtc-client-``
 * Server repository names start with: ``saltyrtc-server-``
 
-### Git
-
-* Use of [git-flow](https://danielkummer.github.io/git-flow-cheatsheet/) is recommended
-
 ### Code Style
 
 * Use comments, describe long code blocks with a few words
