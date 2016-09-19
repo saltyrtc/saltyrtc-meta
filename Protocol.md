@@ -580,6 +580,9 @@ following checks depending on its role:
   'token' or 'key' client-to-client message described in the 
   *Client-to-Client Messages* section.
 
+The message SHALL be NaCl public-key encrypted by the server's session 
+key pair and the client's permanent key pair.
+
 After this message, both client and server have authenticated each 
 other.
 
