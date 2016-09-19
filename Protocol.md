@@ -577,8 +577,8 @@ following checks depending on its role:
 * In case the client is the responder, it SHALL check that the 
   *initiator_connected* field contains a boolean value. In case the 
   field's value is `true`, the responder MUST proceed with sending a 
-  'token' or 'key' client-to-client message described in the *Client-
-  to-Client Messages* section.
+  'token' or 'key' client-to-client message described in the 
+  *Client-to-Client Messages* section.
 
 After this message, both client and server have authenticated each 
 other.
