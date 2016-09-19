@@ -545,7 +545,7 @@ Once the server has received the 'client-auth' message, it SHALL reply with this
 * In case the client is the initiator, a previous initiator on the same path SHALL be dropped by closing its connection with a close code of `3004` (*Dropped by Initiator*) immediately. The new initiator SHALL be assigned the initiator address (`0x01`).
 * In case the client is a responder, the server SHALL choose a responder identity from the range `0x02..0xff`. If no identity can be assigned because each identity is being held by an authenticated responder, the server SHALL close the connection to the client with a close code of `3000` (*Path Full*).
 
-The server MUST set the following fields:
+After the procedure above has been followed, the client SHALL be marked as authenticated towards the server. The server MUST set the following fields:
 
 * The *your_cookie* field SHALL contain the cookie the client has used 
   in its previous messages.
@@ -573,18 +573,18 @@ following checks depending on its role:
   neither contain addresses outside the range `0x02.0xff` nor SHALL an 
   address be repeated in the list. An empty list/array SHALL be 
   considered valid. However, `null`/`None` SHALL NOT be considered a 
-  valid value of that field.
+  valid value of that field. It SHOULD store the responder's 
+  identities in its internal list of responders.
 * In case the client is the responder, it SHALL check that the 
   *initiator_connected* field contains a boolean value. In case the 
   field's value is `true`, the responder MUST proceed with sending a 
   'token' or 'key' client-to-client message described in the 
   *Client-to-Client Messages* section.
 
+After the procedure above has been followed by the client, it SHALL mark the server as authenticated.
+
 The message SHALL be NaCl public-key encrypted by the server's session 
 key pair and the client's permanent key pair.
-
-After this message, both client and server have authenticated each 
-other.
 
 ```
 {
@@ -600,15 +600,21 @@ other.
 
 ## 'new-initiator' Message
 
-This message does not require any special processing. It SHALL only be
-received by SaltyRTC clients in the role of a responder.
-TODO: Remove previously stored cookie & CSN if any
+When a new initiator has authenticated itself towards the server on a path, the server MUST send this message to all currently authenticated responders on the same path. No additional field needs to be set.
+
+A responder who receives a 'new-initiator' message MUST proceed with deleting all currently cached information about the previous initiator (such as cookie and sequence number(s)) and continue by sending a 'token' or 'key' client-to-client message described in the *Client-to-Client Messages* section.
+
+```
+{
+  "type": "new-initiator"
+}
+```
 
 ## 'new-responder' Message
 
-TODO. It SHALL only be received by SaltyRTC clients in the role of the
-initiator.
-TODO: Remove previously stored cookie & CSN if any
+As soon as a new responder has authenticated itself towards the server on path, the server MUST send this message to an authenticated initiator on the same path. The field *id* MUST be set to the assigned identity of the newly connected responder.
+
+An initiator who receives a 'new-responder' message SHALL validate that the *id* field contains a valid responder address (`0x02..0xff`). It SHOULD store the responder's identity in its internal list of responders.
 
 ## 'drop-responder' Message
 
