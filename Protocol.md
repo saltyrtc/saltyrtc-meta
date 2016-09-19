@@ -237,8 +237,24 @@ this protocol. In further sections, the combined number will be called
 
 # Connecting To a Signalling Server
 
-TODO
-TODO: Describe path
+A server MUST listen and accept incoming WebSocket connections. 
+Clients SHALL connect to a server by using the WebSocket protocol and 
+supplying a valid signalling path where they want to meet the other 
+client. Servers MUST separate communication of clients between paths. 
+This will be described in detail in the *Client-to-Client 
+Communication* section.
+
+The path MUST be set as part of the WebSocket URI directly after the 
+hostname, separated by a forward slash. A signalling path is a simple 
+ASCII string and MUST be the lowercase hex value of the initiators 
+public key. Therefore, the resulting path MUST contain exactly 64 
+characters. Initiator and responder connect to the same WebSocket path.
+
+Example of a WebSocket URI including a valid signalling path:
+
+```
+wss://example.com/debc3a6c9a630f27eae6bc3fd962925bdeb63844c09103f609bf7082bc383610
+```
 
 # Sending a Signalling Message
 
@@ -593,6 +609,10 @@ TODO.
 ## 'auth' Message
 
 TODO.
+
+# 'close' Message
+
+TODO
 
 # Errors
 
