@@ -336,7 +336,11 @@ address is sane:
 * A client MUST check that the destination address targets its
   assigned identity (or `0x00` during authentication). The first 
   message received with a destination address different to `0x00` 
-  SHALL be accepted and stored as the client's assigned identity.
+  SHALL be accepted as the client's assigned identity. However, the 
+  client MUST validate that the identity fits its role - initiators 
+  SHALL ONLY accept `0x01` and responders SHALL ONLY an identity from 
+  the range `0x02..0xff`. The identity MUST be stored as the client's 
+  assigned identity.
 
 Furthermore, a peer checks that the source address is sane:
 
@@ -520,12 +524,12 @@ the 'server-hello' message.
 
 When the server receives a 'client-hello' message, it MUST check that 
 the cookie provided in the *your_cookie* field contains the cookie the 
-server has used in its previous and upcoming messages to that client.
+server has used in its previous messages to that client.
 
-The message is NaCl public-key encrypted by the server's session key 
-pair (public key sent in 'server-hello') and the client's permanent 
-key pair (public key as part of the WebSocket path or sent in 'client-
-hello').
+The message SHALL be NaCl public-key encrypted by the server's session 
+key pair (public key sent in 'server-hello') and the client's 
+permanent key pair (public key as part of the WebSocket path or sent 
+in 'client-hello').
 
 ```
 {
@@ -536,9 +540,60 @@ hello').
 
 ## 'server-auth' Message
 
-TODO. The message SHALL only be received by SaltyRTC clients.
-TODO: Assign identity (by setting destination address), valid until closed, accept (client)
-TODO: Validate responder IDs, not twice, in range 0x02..0xff (initiator)
+Once the server has received the 'client-auth' message, it SHALL reply with this message. Depending on the client's role, the server SHALL choose and assign an identity to the client by setting the destination address accordingly:
+
+* In case the client is the initiator, a previous initiator on the same path SHALL be dropped by closing its connection with a close code of `3004` (*Dropped by Initiator*) immediately. The new initiator SHALL be assigned the initiator address (`0x01`).
+* In case the client is a responder, the server SHALL choose a responder identity from the range `0x02..0xff`. If no identity can be assigned because each identity is being held by an authenticated responder, the server SHALL close the connection to the client with a close code of `3000` (*Path Full*).
+
+The server MUST set the following fields:
+
+* The *your_cookie* field SHALL contain the cookie the client has used 
+  in its previous messages.
+* ONLY in case the client is an initiator, the *responders* field 
+  SHALL be set containing a list/an array of the active responder 
+  addresses on that path. An active responder is a responder that has 
+  already completed the authentication process and is still connected 
+  to the same path as the initiator.
+* ONLY in case the client is a responder, the *initiator_connected* 
+  field SHALL be set to a boolean whether an initiator is active on 
+  the same path. An initiator is considered active if it has completed 
+  the authentication process and is still connected.
+
+When the client receives a 'server-auth' message, it MUST have 
+accepted and set its identity as described in the *Receiving a 
+Signalling Message* section. This identity is valid until the 
+connection has been severed. It MUST check that the cookie provided in 
+the *your_cookie* field contains the cookie the client has used in its 
+previous and messages to the server. Moreover, the client MUST do the 
+following checks depending on its role:
+
+* In case the client is the initiator, it SHALL check that the 
+  *responders* field is set and contains a list/an array of responder 
+  identities. The responder identities MUST be validated and SHALL 
+  neither contain addresses outside the range `0x02.0xff` nor SHALL an 
+  address be repeated in the list. An empty list/array SHALL be 
+  considered valid. However, `null`/`None` SHALL NOT be considered a 
+  valid value of that field.
+* In case the client is the responder, it SHALL check that the 
+  *initiator_connected* field contains a boolean value. In case the 
+  field's value is `true`, the responder MUST proceed with sending a 
+  'token' or 'key' client-to-client message described in the *Client-
+  to-Client Messages* section.
+
+After this message, both client and server have authenticated each 
+other.
+
+```
+{
+  "type": "server-auth",
+  "your_cookie": b"18b96fd5a151eae23e8b5a1aed2fe30d",
+  "initiator_connected": true,  // ONLY towards responders
+  "responders": [  // ONLY towards initiators
+    0x02,
+    0x03
+  ]
+}
+```
 
 ## 'new-initiator' Message
 
