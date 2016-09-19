@@ -619,9 +619,9 @@ responders on the same path. No additional field needs to be set.
 
 A responder who receives a 'new-initiator' message MUST proceed with 
 deleting all currently cached information about the previous initiator 
-(such as cookie and sequence number(s)) and continue by sending a 
-'token' or 'key' client-to-client message described in the *Client-to-
-Client Messages* section.
+(such as cached messages, cookie and sequence number(s)) and continue 
+by sending a 'token' or 'key' client-to-client message described in 
+the *Client-to-Client Messages* section.
 
 The message SHALL be NaCl public-key encrypted by the server's session 
 key pair and the responder's permanent key pair.
@@ -661,8 +661,7 @@ authenticated responder from the path the initiator is connected to by
 sending this message. The initiator MUST include the *id* field and 
 set its value to the responder's identity the initiator wants to drop. 
 Before the message is being sent, the initiator SHALL delete all 
-currently cached information about that responder (such as cookie and 
-sequence number(s)).
+currently cached information about that responder (such as cached messages, cookie and sequence number(s)).
 
 Upon receiving a 'drop-responder' message, the server MUST validate 
 that the messages has been received from an authenticated initiator. 
@@ -686,8 +685,30 @@ key pair and the initiator's permanent key pair.
 
 ## 'send-error' Message
 
-TODO: Change 'hash' to 'nonce'. The message SHALL only be received by
-SaltyRTC clients.
+In case the server could not relay a client-to-client message, the 
+server MUST send this message to the original sender of the message 
+that should have been relayed. The server SHALL set the *id* field to 
+the concatenation of the source address, the destination address, the 
+overflow number and the sequence number (or the combined sequence 
+number) of the nonce section from the original message.
+
+A receiving client SHALL look up the original client-to-client message 
+by the supplied *id* field and SHALL re-send the message up to two 
+times (three times including the original message), each time after 
+having received a 'send-error' message. In case the re-send limit has 
+been reached, the client SHALL trigger an error event. If the message 
+could not be found by the supplied *id*, the client SHALL log a 
+warning.
+
+The message SHALL be NaCl public-key encrypted by the server's session 
+key pair and the client's permanent key pair.
+
+```
+{
+  "type": "send-error",
+  "id": b"010200000000000f"
+}
+```
 
 # Client-to-Client Communication
 
@@ -722,6 +743,8 @@ described in the messages' section. In case a field is missing or
 contains invalid data, the incident MUST be treated as a protocol 
 error. This also applies to unexpected messages that deviate from the 
 message flow.
+
+TODO: c2c messages should be cached (last 10 messages) AFTER auth is complete so they can be resent in case of 'send-error'
 
 ## Message Flow
 
