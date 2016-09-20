@@ -673,7 +673,8 @@ Upon receiving a 'drop-responder' message, the server MUST validate
 that the messages has been received from an authenticated initiator. 
 The server MUST validate that the *id* field contains a valid 
 responder address (`0x02..0xff`). If a *reason* field exists, it must 
-contain a valid close code (see *Close Code Enumeration*). It proceeds 
+contain a valid close code (see *Close Code Enumeration*, listing of 
+close codes that are valid for 'drop-responder' messages). It proceeds 
 by looking up the WebSocket connection of the provided responder 
 identity. If no connection can be found, the message SHALL be silently 
 discarded but MAY generate an informational logging entry. If the 
@@ -812,6 +813,13 @@ The following close codes are being used by the protocol:
 - 1001: Going Away
 - 1002: No Shared Subprotocol Found
 - 3000: Path Full
+- 3001: Protocol Error
+- 3002: Internal Error
+- 3003: Handover of the Signalling Channel
+- 3004: Dropped by Initiator
+
+The following close codes are available for 'drop-responder' messages:
+
 - 3001: Protocol Error
 - 3002: Internal Error
 - 3003: Handover of the Signalling Channel
