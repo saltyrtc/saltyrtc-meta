@@ -663,17 +663,23 @@ At any time, an authenticated initiator MAY request to drop an
 authenticated responder from the path the initiator is connected to by 
 sending this message. The initiator MUST include the *id* field and 
 set its value to the responder's identity the initiator wants to drop. 
-Before the message is being sent, the initiator SHALL delete all 
-currently cached information about that responder (such as cached messages, cookie and sequence number(s)).
+In addition, it MAY include the *reason* field which contains an 
+optional close code the server SHALL close the connection to the 
+responder with. Before the message is being sent, the initiator SHALL 
+delete all currently cached information about that responder (such as 
+cached messages, cookie and sequence number(s)).
 
 Upon receiving a 'drop-responder' message, the server MUST validate 
 that the messages has been received from an authenticated initiator. 
 The server MUST validate that the *id* field contains a valid 
-responder address (`0x02..0xff`). It proceeds by looking up the 
-WebSocket connection of the provided responder identity. If no 
-connection can be found, the message SHALL be silently discarded but 
-MAY generate an informational logging entry. If the WebSocket 
-connection has been found, the connection SHALL be closed with a close 
+responder address (`0x02..0xff`). If a *reason* field exists, it must 
+contain a valid close code (see *Close Code Enumeration*). It proceeds 
+by looking up the WebSocket connection of the provided responder 
+identity. If no connection can be found, the message SHALL be silently 
+discarded but MAY generate an informational logging entry. If the 
+WebSocket connection has been found, the connection SHALL be closed 
+with the provided close code of the *reason* field. If no *reason* 
+field has been provided, the connection SHALL be closed with a close 
 code of `3004` (*Dropped by Initiator*).
 
 The message SHALL be NaCl public-key encrypted by the server's session 
