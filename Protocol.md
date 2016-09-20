@@ -712,7 +712,7 @@ key pair and the client's permanent key pair.
 
 # Client-to-Client Communication
 
-TODO: Describe the server's task of relaying messages when clients are on the same path.
+Once a client is authenticated towards a server, the server MUST relay client-to-client messages from initiator to responders that are on the same path and vice versa. To send a client-to-client message, the client simply needs to set the corresponding destination address in the nonce/header.
 
 # Client-to-Client Messages
 
