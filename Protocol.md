@@ -767,15 +767,48 @@ client message MUST be handled differently. In case that any check
 fails, the procedure below MUST be followed unless otherwise stated:
 
 * If the other client is not authenticated yet, an initiator SHALL 
-drop the corresponding responder by sending a 'drop-responder' message 
-with the responder's address in the *id* field to the server and a 
-close code of `3001` (*Protocol Error*) in the *reason* field. A 
-responder SHALL close the connection to the server with a close code 
-of `3001`.
+  drop the corresponding responder by sending a 'drop-responder' 
+  message with the responder's address in the *id* field to the server 
+  and a close code of `3001` (*Protocol Error*) in the *reason* field. 
+  A responder SHALL close the connection to the server with a close 
+  code of `3001`.
 * If the other client is authenticated, both initiator and responder 
-SHALL send a 'close' message to the other client containing the close 
-code `3001` (*Protocol Error*). Both clients SHALL terminate the 
-connection to the server (normal close code).
+  SHALL send a 'close' message to the other client containing the 
+  close code `3001` (*Protocol Error*). Both clients SHALL terminate 
+  the connection to the server (normal close code).
+
+## Client Handshake
+
+Before the client-to-client handshake can take place, the initiator 
+SHALL issue a token which is a securely random generated NaCl secret 
+key (32 bytes) that is valid for a single successfully decrypted 
+message - the 'token' message. The token MUST be exchanged securely 
+between initiator and responder. This specification deliberately does 
+not define how the token should be exchanged (however, the token and 
+the public key of the initiator easily fit into a medium size QR code).
+
+Once the authentication process of the two clients has been completed 
+(after both clients have sent each other a valid 'auth' message), the 
+clients MAY choose to *trust* each other by storing each other's 
+public key and the path securely (note, that this *trusting procedure* 
+must be handled by the application). The API of the clients MUST be 
+able to handle trusted public keys for a path. If a trusted key exists 
+on a path, the initiator SHALL omit generating a token and both 
+clients SHALL skip the 'token' message during the handshake.  
+If one of the clients is out of sync to the other (one has a trusted 
+public key but the other has not), the initiator will receive a 
+different message (either 'token' or 'key') than expected which it 
+cannot decrypt. Therefore, the initiator MUST react by sending a 'drop-
+responder' message with the *reason* field set to `3005` (*Initiator 
+Could Not Decrypt*) in case it cannot decrypt the first message sent 
+by a responder. Once a responder's connection to the server is being 
+terminated by that close code, the application of the responder SHALL 
+be notified that the initiator could not decrypt the message.  
+The easiest way to resolve such a conflict would be to untrust public 
+keys of that path and let the initiator generate a new token.
+
+To mitigate brute-force attacks, the initiator SHALL introduce a 
+timeout of at least one second between handshake attempts.
 
 ## Message Flow
 
@@ -784,8 +817,6 @@ TODO: Visualise where which key pairs are used
 
 ## 'token' Message
 
-TODO. The message SHALL only be received by SaltyRTC clients in the
-role of the initiator.
 
 ## 'key' Message
 
@@ -817,6 +848,7 @@ The following close codes are being used by the protocol:
 - 3002: Internal Error
 - 3003: Handover of the Signalling Channel
 - 3004: Dropped by Initiator
+- 3005: Initiator Could Not Decrypt
 
 The following close codes are available for 'drop-responder' messages:
 
@@ -824,6 +856,7 @@ The following close codes are available for 'drop-responder' messages:
 - 3002: Internal Error
 - 3003: Handover of the Signalling Channel
 - 3004: Dropped by Initiator
+- 3005: Initiator Could Not Decrypt
 
 ---
 
