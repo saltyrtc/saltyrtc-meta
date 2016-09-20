@@ -712,7 +712,7 @@ key pair and the client's permanent key pair.
 
 # Client-to-Client Communication
 
-Once a client is authenticated towards a server, the server MUST relay client-to-client messages from initiator to responders that are on the same path and vice versa. To send a client-to-client message, the client simply needs to set the corresponding destination address in the nonce/header.
+Once a client is authenticated towards a server, the server MUST relay client-to-client messages from initiator to responders that are on the same path and vice versa. To send a client-to-client message, the client simply needs to set the corresponding destination address in the nonce/header. The server MUST validate the source and destination address and then proceeds by relaying the message to the destination. If the targeted client is not reachable anymore, the server MUST create and send a 'send-error' message back to the original sender.
 
 # Client-to-Client Messages
 
