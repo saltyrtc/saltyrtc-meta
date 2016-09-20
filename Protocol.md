@@ -233,8 +233,6 @@ number as a single 48 bit unsigned integer is possible and supported by
 this protocol. In further sections, the combined number will be called
 *Combined Sequence Number*.
 
----
-
 # Connecting To a Signalling Server
 
 A server MUST listen and accept incoming WebSocket connections. 
@@ -689,7 +687,8 @@ key pair and the initiator's permanent key pair.
 ```
 {
   "type": "drop-responder",
-  "id": 0x02
+  "id": 0x02,
+  "reason": 3005
 }
 ```
 
@@ -896,12 +895,37 @@ application desires it.
 The message SHALL be NaCl public-key encrypted by the client's 
 session key pair and the other client's session key pair.
 
+```
 {
   "type": "auth",
-  "your_cookie": b"957c92f0feb9bae1b37cb7e0d9989073",
+  "your_cookie": b"957c92f0feb9bae1b37cb7e0d9989073"
 }
+```
 
-# 'close' Message
+## 'close' Message
+
+Both initiator and responder SHALL trigger sending this message any 
+time the application or a task requests to terminate the signalling 
+connection between the clients over the server and to the server.
+
+A client who sends a 'close' message MUST set the *reason* field to a 
+valid close code (as enumerated in *Close Code Enumeration*). `1001` 
+SHALL be used for normal close cases. Once the message has been sent, 
+the client SHALL ONLY remove all cached data (such as messages, cookies and sequence number(s)) of the other client if a close code other than `3003` (*Handover of the Signalling Channel*) is being used. The client SHALL also terminate the connection to the server with a close code of `1001` (*Going Away*).
+
+A receiving client SHALL validate that the *reason* field contains a valid close code (as enumerated in *Close Code Enumeration*). If the other client has provided a close code different to `3003` (*Handover of the Signalling Channel*), the client SHALL remove all cached data (such as messages, cookies and sequence number(s)) of the other client. The client SHALL also terminate the connection to the server with a close code of `1001` (*Going Away*).
+
+The message SHALL be NaCl public-key encrypted by the client's 
+session key pair and the other client's session key pair.
+
+```
+{
+  "type": "close",
+  "reason": 3003
+}
+```
+
+# Tasks
 
 TODO
 
