@@ -913,7 +913,7 @@ the client SHALL ONLY remove all cached data (such as messages,
 cookies and sequence number(s)) of the other client if a close code 
 other than `3003` (*Handover of the Signalling Channel*) is being 
 used. The client SHALL also terminate the connection to the server 
-with a close code of `1001` (*Going Away*).
+with a close code of `1001` (*Going Away*). However, the connection to the server SHALL linger for a minimum of one second in case the close code `3003` is being used.
 
 A receiving client SHALL validate that the *reason* field contains a 
 valid close code (as enumerated in *Close Code Enumeration*). If the 
@@ -921,7 +921,7 @@ other client has provided a close code different to `3003` (*Handover
 of the Signalling Channel*), the client SHALL remove all cached data 
 (such as messages, cookies and sequence number(s)) of the other 
 client. The client SHALL also terminate the connection to the server 
-with a close code of `1001` (*Going Away*).
+with a close code of `1001` (*Going Away*). In case the close code `3003` has been supplied, the connection to the server SHALL linger for a minimum of one second before it is being closed.
 
 The message SHALL be NaCl public-key encrypted by the client's 
 session key pair and the other client's session key pair.
