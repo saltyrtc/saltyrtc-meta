@@ -935,7 +935,7 @@ session key pair and the other client's session key pair.
 
 # Tasks
 
-TODO
+As soon as the authentication procedure between initiator and responder has been completed sucessfully, the specification of the negotiated task takes over.
 
 # Errors
 
