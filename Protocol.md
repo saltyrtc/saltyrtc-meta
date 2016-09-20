@@ -710,10 +710,6 @@ key pair and the client's permanent key pair.
 }
 ```
 
-# Client-to-Client Communication
-
-Once a client is authenticated towards a server, the server MUST relay client-to-client messages from initiator to responders that are on the same path and vice versa. To send a client-to-client message, the client simply needs to set the corresponding destination address in the nonce/header. The server MUST validate the source and destination address and then proceeds by relaying the message to the destination. If the targeted client is not reachable anymore, the server MUST create and send a 'send-error' message back to the original sender.
-
 # Client-to-Client Messages
 
 The following messages are messages that will be exchanged between two
@@ -724,11 +720,13 @@ messages by looking at the address fields of the nonce. If both fields
 contain a client address (an address different to `0x00`), the message 
 is a client-to-client message.  
 SaltyRTC servers MUST relay these messages to the corresponding 
-destination. In case the message could not be relayed, the server MUST 
-send a 'send-error' message back to the sender (see previous 
-section).  
-Message types between initiator and responder SHALL be repeated in 
-case the sender receives a 'send-error' message from the server.
+destination once the sender is authenticated and the adress sections 
+in the nonce have been validated. In case the message could not be 
+relayed, the server MUST send a 'send-error' message back to the 
+sender (see previous section).  
+Message types between initiator and responder SHALL be repeated two 
+times (three times including the initial send attempt) in case the 
+sender receives a 'send-error' message from the server.
 
 Identical to client-to-server messages, the messages are serialised 
 MessagePack objects. We will provide an example for each message in an 
