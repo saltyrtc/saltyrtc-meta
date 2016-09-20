@@ -808,7 +808,10 @@ The easiest way to resolve such a conflict would be to untrust public
 keys of that path and let the initiator generate a new token.
 
 To mitigate brute-force attacks, the initiator SHALL introduce a 
-timeout of at least one second between handshake attempts.
+timeout of at least one second between handshake attempts. 
+Furthermore, the initiator SHALL delete all cached information about a 
+responder (such as cached messages, cookie and sequence number(s)) in 
+case a responder fails to authenticate itself towards the initiator.
 
 ## Message Flow
 
