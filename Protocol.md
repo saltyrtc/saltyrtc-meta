@@ -692,8 +692,6 @@ key pair and the initiator's permanent key pair.
 }
 ```
 
-TODO: Add *reason* field (close code) and how the server MUST handle it
-
 ## 'send-error' Message
 
 In case the server could not relay a client-to-client message, the 
