@@ -848,7 +848,7 @@ invalidated immediately and SHALL NOT be used for any other message.
 ## 'key' Message
 
 This message is sent by both initiator and responder. The responder 
-will send this message as its first message or directly after the 
+SHALL send this message as its first message or directly after the 
 'token' message. The initiator MUST wait until it has successfully 
 processed the message before it sends a 'key' message to that 
 responder.
@@ -877,8 +877,29 @@ permanent key pair and the other client's permanent key pair.
 
 ## 'auth' Message
 
-TODO.
-.. initiator SHALL delete all currently cached information about the previously authenticated responder (such as cookie and sequence number(s)).
+This message is sent by both initiator and responder. The responder 
+SHALL send this message after it has received and processed a 'key' 
+message from the initiator. The initiator MUST wait until it has 
+successfully processed the 'auth' message before it sends an 'auth' 
+message to that responder.
+
+The client MUST set the *your_cookie* field to the cookie the other 
+client has used in the nonce of its previous message(s).
+
+When the client receives an 'auth' message, it MUST check that the 
+cookie provided in the *your_cookie* field contains the cookie it has 
+used in its previous messages to the other client. After that, the 
+other client has successfully authenticated it towards the client. The 
+other client's public key MAY be stored as trusted on that path if the 
+application desires it.
+
+The message SHALL be NaCl public-key encrypted by the client's 
+session key pair and the other client's session key pair.
+
+{
+  "type": "auth",
+  "your_cookie": b"957c92f0feb9bae1b37cb7e0d9989073",
+}
 
 # 'close' Message
 
