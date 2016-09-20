@@ -463,6 +463,9 @@ case a field is missing or contains invalid data, the incident MUST be
 treated as a protocol error. This also applies to unexpected messages 
 that deviate from the message flow.
 
+In case that any check fails, the peer MUST close the connection with 
+a close code of `3001` (*Protocol Error*) unless otherwise stated.
+
 ## Message Flow
 
 TODO
@@ -683,6 +686,8 @@ key pair and the initiator's permanent key pair.
 }
 ```
 
+TODO: Add *reason* field (close code) and how the server MUST handle it
+
 ## 'send-error' Message
 
 In case the server could not relay a client-to-client message, the 
@@ -720,13 +725,21 @@ messages by looking at the address fields of the nonce. If both fields
 contain a client address (an address different to `0x00`), the message 
 is a client-to-client message.  
 SaltyRTC servers MUST relay these messages to the corresponding 
-destination once the sender is authenticated and the adress sections 
-in the nonce have been validated. In case the message could not be 
-relayed, the server MUST send a 'send-error' message back to the 
-sender (see previous section).  
+destination once the sender is authenticated towards the server and 
+the adress sections in the nonce have been validated. In case the 
+message could not be relayed, the server MUST send a 'send-error' 
+message back to the sender (see previous section).  
 Message types between initiator and responder SHALL be repeated two 
 times (three times including the initial send attempt) in case the 
-sender receives a 'send-error' message from the server.
+sender receives a 'send-error' message from the server. In order to be 
+able to re-send messages, clients SHALL cache a minimum of 10 client-
+to-client messages for each other client. If a message has been sent 
+three times (repeated two times) and the client receives yet another 
+'send-error' message for that message OR the message cannot be found 
+in the cache, the client SHALL treat this incident as a protocol 
+error.  
+In this section and all its subsections, *authentication* means 
+*authentication towards the other client* unless otherwise stated.
 
 Identical to client-to-server messages, the messages are serialised 
 MessagePack objects. We will provide an example for each message in an 
@@ -742,7 +755,10 @@ contains invalid data, the incident MUST be treated as a protocol
 error. This also applies to unexpected messages that deviate from the 
 message flow.
 
-TODO: c2c messages should be cached (last 10 messages) AFTER auth is complete so they can be resent in case of 'send-error'
+Compared to client-to-server messages, protocol errors for client-to-client message MUST be handled differently. In case that any check fails, the procedure below MUST be followed unless otherwise stated:
+
+* If the other client is not authenticated yet, an initiator SHALL drop the corresponding responder by sending a 'drop-responder' message with the responder's address in the *id* field to the server and a close code of `3001` (*Protocol Error*) in the *reason* field. A responder SHALL close the connection to the server with a close code of `3001`.
+* If the other client is authenticated, both initiator and responder SHALL send a 'close' message to the other client containing the close code `3001` (*Protocol Error*). Both clients SHALL terminate the connection to the server (normal close code).
 
 ## Message Flow
 
@@ -769,10 +785,9 @@ TODO
 
 # Errors
 
-## Protocol Violation Error
+A protocol error MUST be treated by closing the connection with a close code of `3001` (*Protocol Error*) unless otherwise stated. For client-to-client messages, the behaviour depends on the other client's authentication status (see the *Client-to-Client Messages* section).
 
-A protocol violation error MUST be treated by closing the connection 
-with a close code of `3001` (*Protocol Error*) unless otherwise stated.
+In any case, errors SHOULD raise an error event to the application if the error cannot be resolved by the implementation itself.
 
 # Close Code Enumeration
 
