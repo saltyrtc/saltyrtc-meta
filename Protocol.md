@@ -755,10 +755,20 @@ contains invalid data, the incident MUST be treated as a protocol
 error. This also applies to unexpected messages that deviate from the 
 message flow.
 
-Compared to client-to-server messages, protocol errors for client-to-client message MUST be handled differently. In case that any check fails, the procedure below MUST be followed unless otherwise stated:
+Compared to client-to-server messages, protocol errors for client-to-
+client message MUST be handled differently. In case that any check 
+fails, the procedure below MUST be followed unless otherwise stated:
 
-* If the other client is not authenticated yet, an initiator SHALL drop the corresponding responder by sending a 'drop-responder' message with the responder's address in the *id* field to the server and a close code of `3001` (*Protocol Error*) in the *reason* field. A responder SHALL close the connection to the server with a close code of `3001`.
-* If the other client is authenticated, both initiator and responder SHALL send a 'close' message to the other client containing the close code `3001` (*Protocol Error*). Both clients SHALL terminate the connection to the server (normal close code).
+* If the other client is not authenticated yet, an initiator SHALL 
+drop the corresponding responder by sending a 'drop-responder' message 
+with the responder's address in the *id* field to the server and a 
+close code of `3001` (*Protocol Error*) in the *reason* field. A 
+responder SHALL close the connection to the server with a close code 
+of `3001`.
+* If the other client is authenticated, both initiator and responder 
+SHALL send a 'close' message to the other client containing the close 
+code `3001` (*Protocol Error*). Both clients SHALL terminate the 
+connection to the server (normal close code).
 
 ## Message Flow
 
