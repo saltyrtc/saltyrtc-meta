@@ -817,10 +817,60 @@ TODO: Visualise where which key pairs are used
 
 ## 'token' Message
 
+Once a responder has authenticated itself towards the server and an 
+initiator is present on that path, it SHALL ONLY send this message to 
+the initiator in case it holds an authentication token issued by the 
+initiator on that path. This message SHALL be skipped in case the 
+responder knows that the initiator already trusts it and previously 
+stored the responder's public key.
+
+The responder MUST set the public key (32 bytes) of the permanent key 
+pair in the *key* field of this message.
+
+A receiving initiator MUST check that the message contains a valid 
+NaCl public key (32 bytes) in the *key* field.
+
+The message SHALL be NaCl secret-key encrypted by the token the 
+initiator created and issued to the responder. In case the initiator 
+has successfully decrypted the 'token' message, the secret-key MUST be 
+invalidated immediately and SHALL NOT be used for any other message.
+
+```
+{
+  "type": "token",
+  "key": b"55e7dd57a01974ca31b6e588909b7b501cdc7694f21b930abb1600241b2ddb27"
+}
+```
 
 ## 'key' Message
 
-TODO.
+This message is sent by both initiator and responder. The responder 
+will send this message as its first message or directly after the 
+'token' message. The initiator MUST wait until it has successfully 
+processed the message before it sends a 'key' message to that 
+responder.
+
+The client MUST generate a session key pair (a new NaCl key pair for 
+public key authenticated encryption) for further communication with 
+the other client. The client's session key pair SHALL NOT be identical 
+to the client's permanent key pair. It MUST set the public key (32 
+bytes) of that key pair in the *key* field.
+
+Once the other client receives a 'key' message, it MUST validate the 
+*key* field: The key shall be 32 bytes and SHALL NOT be identical to 
+the other client's permanent public key. Further messages from the 
+other client will use the session key pair for encryption unless 
+otherwise specified (e.g. by a task).
+
+The message SHALL be NaCl public-key encrypted by the client's 
+permanent key pair and the other client's permanent key pair.
+
+```
+{
+  "type": "key",
+  "key": b"bbbf470d283a9a4a0828e3fb86340fcbd19efe75f63a2e51ad0b16d20c3a0c02",
+}
+```
 
 ## 'auth' Message
 
