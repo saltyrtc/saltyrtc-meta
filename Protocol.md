@@ -612,7 +612,9 @@ on its role:
   address be repeated in the list. An empty list/array SHALL be 
   considered valid. However, `null`/`None` SHALL NOT be considered a 
   valid value of that field. It SHOULD store the responder's 
-  identities in its internal list of responders.
+  identities in its internal list of responders. Additionally, the 
+  initiator SHALL drop new responders that have not sent any messages 
+  to the initiator after 60 seconds.
 * In case the client is the responder, it SHALL check that the 
   *initiator_connected* field contains a boolean value. In case the 
   field's value is `true`, the responder MUST proceed with sending a 
@@ -668,7 +670,8 @@ identity of the newly connected responder.
 An initiator who receives a 'new-responder' message SHALL validate 
 that the *id* field contains a valid responder address (`0x02..0xff`). 
 It SHOULD store the responder's identity in its internal list of 
-responders.
+responders. Furthermore, the initiator MUST drop new responders that 
+have not sent any messages to the initiator after 60 seconds.
 
 The message SHALL be NaCl public-key encrypted by the server's session 
 key pair and the initiator's permanent key pair.
