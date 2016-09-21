@@ -761,11 +761,11 @@ message back to the sender (see previous section).
 Message types between initiator and responder SHALL be repeated two 
 times (three times including the initial send attempt) in case the 
 sender receives a 'send-error' message from the server. In order to be 
-able to re-send messages, clients SHALL cache a minimum of 10 client-
-to-client messages for each other client. If a message has been sent 
-three times (repeated two times) and the client receives yet another 
-'send-error' message for that message OR the message cannot be found 
-in the cache, the client SHALL treat this incident as a protocol 
+able to re-send messages, clients SHALL cache a reasonable amount of 
+client-to-client messages for each other client. If a message has been 
+sent three times (repeated two times) and the client receives yet 
+another 'send-error' message for that message OR the message cannot be 
+found in the cache, the client SHALL treat this incident as a protocol 
 error.  
 In this section and all its subsections, *authentication* means 
 *authentication towards the other client* unless otherwise stated.
