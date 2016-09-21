@@ -81,6 +81,13 @@ The permanent key is a NaCl key pair for public key authenticated
 encryption. Each client MUST have or generate a permanent key that is 
 valid beyond sessions.
 
+## Server's Session Key
+
+A SaltyRTC compliant server MUST generate a new NaCl key pair for 
+public key authenticated encryption **for each connected client**. 
+The key is being exchanged in the handshake and is valid for the 
+lifetime of the connection.
+
 ## Server's Permanent Key
 
 A SaltyRTC complicant server SHOULD have a permanent NaCl key pair for 
@@ -89,13 +96,6 @@ it will be used to sign the server's session key and the client's
 permanent key to mitigate Man-in-the-middle attacks. In order to 
 validate this signature, a client that connects to a server SHOULD know 
 the server's permanent public key.
-
-## Server's Session Key
-
-A SaltyRTC compliant server MUST generate a new NaCl key pair for 
-public key authenticated encryption **for each connected client**. 
-The key is being exchanged in the handshake and is valid for the 
-lifetime of the connection.
 
 ## Client's Session Key
 
