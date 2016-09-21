@@ -487,7 +487,10 @@ public key (32 bytes) of that key pair MUST be set in the *key* field
 of this message.
 
 A receiving client MUST check that the message contains a valid NaCl
-public key (the size of the key MUST be exactly 32 bytes).
+public key (the size of the key MUST be exactly 32 bytes). In case the 
+client has knowledge of the server's permanent public key, it SHALL 
+ensure that the server's session public key is different to the 
+server's permanent public key.
 
 The message SHALL NOT be encrypted.
 
@@ -571,6 +574,12 @@ following fields:
 
 * The *your_cookie* field SHALL contain the cookie the client has used 
   in its previous messages.
+* The *signed_keys* field SHALL be set in case the server has a 
+  permanent key pair: Its value MUST contain the concatenation of the 
+  server's session public key and the client's permanent public key 
+  NaCl. The content of this field SHALL be NaCl public key encrypted 
+  by the server's permanent key and the client's permanent key. For 
+  encryption, the messages' nonce SHALL be used.
 * ONLY in case the client is an initiator, the *responders* field 
   SHALL be set containing a list/an array of the active responder 
   addresses on that path. An active responder is a responder that has 
@@ -586,8 +595,15 @@ accepted and set its identity as described in the *Receiving a
 Signalling Message* section. This identity is valid until the 
 connection has been severed. It MUST check that the cookie provided in 
 the *your_cookie* field contains the cookie the client has used in its 
-previous and messages to the server. Moreover, the client MUST do the 
-following checks depending on its role:
+previous and messages to the server. If the client has knowledge of 
+the server's permanent public key, it SHALL decrypt the *signed_keys* 
+field by using the messages' nonce, the server's permanent key and the 
+client's permanent key. The decrypted message MUST match the 
+concatenation of the server's session permanent key and the client's 
+public permanent key. If the *signed_keys* is present but the client 
+does not have knowledge of the server's permanent key, it SHALL log a 
+warning. Moreover, the client MUST do the following checks depending 
+on its role:
 
 * In case the client is the initiator, it SHALL check that the 
   *responders* field is set and contains a list/an array of responder 
