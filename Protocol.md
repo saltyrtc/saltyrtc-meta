@@ -595,7 +595,8 @@ following fields:
   server's public session key and the client's public permanent key (in
   that order). The content of this field SHALL be NaCl public key
   encrypted using the server's private permanent key and the client's
-  public permanent key. For encryption, the message's nonce SHALL be used.
+  public permanent key. For encryption, the message's nonce SHALL be 
+  used.
 * ONLY in case the client is an initiator, the *responders* field 
   SHALL be set containing a list/an array of the active responder 
   addresses on that path. An active responder is a responder that has 
@@ -617,9 +618,9 @@ field by using the message's nonce, the server's private permanent key
 and the client's public permanent key. The decrypted message MUST match
 the concatenation of the server's public session key and the client's
 public permanent key (in that order). If the *signed_keys* is present
-but the client does not have knowledge of the server's permanent key, it
-SHALL log a warning. Moreover, the client MUST do the following checks
-depending on its role:
+but the client does not have knowledge of the server's permanent key, 
+it SHALL log a warning. Moreover, the client MUST do the following 
+checks depending on its role:
 
 * In case the client is the initiator, it SHALL check that the 
   *responders* field is set and contains a list/an array of responder 
