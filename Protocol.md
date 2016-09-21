@@ -77,9 +77,9 @@ secure random number generator.
 
 ## Client's Permanent Key
 
-The permanent key is a NaCl key pair for public key authenticated 
-encryption. Each client MUST have or generate a permanent key that is 
-valid beyond sessions.
+The permanent key pair is a NaCl key pair for public key authenticated
+encryption. Each client MUST have or generate a permanent key pair that
+is valid beyond sessions.
 
 ## Server's Session Key
 
@@ -95,7 +95,7 @@ public key authenticated encryption. If the server has such a key pair,
 it will be used to sign<sup>1</sup> the server's session key and the
 client's permanent key to mitigate man-in-the-middle attacks. In order
 to validate this signature, a client that connects to a server SHOULD
-know the server's permanent public key.
+know the server's public permanent key.
 
 <sub>1: The signature is done implicitly by using NaCl's authenticated
 public key encryption, because public key signatures in NaCl are still
@@ -493,9 +493,9 @@ of this message.
 
 A receiving client MUST check that the message contains a valid NaCl
 public key (the size of the key MUST be exactly 32 bytes). In case the 
-client has knowledge of the server's permanent public key, it SHALL 
-ensure that the server's session public key is different to the 
-server's permanent public key.
+client has knowledge of the server's public permanent key, it SHALL
+ensure that the server's public session key is different to the
+server's public permanent key.
 
 The message SHALL NOT be encrypted.
 
@@ -613,7 +613,7 @@ Signalling Message* section. This identity is valid until the
 connection has been severed. It MUST check that the cookie provided in 
 the *your_cookie* field contains the cookie the client has used in its 
 previous and messages to the server. If the client has knowledge of 
-the server's permanent public key, it SHALL decrypt the *signed_keys* 
+the server's public permanent key, it SHALL decrypt the *signed_keys*
 field by using the message's nonce, the server's private permanent key
 and the client's public permanent key. The decrypted message MUST match
 the concatenation of the server's public session key and the client's
@@ -876,9 +876,9 @@ pair in the *key* field of this message.
 A receiving initiator MUST check that the message contains a valid 
 NaCl public key (32 bytes) in the *key* field.
 
-The message SHALL be NaCl secret-key encrypted by the token the 
-initiator created and issued to the responder. In case the initiator 
-has successfully decrypted the 'token' message, the secret-key MUST be 
+The message SHALL be NaCl secret key encrypted by the token the
+initiator created and issued to the responder. In case the initiator
+has successfully decrypted the 'token' message, the secret key MUST be
 invalidated immediately and SHALL NOT be used for any other message.
 
 ```
@@ -904,7 +904,7 @@ bytes) of that key pair in the *key* field.
 
 Once the other client receives a 'key' message, it MUST validate the 
 *key* field: The key shall be 32 bytes and SHALL NOT be identical to 
-the other client's permanent public key. Further messages from the 
+the other client's public permanent key. Further messages from the
 other client will use the session key pair for encryption unless 
 otherwise specified (e.g. by a task).
 
