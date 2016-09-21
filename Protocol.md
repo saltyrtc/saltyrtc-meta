@@ -90,12 +90,17 @@ lifetime of the connection.
 
 ## Server's Permanent Key
 
-A SaltyRTC complicant server SHOULD have a permanent NaCl key pair for 
-public key authenticated encryption. If the server has such a key pair, 
-it will be used to sign the server's session key and the client's 
-permanent key to mitigate Man-in-the-middle attacks. In order to 
-validate this signature, a client that connects to a server SHOULD know 
-the server's permanent public key.
+A SaltyRTC complicant server SHOULD have a permanent NaCl key pair for
+public key authenticated encryption. If the server has such a key pair,
+it will be used to sign<sup>1</sup> the server's session key and the
+client's permanent key to mitigate man-in-the-middle attacks. In order
+to validate this signature, a client that connects to a server SHOULD
+know the server's permanent public key.
+
+<sub>1: The signature is done implicitly by using NaCl's authenticated
+public key encryption, because public key signatures in NaCl are still
+subject to change. Authenticated encryption achieves the same goals,
+while avoiding incompatible sign/verify implementations.</sub>
 
 ## Client's Session Key
 
