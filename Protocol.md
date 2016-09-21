@@ -577,9 +577,9 @@ following fields:
 * The *signed_keys* field SHALL be set in case the server has a 
   permanent key pair: Its value MUST contain the concatenation of the 
   server's session public key and the client's permanent public key 
-  NaCl. The content of this field SHALL be NaCl public key encrypted 
-  by the server's permanent key and the client's permanent key. For 
-  encryption, the messages' nonce SHALL be used.
+  (in that order) NaCl. The content of this field SHALL be NaCl public 
+  key encrypted by the server's permanent key and the client's 
+  permanent key. For encryption, the messages' nonce SHALL be used.
 * ONLY in case the client is an initiator, the *responders* field 
   SHALL be set containing a list/an array of the active responder 
   addresses on that path. An active responder is a responder that has 
@@ -600,10 +600,10 @@ the server's permanent public key, it SHALL decrypt the *signed_keys*
 field by using the messages' nonce, the server's permanent key and the 
 client's permanent key. The decrypted message MUST match the 
 concatenation of the server's session permanent key and the client's 
-public permanent key. If the *signed_keys* is present but the client 
-does not have knowledge of the server's permanent key, it SHALL log a 
-warning. Moreover, the client MUST do the following checks depending 
-on its role:
+public permanent key (in that order). If the *signed_keys* is present 
+but the client does not have knowledge of the server's permanent key, 
+it SHALL log a warning. Moreover, the client MUST do the following 
+checks depending on its role:
 
 * In case the client is the initiator, it SHALL check that the 
   *responders* field is set and contains a list/an array of responder 
@@ -631,6 +631,7 @@ key pair and the client's permanent key pair.
 {
   "type": "server-auth",
   "your_cookie": b"18b96fd5a151eae23e8b5a1aed2fe30d",
+  "signed_keys": b"e42bfd8c5bc9870ae1a0d928d52810983ac7ddf69df013a7621d072aa9633616cfd...",
   "initiator_connected": true,  // ONLY towards responders
   "responders": [  // ONLY towards initiators
     0x02,
