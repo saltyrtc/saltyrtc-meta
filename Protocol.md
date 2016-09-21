@@ -54,7 +54,7 @@ WebRTC or ORTC peer-to-peer connection to an initiator.
 ## Signalling Path
 
 A signalling path is a simple ASCII string and consists of the hex
-value of the initiators public key. Initiator and responder connect
+value of the initiator's public key. Initiator and responder connect
 to the same WebSocket path.
 
 ## MessagePack Object
@@ -90,12 +90,17 @@ lifetime of the connection.
 
 ## Server's Permanent Key
 
-A SaltyRTC complicant server SHOULD have a permanent NaCl key pair for 
-public key authenticated encryption. If the server has such a key pair, 
-it will be used to sign the server's session key and the client's 
-permanent key to mitigate Man-in-the-middle attacks. In order to 
-validate this signature, a client that connects to a server SHOULD know 
-the server's permanent public key.
+A SaltyRTC complicant server SHOULD have a permanent NaCl key pair for
+public key authenticated encryption. If the server has such a key pair,
+it will be used to sign<sup>1</sup> the server's session key and the
+client's permanent key to mitigate man-in-the-middle attacks. In order
+to validate this signature, a client that connects to a server SHOULD
+know the server's permanent public key.
+
+<sub>1: The signature is done implicitly by using NaCl's authenticated
+public key encryption, because public key signatures in NaCl are still
+subject to change. Authenticated encryption achieves the same goals,
+while avoiding incompatible sign/verify implementations.</sub>
 
 ## Client's Session Key
 
@@ -574,12 +579,12 @@ following fields:
 
 * The *your_cookie* field SHALL contain the cookie the client has used 
   in its previous messages.
-* The *signed_keys* field SHALL be set in case the server has a 
-  permanent key pair: Its value MUST contain the concatenation of the 
-  server's session public key and the client's permanent public key 
-  (in that order) NaCl. The content of this field SHALL be NaCl public 
-  key encrypted by the server's permanent key and the client's 
-  permanent key. For encryption, the messages' nonce SHALL be used.
+* The *signed_keys* field SHALL be set in case the server has a
+  permanent key pair: Its value MUST contain the concatenation of the
+  server's public session key and the client's public permanent key (in
+  that order). The content of this field SHALL be NaCl public key
+  encrypted using the server's private permanent key and the client's
+  public permanent key. For encryption, the message's nonce SHALL be used.
 * ONLY in case the client is an initiator, the *responders* field 
   SHALL be set containing a list/an array of the active responder 
   addresses on that path. An active responder is a responder that has 
@@ -597,13 +602,13 @@ connection has been severed. It MUST check that the cookie provided in
 the *your_cookie* field contains the cookie the client has used in its 
 previous and messages to the server. If the client has knowledge of 
 the server's permanent public key, it SHALL decrypt the *signed_keys* 
-field by using the messages' nonce, the server's permanent key and the 
-client's permanent key. The decrypted message MUST match the 
-concatenation of the server's session permanent key and the client's 
-public permanent key (in that order). If the *signed_keys* is present 
-but the client does not have knowledge of the server's permanent key, 
-it SHALL log a warning. Moreover, the client MUST do the following 
-checks depending on its role:
+field by using the message's nonce, the server's private permanent key
+and the client's public permanent key. The decrypted message MUST match
+the concatenation of the server's public session key and the client's
+public permanent key (in that order). If the *signed_keys* is present
+but the client does not have knowledge of the server's permanent key, it
+SHALL log a warning. Moreover, the client MUST do the following checks
+depending on its role:
 
 * In case the client is the initiator, it SHALL check that the 
   *responders* field is set and contains a list/an array of responder 
