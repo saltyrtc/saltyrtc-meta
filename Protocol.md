@@ -533,11 +533,18 @@ After the 'client-hello' message has been sent (responder) or after
 the 'server-hello' message has been received (initiator) the client 
 MUST send this message to the server. The client MUST set the 
 *your_cookie* field to the cookie the server has used in the nonce of 
-the 'server-hello' message.
+the 'server-hello' message. It SHALL also set the *subprotocols* field 
+to the exact same list/array of subprotocol strings it has provided to 
+the WebSocket client implementation for subprotocol negotiation.
 
 When the server receives a 'client-hello' message, it MUST check that 
 the cookie provided in the *your_cookie* field contains the cookie the 
-server has used in its previous messages to that client.
+server has used in its previous messages to that client. The server 
+SHALL go through both the client's list of subprotocols provided in 
+the *subprotocols* field and the server's list of subprotocols it has 
+provided to the WebSocket server implementation for subprotocol 
+negotiation. The first common subprotocol found that is present in 
+both lists MUST be equal to the initially negotiated subprotocol.
 
 The message SHALL be NaCl public-key encrypted by the server's session 
 key pair (public key sent in 'server-hello') and the client's 
@@ -547,7 +554,11 @@ in 'client-hello').
 ```
 {
   "type": "client-auth",
-  "your_cookie": b"af354da383bba00507fa8f289a20308a"
+  "your_cookie": b"af354da383bba00507fa8f289a20308a",
+  "subprotocols": [
+    "v1.saltyrtc.org",
+    "some.other.protocol"
+  ]
 }
 ```
 
