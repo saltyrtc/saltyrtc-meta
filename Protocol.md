@@ -936,15 +936,15 @@ The client MUST set the following fields:
 * An initiator MUST include the *task* (without an *s*) field and set 
   it to the name of the SaltyRTC task protocol it has chosen from the 
   list the responder provided.
-* If an offered task requires additional data, both clients SHALL set 
-  the *data* field to a dictionary/an object containing the 
-  corresponding task's names as keys and another dictionary/object as 
-  the task's value. The content of these dictionary/objects depends on 
-  the task and SHALL be specified by the task's protocol 
-  specification. For each task, there MUST be a field in the *data* 
-  field. The task's data value MAY be `null`/`None` if not used.
+* Both clients SHALL set the *data* field to a dictionary/an object 
+  containing the corresponding task's names as keys and another 
+  dictionary/object or `null`/`None` as the task's value. The content 
+  of these dictionary/objects depends on the task and SHALL be 
+  specified by the task's protocol specification. For each task, there 
+  MUST be a field in the *data* field.
 
-When the client receives an 'auth' message, it MUST check the following fields:
+When the client receives an 'auth' message, it MUST check the 
+following fields:
 
 * The cookie provided in the *your_cookie* field SHALL contain the 
   cookie it has used in its previous messages to the other client.
@@ -952,7 +952,11 @@ When the client receives an 'auth' message, it MUST check the following fields:
   an array with at least one element. Each element in the list SHALL 
   be a string. The initiator SHALL continue by comparing the provided 
   tasks to its own list of available tasks and MUST choose the first 
-  common task from both lists.
+  common task from both lists. In case no common task could be found, 
+  the initiator SHALL send a 'close' message to the responder 
+  containing the close code `3006` (*No Shared Task Found*) as reason 
+  and raise an error event indicating that no common signalling task 
+  could be found.
 * A responder SHALL validate that the *task* (without an *s*) field is 
   present and contains one of the task it has previously offered to 
   the initiator.
@@ -961,7 +965,12 @@ When the client receives an 'auth' message, it MUST check the following fields:
   data value. The value MUST be handed over to the corresponding task 
   after processing this message is complete.
 
-After the above procedure has been followed, the other client has successfully authenticated it towards the client. The other client's public key MAY be stored as trusted on that path if the application desires it. Both initiator and responder MUST continue by following the protocol specification of the chosen task after processing this message is complete.
+After the above procedure has been followed, the other client has 
+successfully authenticated it towards the client. The other client's 
+public key MAY be stored as trusted on that path if the application 
+desires it. Both initiator and responder MUST continue by following 
+the protocol specification of the chosen task after processing this 
+message is complete.
 
 The message SHALL be NaCl public-key encrypted by the client's 
 session key pair and the other client's session key pair.
@@ -1053,6 +1062,7 @@ The following close codes are being used by the protocol:
 - 3003: Handover of the Signalling Channel
 - 3004: Dropped by Initiator
 - 3005: Initiator Could Not Decrypt
+- 3006: No Shared Task Found
 
 The following close codes are available for 'drop-responder' messages:
 
@@ -1061,6 +1071,7 @@ The following close codes are available for 'drop-responder' messages:
 - 3003: Handover of the Signalling Channel
 - 3004: Dropped by Initiator
 - 3005: Initiator Could Not Decrypt
+- 3006: No Shared Task Found
 
 ---
 
