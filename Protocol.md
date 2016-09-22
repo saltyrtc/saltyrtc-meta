@@ -936,6 +936,13 @@ The client MUST set the following fields:
 * An initiator MUST include the *task* (without an *s*) field and set 
   it to the name of the SaltyRTC task protocol it has chosen from the 
   list the responder provided.
+* If an offered task requires additional data, both clients SHALL set 
+  the *data* field to a dictionary/an object containing the 
+  corresponding task's names as keys and another dictionary/object as 
+  the task's value. The content of these dictionary/objects depends on 
+  the task and SHALL be specified by the task's protocol 
+  specification. For each task, there MUST be a field in the *data* 
+  field. The task's data value MAY be `null`/`None` if not used.
 
 When the client receives an 'auth' message, it MUST check the following fields:
 
@@ -949,6 +956,10 @@ When the client receives an 'auth' message, it MUST check the following fields:
 * A responder SHALL validate that the *task* (without an *s*) field is 
   present and contains one of the task it has previously offered to 
   the initiator.
+* Both initiator an responder SHALL verify that the *data* field 
+  contains a dictionary/an object and SHALL look up the chosen task's 
+  data value. The value MUST be handed over to the corresponding task 
+  after processing this message is complete.
 
 After the above procedure has been followed, the other client has successfully authenticated it towards the client. The other client's public key MAY be stored as trusted on that path if the application desires it. Both initiator and responder MUST continue by following the protocol specification of the chosen task after processing this message is complete.
 
