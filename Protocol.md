@@ -926,15 +926,51 @@ message from the initiator. The initiator MUST wait until it has
 successfully processed the 'auth' message before it sends an 'auth' 
 message to that responder.
 
-The client MUST set the *your_cookie* field to the cookie the other 
-client has used in the nonce of its previous message(s).
+The client MUST set the following fields:
 
-When the client receives an 'auth' message, it MUST check that the 
-cookie provided in the *your_cookie* field contains the cookie it has 
-used in its previous messages to the other client. After that, the 
-other client has successfully authenticated it towards the client. The 
-other client's public key MAY be stored as trusted on that path if the 
-application desires it.
+* Set the *your_cookie* field to the cookie the other client has used 
+  in the nonce of its previous message(s).
+* A responder MUST set the *tasks* field to a list/an array of 
+  SaltyRTC task protocol's names (as strings) the responder offers to 
+  utilise.
+* An initiator MUST include the *task* (without an *s*) field and set 
+  it to the name of the SaltyRTC task protocol it has chosen from the 
+  list the responder provided.
+* Both clients SHALL set the *data* field to a dictionary/an object 
+  containing the corresponding task's names as keys and another 
+  dictionary/object or `null`/`None` as the task's value. The content 
+  of these dictionary/objects depends on the task and SHALL be 
+  specified by the task's protocol specification. For each task, there 
+  MUST be a field in the *data* field.
+
+When the client receives an 'auth' message, it MUST check the 
+following fields:
+
+* The cookie provided in the *your_cookie* field SHALL contain the 
+  cookie it has used in its previous messages to the other client.
+* An initiator SHALL validate that the *tasks* field contains a list/
+  an array with at least one element. Each element in the list SHALL 
+  be a string. The initiator SHALL continue by comparing the provided 
+  tasks to its own list of available tasks and MUST choose the first 
+  common task from both lists. In case no common task could be found, 
+  the initiator SHALL send a 'close' message to the responder 
+  containing the close code `3006` (*No Shared Task Found*) as reason 
+  and raise an error event indicating that no common signalling task 
+  could be found.
+* A responder SHALL validate that the *task* (without an *s*) field is 
+  present and contains one of the task it has previously offered to 
+  the initiator.
+* Both initiator an responder SHALL verify that the *data* field 
+  contains a dictionary/an object and SHALL look up the chosen task's 
+  data value. The value MUST be handed over to the corresponding task 
+  after processing this message is complete.
+
+After the above procedure has been followed, the other client has 
+successfully authenticated it towards the client. The other client's 
+public key MAY be stored as trusted on that path if the application 
+desires it. Both initiator and responder MUST continue by following 
+the protocol specification of the chosen task after processing this 
+message is complete.
 
 The message SHALL be NaCl public-key encrypted by the client's 
 session key pair and the other client's session key pair.
@@ -942,7 +978,20 @@ session key pair and the other client's session key pair.
 ```
 {
   "type": "auth",
-  "your_cookie": b"957c92f0feb9bae1b37cb7e0d9989073"
+  "your_cookie": b"957c92f0feb9bae1b37cb7e0d9989073",
+  "tasks": [  // ONLY towards an initiator
+    "v1.ortc.tasks.saltyrtc.org",
+    "v1.webrtc.tasks.saltyrtc.org"
+  ],
+  "task": "v1.ortc.tasks.saltyrtc.org",  // ONLY towards a responder
+  "data": {
+     "simple-ortc-v1": {
+        ...
+      },
+      "simple-webrtc-v1": {
+        ...
+      }
+  }
 }
 ```
 
@@ -985,6 +1034,8 @@ session key pair and the other client's session key pair.
 
 # Tasks
 
+TODO: User must set a list of available tasks
+
 As soon as the authentication procedure between initiator and 
 responder has been completed sucessfully, the specification of the 
 negotiated task takes over.
@@ -1011,6 +1062,7 @@ The following close codes are being used by the protocol:
 - 3003: Handover of the Signalling Channel
 - 3004: Dropped by Initiator
 - 3005: Initiator Could Not Decrypt
+- 3006: No Shared Task Found
 
 The following close codes are available for 'drop-responder' messages:
 
@@ -1019,6 +1071,7 @@ The following close codes are available for 'drop-responder' messages:
 - 3003: Handover of the Signalling Channel
 - 3004: Dropped by Initiator
 - 3005: Initiator Could Not Decrypt
+- 3006: No Shared Task Found
 
 ---
 
