@@ -78,7 +78,8 @@ Before the signalling channel handover takes place, the same message
 structure as defined in the [SaltyRTC protocol specification](./
 Protocol.md#message-structure) SHALL be used.
 
-After the handover took place, the nonce/header MUST be slightly 
+For all messages that are being exchanged over data channels (such as 
+the handed over signalling channel), the nonce/header MUST be slightly 
 changed:
 
      0                   1                   2                   3
