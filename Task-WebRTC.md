@@ -79,8 +79,10 @@ following checks:
   signalling channel. The client MUST update its internal list of 
   excluded Data Channel IDs by new values of the other client's list.
 * The *max_size* field MUST contain either `0` or a positive integer. 
-  The minimum of both clients' maximum size SHALL be stored to be used 
-  for data channel communication.
+  If one client's value is `0` but the other client's value is greater 
+  than `0`, the larger of the two values SHALL be stored to be used for 
+  data channel communication. Otherwise, the minimum of both clients' 
+  maximum size SHALL be stored.
 
 # Message Structure
 
