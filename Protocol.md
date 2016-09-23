@@ -1,4 +1,4 @@
-# SaltyRTC - Secure Signalling Solutions based on NaCl
+# SaltyRTC - End-to-End-Encrypted Signalling Solutions
 
 # Abstract
 
