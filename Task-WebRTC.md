@@ -49,7 +49,8 @@ following items:
 
 * A client MUST set the *cookie_2* field to 16 cryptographically secure 
   random bytes. It SHALL be different to the cookie the client 
-  currently uses.
+  currently uses, the other client currently uses and, for initiators, 
+  the *cookie_2* the responder has sent in its task's data.
 * The *exclude* field MUST contain a list/an array of WebRTC Data 
   Channel IDs (non-negative integers) that SHALL not be used for the 
   signalling channel. This list MUST be available to be set from user 
@@ -63,7 +64,9 @@ A client who receives the task's data from the other peer MUST do the
 following checks:
 
 * A client SHALL validate that the *cookie_2* field's value contains 16 
-  bytes and is different to the other client's cookie it currently uses.
+  bytes and is different to the other client's cookie it currently 
+  uses, different to the client's current cookie and different to the 
+  client's upcoming cookie.
 * The *exclude* field MUST contain a list/an array of WebRTC Data 
   Channel IDs (non-negative integers) that SHALL not be used for the 
   signalling channel. The client MUST update its internal list of 
@@ -99,7 +102,8 @@ Cookie 2: 16 byte
 
 This field contains 16 cryptographically secure random bytes. The only 
 difference to the cookie of the SaltyRTC protocol specification is that 
-it MUST be different to the cookie used previously.
+it MUST be different to the cookies of both clients used previously. 
+The new cookie will be received when exchanging the task's data takes place.
 
 Data Channel ID: 2 byte
 
