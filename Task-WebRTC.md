@@ -103,7 +103,8 @@ Cookie 2: 16 byte
 This field contains 16 cryptographically secure random bytes. The only 
 difference to the cookie of the SaltyRTC protocol specification is that 
 it MUST be different to the cookies of both clients used previously. 
-The new cookie will be received when exchanging the task's data takes place.
+The new cookie will be received when exchanging the task's data takes 
+place.
 
 Data Channel ID: 2 byte
 
@@ -117,6 +118,40 @@ Note that the Source and Destination fields have been replaced by the
 Data Channel ID field. As there can be only communication between the 
 peers that set up the peer-to-peer connection, dedicated addresses are 
 no longer required.
+
+# Sending a Data Channel Message
+
+The same procedure as described in the
+[SaltyRTC protocol specification](./Protocol.md#sending-a-signalling-message)
+SHALL be followed. However, for all messages that are being exchanged 
+over data channels (such as the handed over signalling channel), the 
+following changes MUST be applied:
+
+* All references to the *cookie* SHALL be interpreted as references to 
+  *cookie 2*.
+* Source and destination addresses SHALL NOT be set.
+* The data channel id MUST be set to the id of the data channel the 
+  message will be sent on.
+* A signalling channel that is being handed over SHALL continue using 
+  the overflow number and sequence number counters from the WebSocket-
+  based implementation.
+
+# Receiving a Data Channel Message
+
+The same procedure as described in the
+[SaltyRTC protocol specification](./Protocol.md#receiving-a-signalling-message)
+SHALL be followed. However, for all messages that are being exchanged 
+over data channels (such as the handed over signalling channel), the 
+following changes MUST be applied:
+
+* All references to the *cookie* SHALL be interpreted as references to 
+  *cookie 2*.
+* Source and destination addresses SHALL NOT processed or validated.
+* A client MUST check that the data channel id field matches the data 
+  channel's id the message has been received on.
+* A signalling channel that is being handed over SHALL continue using 
+  the overflow number and sequence number counters from the WebSocket-
+  based implementation.
 
 # Messages
 
