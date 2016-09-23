@@ -13,6 +13,7 @@ document are to be interpreted as described in
 
 All terms from the [SaltyRTC protocol specification](./Protocol.md#terminology) are 
 valid in this document.
+Furthermore, this document will reference API parts of the [WebRTC specification](https://www.w3.org/TR/webrtc/).
 
 # Task Protocol Name
 
@@ -22,16 +23,60 @@ The following protocol name SHALL be used for task negotiation:
 
 TODO: Switch to `v1` as soon as the spec has been reviewed.
 
+# Detecting the Maximum Message Size
+
+For now, all implementations SHALL use the value `16384` which seems to 
+be the highest amount of kilobytes that can be applied for portable 
+WebRTC Data Channel communication. An implementation MAY use another 
+value if it can guarantee delivery and reception for messages of that 
+size. A value of `0` indicates that the implementation is able to 
+handle messages of arbitrary length (hooray!).
+
 # Task Data
 
-TODO
-TODO: Add "Cookie 2"
+This task makes use of the *data* field of the 'auth' messages 
+described in the 
+[SaltyRTC protocol specification](./Protocol.md#auth-message).  
+The *Outgoing* section describes what the data of this task SHALL 
+contain and how it MUST be generated. Whereas the *Incoming* section 
+describes how the task's data from the other client's 'auth' message 
+MUST be validated and potentially stored.
+
+## Outgoing
+
+The task's data SHALL be a dictionary/an object containing the 
+following items:
+
+* A client MUST set the *cookie_2* field to 16 cryptographically secure 
+  random bytes. It SHALL be different to the cookie the client 
+  currently uses.
+* The *exclude* field MUST contain a list/an array of WebRTC Data 
+  Channel IDs (non-negative integers) that SHALL not be used for the 
+  signalling channel. This list MUST be available to be set from user 
+  applications that use specific Data Channel IDs.
+* The *max_size* field MUST be set to the value described by the 
+  *Detecting the Maximum Message Size* section.
+
+## Incoming
+
+A client who receives the task's data from the other peer MUST do the 
+following checks:
+
+* A client SHALL validate that the *cookie_2* field's value contains 16 
+  bytes and is different to the other client's cookie it currently uses.
+* The *exclude* field MUST contain a list/an array of WebRTC Data 
+  Channel IDs (non-negative integers) that SHALL not be used for the 
+  signalling channel. The client MUST update its internal list of 
+  excluded Data Channel IDs by new values of the other client's list.
+* The *max_size* field MUST contain either `0` or a positive integer. 
+  The minimum of both clients' maximum size SHALL be stored to be used 
+  for data channel communication.
 
 # Message Structure
 
 Before the signalling channel handover takes place, the same message 
 structure as defined in the [SaltyRTC protocol specification](./
-Protocol.md#message-structure) will be used.
+Protocol.md#message-structure) SHALL be used.
 
 After the handover took place, the nonce/header MUST be slightly 
 changed:
@@ -68,4 +113,21 @@ Data Channel ID field. As there can be only communication between the
 peers that set up the peer-to-peer connection, dedicated addresses are 
 no longer required.
 
+# Messages
+
+TODO, rubbish below:
+
+* A responder SHALL set the *offer* field to the *sdp* field of its 
+  WebRTC `RTCPeerConnection`'s local description it has generated with 
+  calling `createOffer` on the `RTCPeerConnection` instance.
+* An initiator SHALL set the *answer* field to the *sdp* field of its 
+  WebRTC `RTCPeerConnection`'s local description it has generated with 
+  calling `createAnswer` on the `RTCPeerConnection` instance.
+
+* An initiator SHALL validate that the *offer* field contains an SDP 
+  string. It SHALL continue by setting the value of that field as the 
+  WebRTC `RTCPeerConnection`'s remote description.
+* A responder SHALL validate that the *answer* field contains an SDP 
+  string. Furthermore, it SHALL set the value of that field as the 
+  WebRTC `RTCPeerConnection`'s remote description.
 
