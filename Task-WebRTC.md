@@ -168,8 +168,8 @@ The following messages are new messages that will be exchanged between
 two clients (initiator and responder) over the signalling channel. Note 
 that the signalling channel may be handed over to a data channel 
 anytime which is REQUIRED to be supported by the implementation. 
-Furthermore, the handed over signalling channel MUST support all client-
-to-client message types.
+Furthermore, the handed over signalling channel MUST support all 
+client-to-client message types.
 
 Other messages, general behaviour and error handling for 
 client-to-client messages is described in the 
