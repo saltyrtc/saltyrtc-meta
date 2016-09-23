@@ -1,4 +1,4 @@
-# SaltyRTC - Secure WebRTC/ORTC based on NaCl
+# SaltyRTC - Secure Signalling Solutions based on NaCl
 
 # Abstract
 
@@ -1036,7 +1036,9 @@ session key pair and the other client's session key pair.
 
 # Tasks
 
-TODO: User must set a list of available tasks
+To choose a signalling task, client implementations MUST provide an 
+API for the user to choose a list of signalling tasks/solutions (in 
+order of preference) that shall be negotiated between the clients. At least one signalling task MUST be selected by the user.
 
 As soon as the authentication procedure between initiator and 
 responder has been completed sucessfully, the specification of the 
