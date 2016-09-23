@@ -1,6 +1,12 @@
 # SaltyRTC WebRTC Task
 
-This task uses the end-to-end encryption techniques of SaltyRTC to set up a secure WebRTC peer-to-peer connection. It also adds another security layer for Data Channels that are available to users. The signalling channel will persist after being handed over to a dedicated Data Channel once the peer-to-peer connection has been set up. Therefore, further signalling communication between the peers does not require a dedicated WebSocket connection over a SaltyRTC server.
+This task uses the end-to-end encryption techniques of SaltyRTC to set 
+up a secure WebRTC peer-to-peer connection. It also adds another 
+security layer for Data Channels that are available to users. The 
+signalling channel will persist after being handed over to a dedicated 
+Data Channel once the peer-to-peer connection has been set up. 
+Therefore, further signalling communication between the peers does not 
+require a dedicated WebSocket connection over a SaltyRTC server.
 
 # Conventions
 
@@ -11,9 +17,10 @@ document are to be interpreted as described in
 
 # Terminology
 
-All terms from the [SaltyRTC protocol specification](./Protocol.md#terminology) are 
-valid in this document.
-Furthermore, this document will reference API parts of the [WebRTC specification](https://www.w3.org/TR/webrtc/).
+All terms from the 
+[SaltyRTC protocol specification](./Protocol.md#terminology) are valid 
+in this document. Furthermore, this document will reference API parts 
+of the [WebRTC specification](https://www.w3.org/TR/webrtc/).
 
 # Task Protocol Name
 
@@ -153,7 +160,47 @@ following changes MUST be applied:
   the overflow number and sequence number counters from the WebSocket-
   based implementation.
 
-# Messages
+# Client-to-Client Messages
+
+The following messages are new messages that will be exchanged between 
+two clients (initiator and responder) over the signalling channel. Note 
+that the signalling channel may be handed over to a data channel 
+anytime which is REQUIRED to be supported by the implementation. 
+Furthermore, the handed over signalling channel MUST support all client-
+to-client message types.
+
+Other messages, general behaviour and error handling for 
+client-to-client messages is described in the 
+[SaltyRTC protocol specification](./Protocol.md#client-to-client-messages).
+
+## Message Flow (Beyond 'auth')
+
+```
+    Initiator                 Responder
+     |                               |
+     |             offer             |
+     |------------------------------>|
+     |             answer            |
+     |<------------------------------|
+     |      candidate (n times)      |
+     |<----------------------------->|
+     |             close             |
+     |<----------------------------->|
+     |                               |
+```
+
+## 'offer' Message
+
+TODO
+
+## 'answer' Message
+
+TODO
+
+## 'candidate' Message
+
+TODO
+
 
 TODO, rubbish below:
 
