@@ -5,8 +5,8 @@
 SaltyRTC is a signalling protocol that uses end-to-end encryption 
 techniques based on the Networking and Cryptography library (NaCl) and 
 the WebSocket protocol. It offers the user to freely choose from a 
-range of signalling tasks, such as setting up a WebRTC or ORTC peer-to-
-peer connection. SaltyRTC is completely open to new and custom 
+range of signalling tasks, such as setting up a WebRTC or ORTC 
+peer-to-peer connection. SaltyRTC is completely open to new and custom 
 signalling tasks for everything feasible. The protocol has been 
 designed in a way that no third party needs to be trusted. Moreover, 
 it is able to protect the clients' signalling data even in case the 
