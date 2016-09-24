@@ -189,7 +189,7 @@ client-to-client messages is described in the
 ## Message States (Beyond 'auth')
 
 ```
-           ^---------->
+           +----------+
            |          |
     +------+----------v------+    +-------+
     | offer/answer/candidate +--->+ close |
