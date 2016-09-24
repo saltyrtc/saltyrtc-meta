@@ -1006,23 +1006,17 @@ connection between the clients over the server and to the server.
 A client who sends a 'close' message MUST set the *reason* field to a 
 valid close code (as enumerated in *Close Code Enumeration*). `1001` 
 SHALL be used for normal close cases. Once the message has been sent, 
-the client SHALL ONLY remove all cached data (such as messages, 
-cookies and sequence number(s)) of the other client if a close code 
-other than `3003` (*Handover of the Signalling Channel*) is being 
-used. The client SHALL also terminate the connection to the server 
-with a close code of `1001` (*Going Away*). However, the connection to 
-the server SHALL linger for a minimum of one second in case the close 
-code `3003` is being used.
+the client SHALL remove all cached data (such as messages, cookies and 
+sequence number(s)) of the other client. The client SHALL also 
+terminate the connection to the server with a close code of `1001` 
+(*Going Away*).
 
 A receiving client SHALL validate that the *reason* field contains a 
-valid close code (as enumerated in *Close Code Enumeration*). If the 
-other client has provided a close code different to `3003` (*Handover 
-of the Signalling Channel*), the client SHALL remove all cached data 
-(such as messages, cookies and sequence number(s)) of the other 
-client. The client SHALL also terminate the connection to the server 
-with a close code of `1001` (*Going Away*). In case the close code 
-`3003` has been supplied, the connection to the server SHALL linger 
-for a minimum of one second before it is being closed.
+valid close code (as enumerated in *Close Code Enumeration*). The 
+client SHALL remove all cached data (such as messages, cookies and 
+sequence number(s)) of the other client. The client SHALL also 
+terminate the connection to the server with a close code of `1001` 
+(*Going Away*).
 
 The message SHALL be NaCl public-key encrypted by the client's 
 session key pair and the other client's session key pair.
@@ -1072,7 +1066,6 @@ The following close codes are available for 'drop-responder' messages:
 
 - 3001: Protocol Error
 - 3002: Internal Error
-- 3003: Handover of the Signalling Channel
 - 3004: Dropped by Initiator
 - 3005: Initiator Could Not Decrypt
 - 3006: No Shared Task Found
