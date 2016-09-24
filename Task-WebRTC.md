@@ -298,10 +298,10 @@ session key pair and the other client's session key pair.
 The message itself and the client's behaviour is described in the 
 [SaltyRTC protocol specification](./Protocol.md#close-message). Once 
 the signalling channel has been handed over to a wrapped data channel, 
-'close' messages SHALL trigger closing the underlying data channel 
-used for signalling. The user application MAY continue using the 
-`RTCPeerConnection` instance and its data channels. However, wrapped 
-data channels MAY or MAY NOT be available once the signalling's data 
-channel has been closed, depending on the flexibility of the client's 
-implementation.
+sent and received 'close' messages SHALL trigger closing the 
+underlying data channel used for signalling. The user application MAY 
+continue using the `RTCPeerConnection` instance and its data channels. 
+However, wrapped data channels MAY or MAY NOT be available once the 
+signalling's data channel has been closed, depending on the 
+flexibility of the client's implementation.
 
