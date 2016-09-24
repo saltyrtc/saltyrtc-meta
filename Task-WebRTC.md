@@ -125,7 +125,14 @@ allows the use of any combination of ordered/unordered and
 reliable/unreliable data channels while guaranteeing complete messages 
 in any case.
 
-Each wrapped data channel id has its own overflow number and sequence number. The overflow and sequence number SHALL persist once a data channel has been stored. The numbers MUST be restored once a data channel id is being reused. This is absolutely vital to prevent reusing a nonce!
+Each wrapped data channel id has its own overflow number and sequence 
+number. The overflow and sequence number SHALL persist once a data 
+channel has been stored. The numbers MUST be restored once a data 
+channel id is being reused. This is absolutely vital to prevent 
+reusing a nonce! Due to a bug in older Chromium-based implementations, 
+the implementation MUST check that a newly created data channel does 
+not use a data channel id of another data channel instance that is 
+currently *open*.
 
 # Signalling Channel Handover
 
