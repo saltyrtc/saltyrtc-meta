@@ -96,13 +96,41 @@ following checks:
   readable by user applications, so a user application can have its 
   own message chunking implementation if desired.
 
-# Wrapped Data Channels
+# Wrapped Data Channel
 
-TODO
+This protocol adds another security layer to WebRTC's data channels. 
+To allow both the user's application and the handed over signalling 
+channel to easily utilise this security layer, it is RECOMMENDED to 
+provide a wrapper/proxy to the `RTCDataChannel` interface. Underneath, 
+the wrapped data channel MUST use NaCl for encryption/decryption and 
+the `chunked-dc` message chunking implementation (if necessary) in the 
+following way:
+
+* Outgoing messages MUST be processed and encrypted by following the 
+  *Sending a Wrapped Data Channel Message* section. The encrypted 
+  messages SHALL be split to chunks using `chunked-dc` message 
+  chunking ONLY in case the negotiated *max_size* parameter from the 
+  task's data is greater than `0`; in that case the `chunked-dc` 
+  implementation SHALL use the *max_size* as the maximum chunk size. 
+  Otherwise, the encrypted message SHALL be sent as is.
+* Incoming messages SHALL be stitched together using `chunked-dc` 
+  message chunking if required (see previous bullet item for details). 
+  Complete messages MUST be processed and decrypted by following the 
+  *Receiving a Wrapped Data Channel Message* section. The resulting 
+  complete message SHALL raise a corresponding message event.
+
+The 
+[`chunked-dc` message chunking format](https://github.com/saltyrtc/chunked-dc-js#format) 
+allows the use of any combination of ordered/unordered and 
+reliable/unreliable data channels while guaranteeing complete messages 
+in any case.
 
 # Signalling Channel Handover
 
-As soon as both clients have exchanged the required messages and the WebRTC `RTCPeerConnection` instance informs the client that the peer-to-peer connection setup is complete, the client SHALL hand over the signalling channel to a dedicated data channel:
+As soon as both clients have exchanged the required messages and the 
+WebRTC `RTCPeerConnection` instance informs the client that the peer-
+to-peer connection setup is complete, the client SHALL hand over the 
+signalling channel to a dedicated data channel:
 
 1. The client creates a new data channel on the `RTCPeerConnection` 
    instance with the `RTCDataChannelInit` dictionary/object set 
