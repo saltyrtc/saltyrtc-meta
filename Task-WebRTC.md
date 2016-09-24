@@ -41,8 +41,8 @@ TODO: Switch to `v1` as soon as the spec has been reviewed.
 
 # Detecting the Maximum Message Size
 
-For now, all implementations SHALL use the value `16384` which seems to 
-be the highest amount of kilobytes that can be applied for portable 
+For now, all implementations SHALL use the value `16384` which seems 
+to be the highest amount of kilobytes that can be applied for portable 
 WebRTC data channel communication. An implementation MAY use another 
 value if it can guarantee delivery and reception for messages of that 
 size. A value of `0` indicates that the implementation is able to 
@@ -63,8 +63,8 @@ MUST be validated and potentially stored.
 The task's data SHALL be a dictionary/an object containing the 
 following items:
 
-* A client MUST set the *cookie_2* field to 16 cryptographically secure 
-  random bytes. It SHALL be different to the cookie the client 
+* A client MUST set the *cookie_2* field to 16 cryptographically 
+  secure random bytes. It SHALL be different to the cookie the client 
   currently uses, the other client currently uses and, for initiators, 
   the *cookie_2* the responder has sent in its task's data.
 * The *exclude* field MUST contain a list/an array of WebRTC data 
@@ -79,8 +79,8 @@ following items:
 A client who receives the task's data from the other peer MUST do the 
 following checks:
 
-* A client SHALL validate that the *cookie_2* field's value contains 16 
-  bytes and is different to the other client's cookie it currently 
+* A client SHALL validate that the *cookie_2* field's value contains
+  16 bytes and is different to the other client's cookie it currently 
   uses, different to the client's current cookie and different to the 
   client's upcoming cookie.
 * The *exclude* field MUST contain a list/an array of WebRTC data 
@@ -89,11 +89,19 @@ following checks:
   excluded data channel ids by new values of the other client's list.
 * The *max_size* field MUST contain either `0` or a positive integer. 
   If one client's value is `0` but the other client's value is greater 
-  than `0`, the larger of the two values SHALL be stored to be used for 
-  data channel communication. Otherwise, the minimum of both clients' 
-  maximum size SHALL be stored. The stored value SHALL be readable by 
-  user applications, so a user application can have its own message 
-  chunking implementation if desired.
+  than `0`, the larger of the two values SHALL be stored to be used 
+  for data channel communication. Otherwise, the minimum of both 
+  clients' maximum size SHALL be stored. The stored value SHALL be 
+  readable by user applications, so a user application can have its 
+  own message chunking implementation if desired.
+
+# Signalling Channel Handover
+
+TODO: [...] the connection to the server SHALL linger for a minimum of one second in case the close code `3003` is being used. [...]
+
+# Wrapped Data Channels
+
+TODO
 
 # Message Structure
 
@@ -121,10 +129,10 @@ slightly changed:
 Cookie 2: 16 byte
 
 This field contains 16 cryptographically secure random bytes. The only 
-difference to the cookie of the SaltyRTC protocol specification is that 
-it MUST be different to the cookies of both clients used previously. 
-The new cookie will be received when exchanging the task's data takes 
-place.
+difference to the cookie of the SaltyRTC protocol specification is 
+that it MUST be different to the cookies of both clients used 
+previously. The new cookie will be received when exchanging the task's 
+data takes place.
 
 Data Channel ID: 2 byte
 
@@ -214,30 +222,86 @@ client-to-client messages is described in the
 
 ## 'offer' Message
 
-TODO
+At any time, the initiator MAY send an 'offer' message to the 
+responder.
+
+The initiator MUST set the *offer* field to the dictionary/object of 
+its WebRTC `RTCPeerConnection`'s local description it has generated 
+with calling `createOffer` on the `RTCPeerConnection` instance. The 
+*offer* field SHALL be a dictionary/object and MUST contain:
+
+* The *type* field containing a valid `RTCSdpType` in string 
+  representation.
+* The *sdp* field containing a blob of SDP data in string 
+  representation. If the *type* field is `rollback`, the field MAY be 
+  omitted.
+
+The responder SHALL validate that the *offer* field is a dictionary/
+object containing the above mentioned fields and value types. It SHALL 
+continue by setting the value of that field as the WebRTC 
+`RTCPeerConnection`'s remote description and creating an answer.
+
+The message SHALL be NaCl public-key encrypted by the client's 
+session key pair and the other client's session key pair.
 
 ## 'answer' Message
 
-TODO
+Once the responder has set the remote description on its WebRTC 
+`RTCPeerConnection` instance and generated an answer by calling 
+`createAnswer` on the instance, it SHALL send an 'answer' message. The 
+*answer* field SHALL be a dictionary/object and MUST contain:
+
+* The *type* field containing a valid `RTCSdpType` in string 
+  representation.
+* The *sdp* field containing a blob of SDP data in string 
+  representation. If the *type* field is `rollback`, the field MAY be 
+  omitted.
+  
+The initiator SHALL validate that the *answer* field is a dictionary/
+object containing the above mentioned fields and value types. It SHALL 
+continue by setting the value of that field as the WebRTC 
+`RTCPeerConnection`'s remote description.
+
+The message SHALL be NaCl public-key encrypted by the client's 
+session key pair and the other client's session key pair.
 
 ## 'candidate' Message
 
-TODO
+Both clients MAY send ICE candidates at any time to each other. 
+Clients SHOULD bundle available candidates.
 
+A client who sends an ICE candidate SHALL set the *candidate* field to 
+a list/an array of dictionaries/objects where each dictionary/object 
+SHALL contain the following fields:
 
-TODO, rubbish below:
+* The *candidate* field SHALL contain an SDP `candidate-attribute` as 
+  defined in the WebRTC specification in string representation.
+* The *sdpMid* field SHALL contain the *media stream identification* 
+  as defined in the WebRTC specification in string representation or 
+  `null`.
+* The *sdpMLineIndex* field SHALL contain the index of the media 
+  description the candidate is associated with as described in the 
+  WebRTC specification. It's value SHALL be either an unsigned integer 
+  (16 bits) or `null`.
 
-* A responder SHALL set the *offer* field to the *sdp* field of its 
-  WebRTC `RTCPeerConnection`'s local description it has generated with 
-  calling `createOffer` on the `RTCPeerConnection` instance.
-* An initiator SHALL set the *answer* field to the *sdp* field of its 
-  WebRTC `RTCPeerConnection`'s local description it has generated with 
-  calling `createAnswer` on the `RTCPeerConnection` instance.
+The receiving client SHALL validate that the *candidate* field is a 
+list/an array containing one or more dictionaries/objects. These 
+dictionaries/objects SHALL contain the above mentioned fields value 
+types. It shall continue by adding the value of each item in the list 
+as a remote candidate to its WebRTC `RTCPeerConnection` instance.
 
-* An initiator SHALL validate that the *offer* field contains an SDP 
-  string. It SHALL continue by setting the value of that field as the 
-  WebRTC `RTCPeerConnection`'s remote description.
-* A responder SHALL validate that the *answer* field contains an SDP 
-  string. Furthermore, it SHALL set the value of that field as the 
-  WebRTC `RTCPeerConnection`'s remote description.
+The message SHALL be NaCl public-key encrypted by the client's 
+session key pair and the other client's session key pair.
+
+## 'close' Message
+
+The message itself and the client's behaviour is described in the 
+[SaltyRTC protocol specification](./Protocol.md#close-message). Once 
+the signalling channel has been handed over to a wrapped data channel, 
+'close' messages SHALL trigger closing the underlying data channel 
+used for signalling. The user application MAY continue using the 
+`RTCPeerConnection` instance and its data channels. However, wrapped 
+data channels MAY or MAY NOT be available once the signalling's data 
+channel has been closed, depending on the flexibility of the client's 
+implementation.
 
