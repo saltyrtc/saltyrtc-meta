@@ -1,4 +1,4 @@
-# SaltyRTC - End-to-End-Encrypted Signalling Solutions
+# SaltyRTC - End-to-End-Encrypted Signalling
 
 # Abstract
 
