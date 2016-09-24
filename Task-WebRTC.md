@@ -86,7 +86,8 @@ following checks:
 * The *exclude* field MUST contain a list/an array of WebRTC data 
   channel IDs (non-negative integers) that SHALL not be used for the 
   signalling channel. The client MUST update its internal list of 
-  excluded data channel ids by new values of the other client's list.
+  excluded data channel ids by new values of the other client's list. 
+  The resulting list MUST be stored sorted in ascending order.
 * The *max_size* field MUST contain either `0` or a positive integer. 
   If one client's value is `0` but the other client's value is greater 
   than `0`, the larger of the two values SHALL be stored to be used 
@@ -95,13 +96,34 @@ following checks:
   readable by user applications, so a user application can have its 
   own message chunking implementation if desired.
 
-# Signalling Channel Handover
-
-TODO: [...] the connection to the server SHALL linger for a minimum of one second in case the close code `3003` is being used. [...]
-
 # Wrapped Data Channels
 
 TODO
+
+# Signalling Channel Handover
+
+As soon as both clients have exchanged the required messages and the WebRTC `RTCPeerConnection` instance informs the client that the peer-to-peer connection setup is complete, the client SHALL hand over the signalling channel to a dedicated data channel:
+
+1. The client creates a new data channel on the `RTCPeerConnection` 
+   instance with the `RTCDataChannelInit` dictionary/object set 
+   containing only the following values:
+   * *ordered* SHALL be set to `true`,
+   * *protocol* SHALL be set to the same subprotocol that has been 
+     negotiated with the server,
+   * *negotiated* MUST be set to `true`, and
+   * *id* SHALL be set to by counting upwards from `0` and using the 
+     first number that is NOT present in the internal list of excluded 
+     data channel ids (exchanged in the task's data).
+2. The newly created `RTCDataChannel` instance shall be wrapped by 
+   following the *Wrapped Data Channel* section.
+3. As soon as the data channel is *open*, the client SHALL linger for 
+   a minimum of one second. During this phase, the client SHALL accept 
+   messages from both the original signalling channel and the new 
+   signalling channel based on the wrapped data channel. Note that 
+   both channels require slightly different handling of the nonce/
+   header.
+4. After lingering, the client closes the connection to the server 
+   with a close code of `3003` (*Handover of the Signalling Channel*).
 
 # Message Structure
 
