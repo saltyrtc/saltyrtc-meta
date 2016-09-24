@@ -125,6 +125,8 @@ allows the use of any combination of ordered/unordered and
 reliable/unreliable data channels while guaranteeing complete messages 
 in any case.
 
+Each wrapped data channel id has its own overflow number and sequence number. The overflow and sequence number SHALL persist once a data channel has been stored. The numbers MUST be restored once a data channel id is being reused. This is absolutely vital to prevent reusing a nonce!
+
 # Signalling Channel Handover
 
 As soon as both clients have exchanged the required messages and the 
@@ -191,7 +193,10 @@ Contains the data channel id of the data channel that is being used
 for a message.
 
 Overflow Number and Sequence Number SHALL remain the same as in the 
-SaltyRTC protocol specification.
+SaltyRTC protocol specification. However, they are tied to the Data 
+Channel ID and MUST be reused (e.g. SHALL NOT reset) in case a data 
+channel's id is being reused after the former data channel that used 
+to have the id has been closed.
 
 Note that the Source and Destination fields have been replaced by the 
 Data Channel ID field. As there can be only communication between the 
