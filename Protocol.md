@@ -1,6 +1,6 @@
 # SaltyRTC - End-to-End-Encrypted Signalling
 
-# Abstract
+# Introduction
 
 SaltyRTC is a signalling protocol that uses end-to-end encryption 
 techniques based on the Networking and Cryptography library (NaCl) and 
@@ -14,10 +14,6 @@ underlying TLS encryption of the WebSocket protocol has been
 completely broken.
 
 This document describes the protocol for both client and server.
-
-# Introduction
-
-TODO
 
 # Conventions
 
