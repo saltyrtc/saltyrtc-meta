@@ -63,10 +63,6 @@ MUST be validated and potentially stored.
 The task's data SHALL be a dictionary/an object containing the 
 following items:
 
-* A client MUST set the *cookie_2* field to 16 cryptographically 
-  secure random bytes. It SHALL be different to the cookie the client 
-  currently uses, the other client currently uses and, for initiators, 
-  the *cookie_2* the responder has sent in its task's data.
 * The *exclude* field MUST contain a list/an array of WebRTC data 
   channel ids (non-negative integers) that SHALL not be used for the 
   signalling channel. This list MUST be available to be set from user 
@@ -79,10 +75,6 @@ following items:
 A client who receives the task's data from the other peer MUST do the 
 following checks:
 
-* A client SHALL validate that the *cookie_2* field's value contains
-  16 bytes and is different to the other client's cookie it currently 
-  uses, different to the client's current cookie and different to the 
-  client's upcoming cookie.
 * The *exclude* field MUST contain a list/an array of WebRTC data 
   channel IDs (non-negative integers) that SHALL not be used for the 
   signalling channel. The client MUST update its internal list of 
