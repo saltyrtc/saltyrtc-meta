@@ -668,7 +668,9 @@ key pair and the client's permanent key pair.
 
 When a new initiator has authenticated itself towards the server on a 
 path, the server MUST send this message to all currently authenticated 
-responders on the same path. No additional field needs to be set.
+responders on the same path. No additional field needs to be set. The 
+server MUST ensure that a 'new-initiator' message has been sent before 
+the corresponding initiator is able to send messages to any responder.
 
 A responder who receives a 'new-initiator' message MUST proceed with 
 deleting all currently cached information about and for the previous 
@@ -690,7 +692,9 @@ key pair and the responder's permanent key pair.
 As soon as a new responder has authenticated itself towards the server 
 on path, the server MUST send this message to an authenticated 
 initiator on the same path. The field *id* MUST be set to the assigned 
-identity of the newly connected responder.
+identity of the newly connected responder. The server MUST ensure that 
+a 'new-responder' message has been sent before the corresponding 
+responder is able to send messages to the initiator.
 
 An initiator who receives a 'new-responder' message SHALL validate 
 that the *id* field contains a valid responder address (`0x02..0xff`). 
