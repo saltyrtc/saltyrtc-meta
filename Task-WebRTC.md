@@ -117,14 +117,19 @@ allows the use of any combination of ordered/unordered and
 reliable/unreliable data channels while guaranteeing complete messages 
 in any case.
 
-Each wrapped data channel id has its own overflow number and sequence 
-number. The overflow and sequence number SHALL persist once a data 
-channel has been stored. The numbers MUST be restored once a data 
-channel id is being reused. This is absolutely vital to prevent 
-reusing a nonce!  
+As described in the *Sending a Wrapped Data Channel Message* and the 
+*Receiving a Wrapped Data Channel Message* section, each new wrapped 
+data channel instance is being treated as a new peer from the nonce's 
+perspective and independent of the underlying data channel id. To 
+prevent nonce reuse, it is absolutely vital that each wrapped data 
+channel instance has its own cookie, sequence number and overflow 
+number, each for incoming and outgoing messages. Both clients SHALL 
+use cryptographically secure random numbers for the cookie and the 
+sequence number.
+
 Due to a bug in older Chromium-based implementations, the 
 implementation MUST check that a newly created data channel does not 
-use a data channel id of another data channel instance that is 
+use the same data channel id of another data channel instance that is 
 currently *open*.
 
 # Signalling Channel Handover
@@ -181,7 +186,7 @@ slightly changed:
      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     |                                                               |
-    |                           Cookie 2                            |
+    |                            Cookie                             |
     |                                                               |
     |                                                               |
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -190,24 +195,20 @@ slightly changed:
     |                        Sequence Number                        |
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
-Cookie 2: 16 byte
-
-This field contains 16 cryptographically secure random bytes. The only 
-difference to the cookie of the SaltyRTC protocol specification is 
-that it MUST be different to the cookies of both clients used 
-previously. The new cookie will be received when exchanging the task's 
-data takes place.
-
 Data Channel ID: 2 byte
 
 Contains the data channel id of the data channel that is being used 
 for a message.
 
+The cookie field remains the same as in the SaltyRTC protocol 
+specification. Each new wrapped data channel SHALL have a new 
+cryptographically secure random cookie, one for incoming messages and 
+one for outgoing messages.
+
 Overflow Number and Sequence Number SHALL remain the same as in the 
-SaltyRTC protocol specification. However, they are tied to the Data 
-Channel ID and MUST be reused (e.g. SHALL NOT reset) in case a data 
-channel's id is being reused after the former data channel that used 
-to have the id has been closed.
+SaltyRTC protocol specification. Each new wrapped data channel 
+instance SHALL have its own overflow number and sequence number, each 
+for outgoing and incoming messages.
 
 Note that the Source and Destination fields have been replaced by the 
 Data Channel ID field. As there can be only communication between the 
@@ -222,14 +223,14 @@ SHALL be followed. However, for all messages that are being exchanged
 over wrapped data channels (such as the handed over signalling 
 channel), the following changes MUST be applied:
 
-* All references to the *cookie* SHALL be interpreted as references to 
-  *cookie 2*.
-* Source and destination addresses SHALL NOT be set.
+* Each data channel instance SHALL have its own cookie, overflow 
+  number and sequence number, for outgoing messages.
+* Source and destination addresses SHALL NOT be set, instead
 * The data channel id MUST be set to the id of the data channel the 
   message will be sent on.
 * A signalling channel that is being handed over SHALL continue using 
   the overflow number and sequence number counters from the WebSocket-
-  based implementation.
+  based signalling implementation.
 
 # Receiving a Wrapped Data Channel Message
 
@@ -239,14 +240,14 @@ SHALL be followed. However, for all messages that are being exchanged
 over wrapped data channels (such as the handed over signalling 
 channel), the following changes MUST be applied:
 
-* All references to the *cookie* SHALL be interpreted as references to 
-  *cookie 2*.
+* Each data channel instance SHALL have its own cookie, overflow 
+  number and sequence number, for incoming messages.
 * Source and destination addresses SHALL NOT processed or validated.
 * A client MUST check that the data channel id field matches the data 
   channel's id the message has been received on.
 * A signalling channel that is being handed over SHALL continue using 
   the overflow number and sequence number counters from the WebSocket-
-  based implementation.
+  based signalling implementation.
 
 # Client-to-Client Messages
 
@@ -372,7 +373,10 @@ session key pair and the other client's session key pair.
 ## 'handover' Message
 
 Both clients SHALL send this message once the wrapped data channel's 
-state for the handed over signalling is `open` on the signalling channel that has been established over the SaltyRTC server. The message SHALL NOT ever be sent over an already handed over signalling channel.
+state for the handed over signalling is `open` on the signalling 
+channel that has been established over the SaltyRTC server. The 
+message SHALL NOT ever be sent over an already handed over signalling 
+channel.
 
 A client who sends a 'handover' message SHALL NOT include any 
 additional fields. After this message, the client MUST:
