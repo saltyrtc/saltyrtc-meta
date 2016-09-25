@@ -323,6 +323,16 @@ continue by setting the value of that field as the WebRTC
 The message SHALL be NaCl public-key encrypted by the client's 
 session key pair and the other client's session key pair.
 
+```
+{
+  "type": "offer",
+  "offer": {
+    "type": "offer",
+    "sdp": "..."
+  }
+}
+```
+
 ## 'answer' Message
 
 Once the responder has set the remote description on its WebRTC 
@@ -343,6 +353,16 @@ continue by setting the value of that field as the WebRTC
 
 The message SHALL be NaCl public-key encrypted by the client's 
 session key pair and the other client's session key pair.
+
+```
+{
+  "type": "answer",
+  "answer": {
+    "type": "answer",
+    "sdp": "..."
+  }
+}
+```
 
 ## 'candidate' Message
 
@@ -371,6 +391,17 @@ as a remote candidate to its WebRTC `RTCPeerConnection` instance.
 
 The message SHALL be NaCl public-key encrypted by the client's 
 session key pair and the other client's session key pair.
+
+```
+{
+  "type": "candidate",
+  "candidate": {
+    "candidate": "...",
+    "sdpMid": "data",
+    "sdpMLineIndex": 0
+  }
+}
+```
 
 ## 'handover' Message
 
@@ -401,6 +432,12 @@ After a client has received a 'handover' message, it SHALL:
 
 The message SHALL be NaCl public-key encrypted by the client's 
 session key pair and the other client's session key pair.
+
+```
+{
+  "type": "handover"
+}
+```
 
 ## 'close' Message
 
