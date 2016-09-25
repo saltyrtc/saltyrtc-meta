@@ -743,13 +743,10 @@ the concatenation of the source address, the destination address, the
 overflow number and the sequence number (or the combined sequence 
 number) of the nonce section from the original message.
 
-A receiving client SHALL look up the original client-to-client message 
-by the supplied *id* field and SHALL re-send the message up to two 
-times (three times including the original message), each time after 
-having received a 'send-error' message. In case the re-send limit has 
-been reached, the client SHALL trigger an error event. If the message 
-could not be found by the supplied *id*, the client SHALL log a 
-warning.
+A receiving client MUST treat this incident as a protocol error 
+towards the client the message was destined at. Note that the protocol 
+error SHALL be handled as described in the *Client-to-Client Messages* 
+section.
 
 The message SHALL be NaCl public-key encrypted by the server's session 
 key pair and the client's permanent key pair.
@@ -775,15 +772,6 @@ destination once the sender is authenticated towards the server and
 the adress sections in the nonce have been validated. In case the 
 message could not be relayed, the server MUST send a 'send-error' 
 message back to the sender (see previous section).  
-Message types between initiator and responder SHALL be repeated two 
-times (three times including the initial send attempt) in case the 
-sender receives a 'send-error' message from the server. In order to be 
-able to re-send messages, clients SHALL cache a reasonable amount of 
-client-to-client messages for each other client. If a message has been 
-sent three times (repeated two times) and the client receives yet 
-another 'send-error' message for that message OR the message cannot be 
-found in the cache, the client SHALL treat this incident as a protocol 
-error.  
 In this section and all its subsections, *authentication* means 
 *authentication towards the other client* unless otherwise stated.
 
@@ -811,10 +799,11 @@ fails, the procedure below MUST be followed unless otherwise stated:
   and a close code of `3001` (*Protocol Error*) in the *reason* field. 
   A responder SHALL close the connection to the server with a close 
   code of `3001`.
-* If the other client is authenticated, both initiator and responder 
-  SHALL send a 'close' message to the other client containing the 
-  close code `3001` (*Protocol Error*). Both clients SHALL terminate 
-  the connection to the server (normal close code).
+* If the other client is authenticated and the error cause is not a 
+  'send-error' message from the server, the client SHALL send a 
+  'close' message to the other client containing the close code `3001` 
+  (*Protocol Error*). In any case, both clients SHALL terminate the 
+  connection to the server (normal close code).
 
 ## Client Handshake
 

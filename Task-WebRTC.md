@@ -154,14 +154,25 @@ signalling channel to a dedicated data channel:
      data channel ids (exchanged in the task's data).
 2. The newly created `RTCDataChannel` instance shall be wrapped by 
    following the *Wrapped Data Channel* section.
-3. As soon as the data channel is *open*, the client SHALL linger for 
-   a minimum of one second. During this phase, the client SHALL accept 
-   messages from both the original signalling channel and the new 
-   signalling channel based on the wrapped data channel. Note that 
-   both channels require slightly different handling of the nonce/
-   header.
-4. After lingering, the client closes the connection to the server 
-   with a close code of `3003` (*Handover of the Signalling Channel*).
+3. As soon as the data channel is *open*, the client SHALL send a 
+   'handover' message to the other client. After this message, the 
+   client SHALL NOT send any messages on the original signalling 
+   channel. The sequence number and overflow number for outgoing 
+   messages to the other client SHALL be transferred to the new 
+   wrapped data channel. The client MAY already send signalling 
+   messages over the new signalling channel. If the client has already 
+   received a 'handover' message from the other client, it MUST 
+   continue with the next step, skipping the following sentences. 
+   Otherwise, the client MUST accept further messages from the other 
+   client on the original signalling channel only and wait for an 
+   incoming 'handover' message. Once that 'handover' message has been 
+   received, the client SHALL ONLY accept signalling messages over the 
+   wrapped data channel. Furthermore, it SHALL transfer the sequence 
+   number and overflow number for incoming messages of the other 
+   client to the wrapped data channel.
+4. After both clients have sent each other 'handover' messages, the 
+   client closes the connection to the server with a close code of 
+   `3003` (*Handover of the Signalling Channel*).
 
 # Message Structure
 
@@ -261,11 +272,16 @@ client-to-client messages is described in the
 ## Message States (Beyond 'auth')
 
 ```
-           +----------+
-           |          |
-    +------+----------v------+    +-------+
-    | offer/answer/candidate +--->+ close |
-    +------------------------+    +-------+
+         +-------------+------------------------------+
+         |             v                              v
+    -----+-------------+-----+    +----------+    +---+---+
+    | offer/answer/candidate +--->+ handover +--->+ close |
+    -------------------------+    +-----+----+    +---+---+
+                                        |             ^
+                                        v             |
+                    +-------------------+----+        |
+                    | offer/answer/candidate +---------
+                    +------------------------+
 ```
 
 ## Message Flow Example (Beyond 'auth')
@@ -279,6 +295,10 @@ client-to-client messages is described in the
      |<------------------------------|
      |      candidate (n times)      |
      |<----------------------------->|
+     |            handover           |
+     |------------------------------>|
+     |            handover           |
+     |<------------------------------|
      |             close             |
      |<----------------------------->|
      |                               |
@@ -353,6 +373,33 @@ list/an array containing one or more dictionaries/objects. These
 dictionaries/objects SHALL contain the above mentioned fields value 
 types. It shall continue by adding the value of each item in the list 
 as a remote candidate to its WebRTC `RTCPeerConnection` instance.
+
+The message SHALL be NaCl public-key encrypted by the client's 
+session key pair and the other client's session key pair.
+
+## 'handover' Message
+
+Both clients SHALL send this message once the wrapped data channel's 
+state for the handed over signalling is `open` on the signalling channel that has been established over the SaltyRTC server. The message SHALL NOT ever be sent over an already handed over signalling channel.
+
+A client who sends a 'handover' message SHALL NOT include any 
+additional fields. After this message, the client MUST:
+
+* Transfer the overflow number and sequence number for outgoing 
+  signalling messages destined at the other client to the new 
+  signalling channel (based on the wrapped data channel), and
+* Send further signalling messages over the new signalling channel 
+  only.
+
+After a client has received a 'handover' message, it SHALL:
+
+* Transfer the overflow number and sequence number for incoming 
+  messages of the other client to the new signalling channel (based on 
+  the wrapped data channel),
+* Receive incoming signalling messages over the new signalling channel 
+  only, and
+* In case it receives further signalling messages over the old 
+  signalling channel, treat this incident as a protocol error.
 
 The message SHALL be NaCl public-key encrypted by the client's 
 session key pair and the other client's session key pair.
