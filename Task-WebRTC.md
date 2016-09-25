@@ -243,6 +243,8 @@ channel), the following changes MUST be applied:
 * Each data channel instance SHALL have its own cookie, overflow 
   number and sequence number, for incoming messages.
 * Source and destination addresses SHALL NOT processed or validated.
+* Overflow number and sequence number SHALL NOT be validated to ensure 
+  unordered and unreliable wrapped data channels can function properly.
 * A client MUST check that the data channel id field matches the data 
   channel's id the message has been received on.
 * A signalling channel that is being handed over SHALL continue using 
