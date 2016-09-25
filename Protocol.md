@@ -312,7 +312,7 @@ peer does the following:
   it MUST increase the combined sequence number of the destination 
   peer by `1` and check that is has not reset to `0`. Implementations 
   that use the combined sequence number SHALL ignore the following 
-  three procedures.
+  two procedures.
 * Increment the sequence number of the destination peer by `1`. In 
   case that it overflows (and resets to `0`), the overflow number of 
   the destination peer MUST be increased by `1` as well, and
