@@ -224,7 +224,7 @@ over wrapped data channels (such as the handed over signalling
 channel), the following changes MUST be applied:
 
 * Each data channel instance SHALL have its own cookie, overflow 
-  number and sequence number, for outgoing messages.
+  number and sequence number for outgoing messages.
 * Source and destination addresses SHALL NOT be set, instead
 * The data channel id MUST be set to the id of the data channel the 
   message will be sent on.
@@ -241,7 +241,7 @@ over wrapped data channels (such as the handed over signalling
 channel), the following changes MUST be applied:
 
 * Each data channel instance SHALL have its own cookie, overflow 
-  number and sequence number, for incoming messages.
+  number and sequence number for incoming messages.
 * Source and destination addresses SHALL NOT processed or validated.
 * Overflow number and sequence number SHALL NOT be validated to ensure 
   unordered and unreliable wrapped data channels can function properly.

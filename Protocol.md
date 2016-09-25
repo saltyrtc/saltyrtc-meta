@@ -213,8 +213,10 @@ following fields:
 Cookie: 16 byte
 
 This field contains 16 cryptographically secure random bytes. For 
-SaltyRTC clients, the cookie MUST remain the same during the 
-connection to the signalling path. However, SaltyRTC servers MUST 
+SaltyRTC clients, the cookie SHALL be different for each new 
+communication partner on the signalling path. Precisely, SaltyRTC 
+clients generate a cookie for communication with the server and for 
+each other client they communicate with. SaltyRTC servers MUST 
 generate and use a random cookie for each client.
 
 Source: 1 byte
@@ -269,11 +271,20 @@ wss://example.com/debc3a6c9a630f27eae6bc3fd962925bdeb63844c09103f609bf7082bc3836
 A peer that wants to send a signalling message needs to go through the 
 process of creating the *nonce* part of the message first.
 
-In case this is the first message sent on a newly established 
-client-to-server connection, a random cryptographically secure cookie 
-MUST be generated. In case the other peer has already sent a message, 
-this cookie MUST be different to the cookie the other peer has used in 
-its first message.
+If the server announced a new initiator or responder with the same 
+address as a previous client OR this is the first message to the 
+destination peer in general:
+
+* A server SHALL generate a new cryptographically secure random cookie 
+  to be used for the client until the connection has been severed.
+* A client SHALL also generate a new cryptographically secure random 
+  cookie to be used for the other peer which is valid for servers 
+  until the connection has been closed. For other clients, this cookie 
+  is valid until the server announces a new initiator or responder 
+  with the same address or until the connection to the server has been 
+  closed.
+
+The cookie SHALL be set to the previously generated cookie.
 
 Set the source address:
 
@@ -660,10 +671,10 @@ path, the server MUST send this message to all currently authenticated
 responders on the same path. No additional field needs to be set.
 
 A responder who receives a 'new-initiator' message MUST proceed with 
-deleting all currently cached information about the previous initiator 
-(such as cached messages, cookie and sequence number(s)) and continue 
-by sending a 'token' or 'key' client-to-client message described in 
-the *Client-to-Client Messages* section.
+deleting all currently cached information about and for the previous 
+initiator (such as cookies and the sequence numbers) and continue by 
+sending a 'token' or 'key' client-to-client message described in the 
+*Client-to-Client Messages* section.
 
 The message SHALL be NaCl public-key encrypted by the server's session 
 key pair and the responder's permanent key pair.
@@ -706,8 +717,9 @@ set its value to the responder's identity the initiator wants to drop.
 In addition, it MAY include the *reason* field which contains an 
 optional close code the server SHALL close the connection to the 
 responder with. Before the message is being sent, the initiator SHALL 
-delete all currently cached information about that responder (such as 
-cached messages, cookie and sequence number(s)).
+delete all currently cached information (such as cookies and sequence 
+numbers) about and for the previous responder that used the same 
+address.
 
 Upon receiving a 'drop-responder' message, the server MUST validate 
 that the messages has been received from an authenticated initiator. 
@@ -837,9 +849,9 @@ keys of that path and let the initiator generate a new token.
 
 To mitigate brute-force attacks, the initiator SHALL introduce a 
 timeout of at least one second between handshake attempts. 
-Furthermore, the initiator SHALL delete all cached information about a 
-responder (such as cached messages, cookie and sequence number(s)) in 
-case a responder fails to authenticate itself towards the initiator.
+Furthermore, the initiator SHALL delete all cached information about 
+and for a responder (such as cookies and sequence numbers) in case a 
+responder fails to authenticate itself towards the initiator.
 
 ## Message Flow
 
@@ -989,17 +1001,17 @@ connection between the clients over the server and to the server.
 A client who sends a 'close' message MUST set the *reason* field to a 
 valid close code (as enumerated in *Close Code Enumeration*). `1001` 
 SHALL be used for normal close cases. Once the message has been sent, 
-the client SHALL remove all cached data (such as messages, cookies and 
-sequence number(s)) of the other client. The client SHALL also 
-terminate the connection to the server with a close code of `1001` 
-(*Going Away*).
+the client SHALL remove all cached data (such as cookies and sequence 
+numbers) of and for the other client. The client SHALL also terminate 
+the connection to the server with a close code of `1001` (*Going 
+Away*).
 
 A receiving client SHALL validate that the *reason* field contains a 
 valid close code (as enumerated in *Close Code Enumeration*). The 
-client SHALL remove all cached data (such as messages, cookies and 
-sequence number(s)) of the other client. The client SHALL also 
-terminate the connection to the server with a close code of `1001` 
-(*Going Away*).
+client SHALL remove all cached data (such as cookies and sequence 
+numbers) of and for the other client. The client SHALL also terminate 
+the connection to the server with a close code of `1001` (*Going 
+Away*).
 
 The message SHALL be NaCl public-key encrypted by the client's 
 session key pair and the other client's session key pair.
@@ -1015,7 +1027,8 @@ session key pair and the other client's session key pair.
 
 To choose a signalling task, client implementations MUST provide an 
 API for the user to choose a list of signalling tasks/solutions (in 
-order of preference) that shall be negotiated between the clients. At least one signalling task MUST be selected by the user.
+order of preference) that shall be negotiated between the clients. At 
+least one signalling task MUST be selected by the user.
 
 As soon as the authentication procedure between initiator and 
 responder has been completed sucessfully, the specification of the 
@@ -1053,8 +1066,6 @@ The following close codes are available for 'drop-responder' messages:
 - 3005: Initiator Could Not Decrypt
 - 3006: No Shared Task Found
 
----
-
 # Security Mechanisms
 
 ## Cookie
@@ -1070,7 +1081,8 @@ with one another must choose different cookies.
 
 ## Overflow Number and Sequence Number
 
-Both the overflow number and the sequence number ensure that a nonce
+Both the overflow number and the sequence number, in combination with 
+the cookie, source and destination address, ensure that a nonce 
 remains a *number used once*. Furthermore, in conjunction with the
 cookie, they are being used to mitigate replay attacks.
 
