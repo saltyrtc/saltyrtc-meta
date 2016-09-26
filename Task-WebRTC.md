@@ -76,10 +76,8 @@ following checks:
 
 * The *exclude* field MUST contain an `Array` of WebRTC data channel 
   IDs (non-negative integers) that SHALL not be used for the 
-  signalling channel. The client MUST update its internal list of 
-  excluded data channel ids by new values of the other client's 
-  *exclude* `Array`. The resulting list MUST be stored sorted in 
-  ascending order.
+  signalling channel. The client SHALL store this list for usage 
+  during handover.
 * The *max_size* field MUST contain either `0` or a positive integer. 
   If one client's value is `0` but the other client's value is greater 
   than `0`, the larger of the two values SHALL be stored to be used 
@@ -146,9 +144,8 @@ signalling channel to a dedicated data channel:
    * *protocol* SHALL be set to the same subprotocol that has been 
      negotiated with the server,
    * *negotiated* MUST be set to `true`, and
-   * *id* SHALL be set to by counting upwards from `0` and using the 
-     first number that is NOT present in the internal list of excluded 
-     data channel ids (exchanged in the task's data).
+   * *id* SHALL be set to the lowest possible number, starting from 
+     `0`, that is not excluded by both clients as negotiated.
 2. The newly created `RTCDataChannel` instance shall be wrapped by 
    following the *Wrapped Data Channel* section.
 3. As soon as the data channel is *open*, the client SHALL send a 
