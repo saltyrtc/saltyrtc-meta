@@ -985,10 +985,10 @@ session key pair and the other client's session key pair.
   ],
   "task": "v1.ortc.tasks.saltyrtc.org",  // ONLY towards a responder
   "data": {
-     "simple-ortc-v1": {
+     "v1.ortc.tasks.saltyrtc.org": {
         ...
       },
-      "simple-webrtc-v1": {
+      "v1.webrtc.tasks.saltyrtc.org": {
         ...
       }
   }
