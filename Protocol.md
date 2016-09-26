@@ -501,17 +501,17 @@ a close code of `3001` (*Protocol Error*) unless otherwise stated.
 
 ```
         +--------------+     +-------------+
-    --->+ server|hello +--+->+ client|auth |
+    --->+ server-hello +--+->+ client-auth |
         +------+-------+  |  +------+------+
                |          |         |
                v          |         v
         +------+-------+  |  +------+------+
-        | client|hello +--+  | server|auth |
+        | client-hello +--+  | server-auth |
         +--------------+     +------+------+
                                     |
                                     v
         +---------------------------+-------------+
-        | new|responder/drop|responder/send|error |
+        | new-responder/drop-responder/send-error |
         +-------+-------------------------+-------+
                 |                         ^
                 +-------------------------+
