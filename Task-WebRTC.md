@@ -76,11 +76,9 @@ following checks:
 
 * The *exclude* field MUST contain an `Array` of WebRTC data channel 
   IDs (non-negative integers) that SHALL not be used for the 
-  signalling channel. The client MUST update its internal list of 
-  excluded data channel ids by new values of the other client's 
-  *exclude* `Array`. The resulting list MUST be stored sorted in 
-  ascending order.
-* The *max_packet_size* field MUST contain either `0` or a positive integer.
+  signalling channel. The client SHALL store this list for usage 
+  during handover.
+* The *max_packet_size* field MUST contain either `0` or a positive integer. 
   If one client's value is `0` but the other client's value is greater 
   than `0`, the larger of the two values SHALL be stored to be used 
   for data channel communication. Otherwise, the minimum of both 
@@ -130,7 +128,7 @@ sequence number.
 Due to a bug in older Chromium-based implementations, the 
 implementation MUST check that a newly created data channel does not 
 use the same data channel id of another data channel instance that is 
-currently *open*.
+currently `open`.
 
 # Signalling Channel Handover
 
@@ -146,12 +144,11 @@ signalling channel to a dedicated data channel:
    * *protocol* SHALL be set to the same subprotocol that has been 
      negotiated with the server,
    * *negotiated* MUST be set to `true`, and
-   * *id* SHALL be set to by counting upwards from `0` and using the 
-     first number that is NOT present in the internal list of excluded 
-     data channel ids (exchanged in the task's data).
+   * *id* SHALL be set to the lowest possible number, starting from 
+     `0`, that is not excluded by both clients as negotiated.
 2. The newly created `RTCDataChannel` instance shall be wrapped by 
    following the *Wrapped Data Channel* section.
-3. As soon as the data channel is *open*, the client SHALL send a 
+3. As soon as the data channel is `open`, the client SHALL send a 
    'handover' message to the other client. After this message, the 
    client SHALL NOT send any messages on the original signalling 
    channel. The sequence number and overflow number for outgoing 
@@ -228,9 +225,6 @@ channel), the following changes MUST be applied:
 * Source and destination addresses SHALL NOT be set, instead
 * The data channel id MUST be set to the id of the data channel the 
   message will be sent on.
-* A signalling channel that is being handed over SHALL continue using 
-  the overflow number and sequence number counters from the WebSocket-
-  based signalling implementation.
 
 # Receiving a Wrapped Data Channel Message
 
@@ -242,14 +236,12 @@ channel), the following changes MUST be applied:
 
 * Each data channel instance SHALL have its own cookie, overflow 
   number and sequence number for incoming messages.
-* Source and destination addresses SHALL NOT processed or validated.
+* Source and destination addresses are not present in the wrapped data 
+  channel's nonce/header.
 * Overflow number and sequence number SHALL NOT be validated to ensure 
   unordered and unreliable wrapped data channels can function properly.
 * A client MUST check that the data channel id field matches the data 
   channel's id the message has been received on.
-* A signalling channel that is being handed over SHALL continue using 
-  the overflow number and sequence number counters from the WebSocket-
-  based signalling implementation.
 
 # Client-to-Client Messages
 
@@ -296,6 +288,8 @@ client-to-client messages is described in the
      |------------------------------>|
      |            handover           |
      |<------------------------------|
+     |      candidate (m times)      |
+     |<----------------------------->|
      |             close             |
      |<----------------------------->|
      |                               |
@@ -397,24 +391,28 @@ session key pair and the other client's session key pair.
 ```
 {
   "type": "candidate",
-  "candidate": {
+  "candidate": [{
     "candidate": "...",
     "sdpMid": "data",
     "sdpMLineIndex": 0
-  }
+  }], [{
+    "candidate": "...",
+    "sdpMid": "data",
+    "sdpMLineIndex": 0
+  }], ...
 }
 ```
 
 ## 'handover' Message
 
-Both clients SHALL send this message once the wrapped data channel's 
-state for the handed over signalling is `open` on the signalling 
-channel that has been established over the SaltyRTC server. The 
-message SHALL NOT ever be sent over an already handed over signalling 
-channel.
+Both clients SHALL send this message once the wrapped data channel 
+dedicated for the signalling is `open`. However, the message MUST be 
+sent on the signalling channel that has been established over the 
+SaltyRTC server. The message SHALL NOT be sent over an already handed 
+over signalling channel.
 
 A client who sends a 'handover' message SHALL NOT include any 
-additional fields. After this message, the client MUST:
+additional fields. After sending this message, the client MUST:
 
 * Transfer the overflow number and sequence number for outgoing 
   signalling messages destined at the other client to the new 
