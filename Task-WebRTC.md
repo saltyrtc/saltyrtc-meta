@@ -128,7 +128,7 @@ sequence number.
 Due to a bug in older Chromium-based implementations, the 
 implementation MUST check that a newly created data channel does not 
 use the same data channel id of another data channel instance that is 
-currently *open*.
+currently `open`.
 
 # Signalling Channel Handover
 
@@ -148,7 +148,7 @@ signalling channel to a dedicated data channel:
      `0`, that is not excluded by both clients as negotiated.
 2. The newly created `RTCDataChannel` instance shall be wrapped by 
    following the *Wrapped Data Channel* section.
-3. As soon as the data channel is *open*, the client SHALL send a 
+3. As soon as the data channel is `open`, the client SHALL send a 
    'handover' message to the other client. After this message, the 
    client SHALL NOT send any messages on the original signalling 
    channel. The sequence number and overflow number for outgoing 
@@ -405,14 +405,14 @@ session key pair and the other client's session key pair.
 
 ## 'handover' Message
 
-Both clients SHALL send this message once the wrapped data channel's 
-state for the handed over signalling is `open` on the signalling 
-channel that has been established over the SaltyRTC server. The 
-message SHALL NOT ever be sent over an already handed over signalling 
-channel.
+Both clients SHALL send this message once the wrapped data channel 
+dedicated for the signalling is `open`. However, the message MUST be 
+sent on the signalling channel that has been established over the 
+SaltyRTC server. The message SHALL NOT be sent over an already handed 
+over signalling channel.
 
 A client who sends a 'handover' message SHALL NOT include any 
-additional fields. After this message, the client MUST:
+additional fields. After sending this message, the client MUST:
 
 * Transfer the overflow number and sequence number for outgoing 
   signalling messages destined at the other client to the new 
