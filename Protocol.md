@@ -476,7 +476,7 @@ For ease of reading, binary data of the examples is represented as a
 hex-encoded string. However, binary data SHALL NOT be hex-encoded in
 implementations. Unless otherwise noted, all non-binary strings MUST
 be interpreted as UTF-8 encoded strings. Furthermore, field values
-SHALL NOT be Nil. The *type* field is REQUIRED for all messages. 
+SHALL NOT be `Nil`. The *type* field is REQUIRED for all messages. 
 Other required fields will be described in the messages' section. In 
 case a field is missing or contains invalid data, the incident MUST be 
 treated as a protocol error. This also applies to unexpected messages 
@@ -546,17 +546,17 @@ the 'server-hello' message has been received (initiator) the client
 MUST send this message to the server. The client MUST set the 
 *your_cookie* field to the cookie the server has used in the nonce of 
 the 'server-hello' message. It SHALL also set the *subprotocols* field 
-to the exact same Array of subprotocol strings it has provided to 
+to the exact same `Array` of subprotocol strings it has provided to 
 the WebSocket client implementation for subprotocol negotiation.
 
 When the server receives a 'client-hello' message, it MUST check that 
 the cookie provided in the *your_cookie* field contains the cookie the 
 server has used in its previous messages to that client. The server 
-SHALL go through both the client's Array of subprotocols provided in 
-the *subprotocols* field and the server's Array of subprotocols it has 
+SHALL go through both the client's `Array` of subprotocols provided in 
+the *subprotocols* field and the server's `Array` of subprotocols it has 
 provided to the WebSocket server implementation for subprotocol 
 negotiation. The first common subprotocol found that is present in 
-both Arrays MUST be equal to the initially negotiated subprotocol.
+both `Array`s MUST be equal to the initially negotiated subprotocol.
 
 The message SHALL be NaCl public-key encrypted by the server's session 
 key pair (public key sent in 'server-hello') and the client's 
@@ -605,7 +605,7 @@ following fields:
   public permanent key. For encryption, the message's nonce SHALL be 
   used.
 * ONLY in case the client is an initiator, the *responders* field 
-  SHALL be set containing an Array of the active responder 
+  SHALL be set containing an `Array` of the active responder 
   addresses on that path. An active responder is a responder that has 
   already completed the authentication process and is still connected 
   to the same path as the initiator.
@@ -630,11 +630,11 @@ it SHALL log a warning. Moreover, the client MUST do the following
 checks depending on its role:
 
 * In case the client is the initiator, it SHALL check that the 
-  *responders* field is set and contains an Array of responder 
+  *responders* field is set and contains an `Array` of responder 
   identities. The responder identities MUST be validated and SHALL 
   neither contain addresses outside the range `0x02.0xff` nor SHALL an 
-  address be repeated in the Array. An empty Array SHALL be 
-  considered valid. However, Nil SHALL NOT be considered a 
+  address be repeated in the `Array`. An empty `Array` SHALL be 
+  considered valid. However, `Nil` SHALL NOT be considered a 
   valid value of that field. It SHOULD store the responder's 
   identities in its internal list of responders. Additionally, the 
   initiator SHALL drop new responders that have not sent any messages 
@@ -798,7 +798,7 @@ that the content is binary data. For ease of reading, binary data of
 the examples is represented as a hex-encoded string. However, binary 
 data SHALL NOT be hex-encoded in implementations. Unless otherwise 
 noted, all non-binary strings MUST be interpreted as UTF-8 encoded 
-strings. Furthermore, field values SHALL NOT be Nil. The *type* 
+strings. Furthermore, field values SHALL NOT be `Nil`. The *type* 
 field is REQUIRED for all messages. Other required fields will be 
 described in the messages' section. In case a field is missing or 
 contains invalid data, the incident MUST be treated as a protocol 
@@ -931,15 +931,15 @@ The client MUST set the following fields:
 
 * Set the *your_cookie* field to the cookie the other client has used 
   in the nonce of its previous message(s).
-* A responder MUST set the *tasks* field to an Array of SaltyRTC
+* A responder MUST set the *tasks* field to an `Array` of SaltyRTC
   task protocol names the responder offers to utilise.
 * An initiator MUST include the *task* field and set it to the name of
-  the SaltyRTC task protocol it has chosen from the Array the responder
+  the SaltyRTC task protocol it has chosen from the `Array` the responder
   provided.
-* Both clients SHALL set the *data* field to a Map 
+* Both clients SHALL set the *data* field to a `Map` 
   containing the selected tasks' names as keys and another 
-  Map or Nil as the task's value. The content 
-  of these Maps depends on the task and SHALL be 
+  `Map` or `Nil` as the task's value. The content 
+  of these `Map`s depends on the task and SHALL be 
   specified by the task's protocol specification. For each task, there 
   MUST be a field in the *data* field.
 
@@ -949,10 +949,10 @@ following fields:
 * The cookie provided in the *your_cookie* field SHALL contain the 
   cookie it has used in its previous messages to the other client.
 * An initiator SHALL validate that the *tasks* field contains
-  an Array with at least one element. Each element in the Array SHALL 
+  an `Array` with at least one element. Each element in the `Array` SHALL 
   be a string. The initiator SHALL continue by comparing the provided 
-  tasks to its own Array of available tasks and MUST choose the first 
-  common task from both Arrays. In case no common task could be found, 
+  tasks to its own `Array` of available tasks and MUST choose the first 
+  common task from both `Arrays`. In case no common task could be found, 
   the initiator SHALL send a 'close' message to the responder 
   containing the close code `3006` (*No Shared Task Found*) as reason 
   and raise an error event indicating that no common signalling task 
@@ -960,7 +960,7 @@ following fields:
 * A responder SHALL validate that the *task* field is present and
   contains one of the task it has previously offered to the initiator.
 * Both initiator an responder SHALL verify that the *data* field 
-  contains a Map and SHALL look up the chosen task's 
+  contains a `Map` and SHALL look up the chosen task's 
   data value. The value MUST be handed over to the corresponding task 
   after processing this message is complete.
 
