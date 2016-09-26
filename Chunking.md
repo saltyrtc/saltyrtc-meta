@@ -91,9 +91,9 @@ chunks:
 
 ## Unchunking
 
-Implementations MUST support unchunking of chunks that arrive in arbitrary
-order. This is usually done by keeping track of messages and the corresponding
-chunks.
+Implementations MUST support unchunking of chunks that arrive in 
+arbitrary order. This is usually done by keeping track of messages and 
+the corresponding chunks.
 
 In order to prevent memory leaks when chunks are lost in transmission,
 implementations SHOULD provide a way to clean up incomplete messages.
