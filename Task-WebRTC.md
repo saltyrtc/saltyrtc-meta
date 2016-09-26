@@ -22,6 +22,17 @@ All terms from the
 in this document. Furthermore, this document will reference API parts 
 of the [WebRTC specification](https://www.w3.org/TR/webrtc/).
 
+## Message Chunking
+
+The 
+[SaltyRTC chunking specification](https://github.com/saltyrtc/saltyrtc-meta/blob/master/Chunking.md) 
+makes it possible to split a message into chunks and reassemble the 
+message on the receiver's side while allowing any combination of 
+ordered/unordered and reliable/unreliable transport channel 
+underneath. Depending on the WebRTC data channel implementation, 
+message chunking may or may not be applied to all wrapped data 
+channels.
+
 ## Wrapped Data Channel
 
 This protocol adds another security layer for WebRTC data channels as 
@@ -93,28 +104,23 @@ To allow both the user's application and the handed over signalling
 channel to easily utilise this security layer, it is RECOMMENDED to 
 provide a wrapper/proxy to the `RTCDataChannel` interface. Underneath, 
 the wrapped data channel MUST use NaCl for encryption/decryption and 
-the `chunked-dc` message chunking implementation (if necessary) in the 
-following way:
+chunk messages as specified in the 
+[SaltyRTC chunking specification](https://github.com/saltyrtc/saltyrtc-meta/blob/master/Chunking.md) 
+if necessary.
 
-* Outgoing messages MUST be processed and encrypted by following the 
-  *Sending a Wrapped Data Channel Message* section. The encrypted 
-  messages SHALL be split to chunks using `chunked-dc` message 
-  chunking ONLY in case the negotiated *max_packet_size* parameter 
-  from the task's data is greater than `0`; in that case the 
-  `chunked-dc` implementation SHALL use the *max_packet_size* as the 
-  maximum chunk size. Otherwise, the encrypted message SHALL be sent 
-  as is.
-* Incoming messages SHALL be stitched together using `chunked-dc` 
-  message chunking if required (see previous bullet item for details). 
-  Complete messages MUST be processed and decrypted by following the 
-  *Receiving a Wrapped Data Channel Message* section. The resulting 
-  complete message SHALL raise a corresponding message event.
+Outgoing messages MUST be processed and encrypted by following the 
+*Sending a Wrapped Data Channel Message* section. The encrypted 
+messages SHALL be split into chunks using SaltyRTC message chunking 
+ONLY in case the negotiated *max_packet_size* parameter from the 
+task's data is greater than `0`; in that case the message chunking 
+implementation SHALL use the *max_packet_size* as the maximum chunk 
+size. Otherwise, the encrypted message SHALL be sent as is.
 
-The 
-[`chunked-dc` message chunking format](https://github.com/saltyrtc/chunked-dc-js#format) 
-allows the use of any combination of ordered/unordered and 
-reliable/unreliable data channels while guaranteeing complete messages 
-in any case.
+Incoming messages SHALL be stitched together using SaltyRTC message 
+chunking if required (see the previous paragraph for details). 
+Complete messages MUST be processed and decrypted by following the 
+*Receiving a Wrapped Data Channel Message* section. The resulting 
+complete message SHALL raise a corresponding message event.
 
 As described in the *Sending a Wrapped Data Channel Message* and the 
 *Receiving a Wrapped Data Channel Message* section, each new wrapped 
