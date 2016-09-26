@@ -1,18 +1,31 @@
 # SaltyRTC
 
-SaltyRTC is an **end-to-end encrypted signalling protocol** for WebRTC and ORTC. It also provides another **security layer for WebRTC/ORTC Data Channels**.
+SaltyRTC is an **end-to-end encrypted signalling protocol**. It offers 
+to freely choose from a range of signalling tasks, such as setting up a 
+**WebRTC** or **ORTC** peer-to-peer connection. However, SaltyRTC is 
+completely open to new and custom signalling tasks for everything 
+feasible.
 
-This repository contains various organisational information and a [protocol description](Protocol.md) of *SaltyRTC*.
+In this repository, you can find...
+
+* The [SaltyRTC Signalling Protocol](Protocol.md).
+* The [SaltyRTC WebRTC Task Protocol](Task-WebRTC.md) to set up a 
+  secure WebRTC peer-to-peer connection by using SaltyRTC's end-to-end 
+  encryption techniques.
+* The [SaltyRTC Chunking Specification](Chunking.md) used by SaltyRTC's 
+  WebRTC task. However, the specification can also be used as a generic 
+  message chunking solution.
 
 ## Implementations
 
-### Naming
+If you have implemented a SaltyRTC client or server :+1: and you would like to add it to this list, we will gladly accept a pull request from you.
 
-* Client repository names start with: ``saltyrtc-client-``
-* Server repository names start with: ``saltyrtc-server-``
+**Clients**
 
-### Code Style
+* [saltyrtc-client-js](https://github.com/saltyrtc/saltyrtc-client-js)
+* [saltyrtc-client-java](https://github.com/saltyrtc/saltyrtc-client-java)
 
-* Use comments, describe long code blocks with a few words
-* Document your code
-* Write tests
+**Servers**
+
+* [saltyrtc-server-python](https://github.com/saltyrtc/saltyrtc-server-python)
+
