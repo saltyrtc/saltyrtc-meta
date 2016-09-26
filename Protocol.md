@@ -1083,6 +1083,12 @@ negotiated task takes over.
 
 # Message Flow Example
 
+This example provides the message flow of an initiator and a responder 
+that connect to the same signalling path. The responder starts 
+communicating with the initiator once it has completed the 
+authentication towards the server. Then, both clients proceed with the 
+client-to-client handshake.
+
 ```
     Initiator                     Server                      Responder
      |                               |                               :
