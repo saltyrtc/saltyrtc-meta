@@ -47,6 +47,13 @@ WebRTC or ORTC peer-to-peer connection to a responder.
 The responder is a SaltyRTC compliant client who wants to establish a
 WebRTC or ORTC peer-to-peer connection to an initiator.
 
+## Task
+
+A SaltyRTC task is a protocol extension to this protocol that will be 
+negotiated during the client-to-client authentication phase. Once a 
+task has been negotiated and the authentication is complete, the 
+task protocol defines further procedures, messages, etc.
+
 ## Signalling Path
 
 A signalling path is a simple ASCII string and consists of the hex
