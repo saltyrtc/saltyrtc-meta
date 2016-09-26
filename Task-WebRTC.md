@@ -276,7 +276,9 @@ client-to-client messages is described in the
                                             v             |
                         +-------------------+----+        |
                         | offer/answer/candidate +---------
-                        +------------------------+
+                        +----+--------------+----+
+                             |              ^
+                             +--------------+
 ```
 
 ## Message Flow Example (Beyond 'auth')
