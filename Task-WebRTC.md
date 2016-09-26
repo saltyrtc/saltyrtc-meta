@@ -225,9 +225,6 @@ channel), the following changes MUST be applied:
 * Source and destination addresses SHALL NOT be set, instead
 * The data channel id MUST be set to the id of the data channel the 
   message will be sent on.
-* A signalling channel that is being handed over SHALL continue using 
-  the overflow number and sequence number counters from the WebSocket-
-  based signalling implementation.
 
 # Receiving a Wrapped Data Channel Message
 
@@ -245,9 +242,6 @@ channel), the following changes MUST be applied:
   unordered and unreliable wrapped data channels can function properly.
 * A client MUST check that the data channel id field matches the data 
   channel's id the message has been received on.
-* A signalling channel that is being handed over SHALL continue using 
-  the overflow number and sequence number counters from the WebSocket-
-  based signalling implementation.
 
 # Client-to-Client Messages
 
