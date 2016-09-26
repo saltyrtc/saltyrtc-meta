@@ -656,8 +656,9 @@ checks depending on its role:
   considered valid. However, `Nil` SHALL NOT be considered a 
   valid value of that field. It SHOULD store the responder's 
   identities in its internal list of responders. Additionally, the 
-  initiator SHALL drop new responders that have not sent any messages 
-  to the initiator after 60 seconds.
+  initiator MUST drop inactive responders. To achieve that, the 
+  initiator MAY drop responders that have not sent any messages to the 
+  initiator after 60 seconds.
 * In case the client is the responder, it SHALL check that the 
   *initiator_connected* field contains a boolean value. In case the 
   field's value is `true`, the responder MUST proceed with sending a 
