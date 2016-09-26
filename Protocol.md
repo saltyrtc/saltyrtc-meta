@@ -931,9 +931,8 @@ The client MUST set the following fields:
 
 * Set the *your_cookie* field to the cookie the other client has used 
   in the nonce of its previous message(s).
-* A responder MUST set the *tasks* field to a list/an array of 
-  SaltyRTC task protocol names (as strings) the responder offers to
-  utilise.
+* A responder MUST set the *tasks* field to a list/an array of SaltyRTC
+  task protocol names the responder offers to utilise.
 * An initiator MUST include the *task* field and set it to the name of
   the SaltyRTC task protocol it has chosen from the list the responder
   provided.
