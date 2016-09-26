@@ -835,10 +835,13 @@ Once the authentication process of the two clients has been completed
 (after both clients have sent each other a valid 'auth' message), the 
 clients MAY choose to *trust* each other by storing each other's 
 public key and the path securely (note, that this *trusting procedure* 
-must be handled by the application). The API of the clients MUST be 
-able to handle trusted public keys for a path. If a trusted key exists 
-on a path, the initiator SHALL omit generating a token and both 
-clients SHALL skip the 'token' message during the handshake.  
+must be handled by the application).
+
+The API of the clients MUST be able to handle trusted public keys. If a
+trusted key is passed to the client, the initiator SHALL omit generating
+a token and both clients SHALL skip the 'token' message during the
+handshake.
+
 If one of the clients is out of sync to the other (one has a trusted 
 public key but the other has not), the initiator will receive a 
 different message (either 'token' or 'key') than expected which it 
