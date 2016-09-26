@@ -537,11 +537,6 @@ a close code of `3001` (*Protocol Error*) unless otherwise stated.
                                +----------+
 ```
 
-## Message Flow
-
-TODO
-TODO: Visualise where which key pairs are used
-
 ## 'server-hello' Message
 
 This message MUST be sent by the server after a client connected to 
@@ -912,11 +907,6 @@ Furthermore, the initiator SHALL delete all cached information about
 and for a responder (such as cookies and sequence numbers) in case a 
 responder fails to authenticate itself towards the initiator.
 
-## Message Flow
-
-TODO
-TODO: Visualise where which key pairs are used
-
 ## 'token' Message
 
 Once a responder has authenticated itself towards the server and an 
@@ -1090,6 +1080,40 @@ least one signalling task MUST be selected by the user.
 As soon as the authentication procedure between initiator and 
 responder has been completed sucessfully, the specification of the 
 negotiated task takes over.
+
+# Message Flow Example
+
+```
+    Initiator                     Server                      Responder
+     |                               |                               :
+     |   wss://saltytc.org/01ff...   |                               :
+     |------------------------------>|                               :
+     |         server-hello          |                               :
+     |<------------------------------|                               |
+     |          client-auth          |   wss://saltytc.org/01ff...   |
+     |------------------------------>|<------------------------------|
+     |          server-auth          |         server-hello          |
+     |<------------------------------|------------------------------>|
+     |                               |         client-hello          |
+     |                               |<------------------------------|
+     |                               |          client-auth          |
+     |                               |<------------------------------|
+     |                               |          server-auth          |
+     |                               |------------------------------>|
+     |                               |             token             |
+     |             token             |<------------------------------|
+     |<------------------------------|              key              |
+     |              key              |<------------------------------|
+     |<------------------------------|                               |
+     |              key              |                               |
+     |------------------------------>|              key              |
+     |                               |------------------------------>|
+     |                               |             auth              |
+     |             auth              |<------------------------------|
+     |<------------------------------|                               :
+     :                               :                               :
+     :                               :                               :
+```
 
 # Errors
 
