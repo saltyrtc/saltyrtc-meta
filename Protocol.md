@@ -497,6 +497,26 @@ that deviate from the message flow.
 In case that any check fails, the peer MUST close the connection with 
 a close code of `3001` (*Protocol Error*) unless otherwise stated.
 
+## Message States (towards/from initiator)
+
+```
+        +--------------+     +-------------+
+    --->+ server|hello +--+->+ client|auth |
+        +------+-------+  |  +------+------+
+               |          |         |
+               v          |         v
+        +------+-------+  |  +------+------+
+        | client|hello +--+  | server|auth |
+        +--------------+     +------+------+
+                                    |
+                                    v
+        +---------------------------+-------------+
+        | new|responder/drop|responder/send|error |
+        +-------+-------------------------+-------+
+                |                         ^
+                +-------------------------+
+```
+
 ## Message Flow
 
 TODO
