@@ -59,6 +59,18 @@ MessagePack is an object serialisation format very similar to JSON but
 uses a binary format. The MessagePack specification can be found 
 [here](https://github.com/msgpack/msgpack/blob/0b8f5ac67cdd130f4d4d4fe6afb839b989fdb86a/spec.md).
 
+## `Object`, `Array`, `Map` and `Nil`
+
+As we are using MessagePack for data serialisation, the terms 
+`Object`, `Array`, `Map` and `Nil` represent the terms from the 
+[MessagePack specification](https://github.com/msgpack/msgpack/blob/master/spec.md):
+
+* `Object` represents a value of any type.
+* `Array` represents a sequence of objects.
+* `Map` represents a key-value pair of objects
+* `Nil` represents `nil` (`null` or `None` in other programming 
+  languages)
+
 ## NaCl Key Pairs
 
 NaCl (pronounced *salt*) is the Networking and Cryptography library 
