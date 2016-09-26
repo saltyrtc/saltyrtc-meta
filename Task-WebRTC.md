@@ -60,13 +60,12 @@ MUST be validated and potentially stored.
 
 ## Outgoing
 
-The task's data SHALL be a dictionary/an object containing the 
-following items:
+The task's data SHALL be a `Map` containing the following items:
 
-* The *exclude* field MUST contain a list/an array of WebRTC data 
-  channel ids (non-negative integers) that SHALL not be used for the 
-  signalling channel. This list MUST be available to be set from user 
-  applications that use specific data channel ids.
+* The *exclude* field MUST contain an `Array` of WebRTC data channel 
+  ids (non-negative integers) that SHALL not be used for the 
+  signalling channel. This `Array` MUST be available to be set from 
+  user applications that use specific data channel ids.
 * The *max_size* field MUST be set to the value described by the 
   *Detecting the Maximum Message Size* section.
 
@@ -75,11 +74,12 @@ following items:
 A client who receives the task's data from the other peer MUST do the 
 following checks:
 
-* The *exclude* field MUST contain a list/an array of WebRTC data 
-  channel IDs (non-negative integers) that SHALL not be used for the 
+* The *exclude* field MUST contain an `Array` of WebRTC data channel 
+  IDs (non-negative integers) that SHALL not be used for the 
   signalling channel. The client MUST update its internal list of 
-  excluded data channel ids by new values of the other client's list. 
-  The resulting list MUST be stored sorted in ascending order.
+  excluded data channel ids by new values of the other client's 
+  *exclude* `Array`. The resulting list MUST be stored sorted in 
+  ascending order.
 * The *max_size* field MUST contain either `0` or a positive integer. 
   If one client's value is `0` but the other client's value is greater 
   than `0`, the larger of the two values SHALL be stored to be used 
@@ -140,8 +140,8 @@ to-peer connection setup is complete, the client SHALL hand over the
 signalling channel to a dedicated data channel:
 
 1. The client creates a new data channel on the `RTCPeerConnection` 
-   instance with the `RTCDataChannelInit` dictionary/object set 
-   containing only the following values:
+   instance with the `RTCDataChannelInit` object containing only the 
+   following values:
    * *ordered* SHALL be set to `true`,
    * *protocol* SHALL be set to the same subprotocol that has been 
      negotiated with the server,
@@ -304,10 +304,10 @@ client-to-client messages is described in the
 At any time, the initiator MAY send an 'offer' message to the 
 responder.
 
-The initiator MUST set the *offer* field to the dictionary/object of 
-its WebRTC `RTCPeerConnection`'s local description it has generated 
-with calling `createOffer` on the `RTCPeerConnection` instance. The 
-*offer* field SHALL be a dictionary/object and MUST contain:
+The initiator MUST set the *offer* field to the `Map` of its WebRTC 
+`RTCPeerConnection`'s local description it has generated with calling 
+`createOffer` on the `RTCPeerConnection` instance. The *offer* field 
+SHALL be a `Map` and MUST contain:
 
 * The *type* field containing a valid `RTCSdpType` in string 
   representation.
@@ -315,8 +315,8 @@ with calling `createOffer` on the `RTCPeerConnection` instance. The
   representation. If the *type* field is `rollback`, the field MAY be 
   omitted.
 
-The responder SHALL validate that the *offer* field is a dictionary/
-object containing the above mentioned fields and value types. It SHALL 
+The responder SHALL validate that the *offer* field is a `Map` 
+containing the above mentioned fields and value types. It SHALL 
 continue by setting the value of that field as the WebRTC 
 `RTCPeerConnection`'s remote description and creating an answer.
 
@@ -338,7 +338,7 @@ session key pair and the other client's session key pair.
 Once the responder has set the remote description on its WebRTC 
 `RTCPeerConnection` instance and generated an answer by calling 
 `createAnswer` on the instance, it SHALL send an 'answer' message. The 
-*answer* field SHALL be a dictionary/object and MUST contain:
+*answer* field SHALL be a `Map` and MUST contain:
 
 * The *type* field containing a valid `RTCSdpType` in string 
   representation.
@@ -346,8 +346,8 @@ Once the responder has set the remote description on its WebRTC
   representation. If the *type* field is `rollback`, the field MAY be 
   omitted.
   
-The initiator SHALL validate that the *answer* field is a dictionary/
-object containing the above mentioned fields and value types. It SHALL 
+The initiator SHALL validate that the *answer* field is a `Map` 
+containing the above mentioned fields and value types. It SHALL 
 continue by setting the value of that field as the WebRTC 
 `RTCPeerConnection`'s remote description.
 
@@ -370,24 +370,24 @@ Both clients MAY send ICE candidates at any time to each other.
 Clients SHOULD bundle available candidates.
 
 A client who sends an ICE candidate SHALL set the *candidate* field to 
-a list/an array of dictionaries/objects where each dictionary/object 
-SHALL contain the following fields:
+an `Array` of `Map`s where each `Map` SHALL contain the following 
+fields:
 
 * The *candidate* field SHALL contain an SDP `candidate-attribute` as 
   defined in the WebRTC specification in string representation.
 * The *sdpMid* field SHALL contain the *media stream identification* 
   as defined in the WebRTC specification in string representation or 
-  `null`.
+  `Nil`.
 * The *sdpMLineIndex* field SHALL contain the index of the media 
   description the candidate is associated with as described in the 
   WebRTC specification. It's value SHALL be either an unsigned integer 
-  (16 bits) or `null`.
+  (16 bits) or `Nil`.
 
-The receiving client SHALL validate that the *candidate* field is a 
-list/an array containing one or more dictionaries/objects. These 
-dictionaries/objects SHALL contain the above mentioned fields value 
-types. It shall continue by adding the value of each item in the list 
-as a remote candidate to its WebRTC `RTCPeerConnection` instance.
+The receiving client SHALL validate that the *candidate* field is an 
+`Array` containing one or more `Map`s. These `Map`s SHALL contain the 
+above mentioned fields value types. It shall continue by adding the 
+value of each item in the `Array` as a remote candidate to its WebRTC 
+`RTCPeerConnection` instance.
 
 The message SHALL be NaCl public-key encrypted by the client's 
 session key pair and the other client's session key pair.
