@@ -600,8 +600,8 @@ When the server receives a 'client-hello' message, it MUST check that
 the cookie provided in the *your_cookie* field contains the cookie the 
 server has used in its previous messages to that client. The server 
 SHALL go through both the client's `Array` of subprotocols provided in 
-the *subprotocols* field and the server's `Array` of subprotocols it has 
-provided to the WebSocket server implementation for subprotocol 
+the *subprotocols* field and the server's `Array` of subprotocols it 
+has provided to the WebSocket server implementation for subprotocol 
 negotiation. The first common subprotocol found that is present in 
 both `Array`s MUST be equal to the initially negotiated subprotocol.
 
@@ -679,8 +679,8 @@ checks depending on its role:
 * In case the client is the initiator, it SHALL check that the 
   *responders* field is set and contains an `Array` of responder 
   identities. The responder identities MUST be validated and SHALL 
-  neither contain addresses outside the range `0x02.0xff` nor SHALL an 
-  address be repeated in the `Array`. An empty `Array` SHALL be 
+  neither contain addresses outside the range `0x02..0xff` nor SHALL 
+  an address be repeated in the `Array`. An empty `Array` SHALL be 
   considered valid. However, `Nil` SHALL NOT be considered a 
   valid value of that field. It SHOULD store the responder's 
   identities in its internal list of responders. Additionally, the 
@@ -885,9 +885,9 @@ public key and the path securely (note, that this *trusting procedure*
 must be handled by the application).
 
 The API of the clients MUST be able to handle trusted public keys. If a
-trusted key is passed to the client, the initiator SHALL omit generating
-a token and both clients SHALL skip the 'token' message during the
-handshake.
+trusted key is passed to the client, the initiator SHALL omit 
+generating a token and both clients SHALL skip the 'token' message 
+during the handshake.
 
 If one of the clients is out of sync to the other (one has a trusted 
 public key but the other has not), the initiator will receive a 
@@ -906,6 +906,25 @@ timeout of at least one second between handshake attempts.
 Furthermore, the initiator SHALL delete all cached information about 
 and for a responder (such as cookies and sequence numbers) in case a 
 responder fails to authenticate itself towards the initiator.
+
+## Message States
+
+```
+         +-------+    +-----------------+    +------------------+
+    --+->+ token |    | key (initiator) +--->+ auth (responder) |
+      |  +---+---+    +--------+--------+    +---------+--------+
+      |      |                 ^                       |
+      |      |                 |                       v
+      |      |        +--------+--------+    +---------+--------+
+      +------+------->+ key (responder) |    | auth (initiator) |
+                      +-----------------+    +---+----------+---+
+                                                 :          |
+                                                 :          v
+                                                 v      +---+---+
+                                                        | close |
+                                               Task     +-------+
+
+```
 
 ## 'token' Message
 
@@ -979,8 +998,8 @@ The client MUST set the following fields:
 * A responder MUST set the *tasks* field to an `Array` of SaltyRTC
   task protocol names the responder offers to utilise.
 * An initiator MUST include the *task* field and set it to the name of
-  the SaltyRTC task protocol it has chosen from the `Array` the responder
-  provided.
+  the SaltyRTC task protocol it has chosen from the `Array` the 
+  responder provided.
 * Both clients SHALL set the *data* field to a `Map` 
   containing the selected tasks' names as keys and another 
   `Map` or `Nil` as the task's value. The content 
@@ -994,14 +1013,14 @@ following fields:
 * The cookie provided in the *your_cookie* field SHALL contain the 
   cookie it has used in its previous messages to the other client.
 * An initiator SHALL validate that the *tasks* field contains
-  an `Array` with at least one element. Each element in the `Array` SHALL 
-  be a string. The initiator SHALL continue by comparing the provided 
-  tasks to its own `Array` of available tasks and MUST choose the first 
-  common task from both `Arrays`. In case no common task could be found, 
-  the initiator SHALL send a 'close' message to the responder 
-  containing the close code `3006` (*No Shared Task Found*) as reason 
-  and raise an error event indicating that no common signalling task 
-  could be found.
+  an `Array` with at least one element. Each element in the `Array` 
+  SHALL be a string. The initiator SHALL continue by comparing the 
+  provided tasks to its own `Array` of available tasks and MUST choose 
+  the first common task from both `Arrays`. In case no common task 
+  could be found, the initiator SHALL send a 'close' message to the 
+  responder containing the close code `3006` (*No Shared Task Found*) 
+  as reason and raise an error event indicating that no common 
+  signalling task could be found.
 * A responder SHALL validate that the *task* field is present and
   contains one of the task it has previously offered to the initiator.
 * Both initiator an responder SHALL verify that the *data* field 
@@ -1116,7 +1135,10 @@ client-to-client handshake.
      |                               |------------------------------>|
      |                               |             auth              |
      |             auth              |<------------------------------|
-     |<------------------------------|                               :
+     |<------------------------------|                               |
+     |             auth              |                               |
+     |------------------------------>|             auth              |
+     :                               |------------------------------>|
      :                               :                               :
      :                               :                               :
 ```
