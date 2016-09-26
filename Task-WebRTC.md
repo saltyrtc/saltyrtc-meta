@@ -66,7 +66,7 @@ The task's data SHALL be a `Map` containing the following items:
   ids (non-negative integers) that SHALL not be used for the 
   signalling channel. This `Array` MUST be available to be set from 
   user applications that use specific data channel ids.
-* The *max_size* field MUST be set to the value described by the 
+* The *max_packet_size* field MUST be set to the value described by the
   *Detecting the Maximum Message Size* section.
 
 ## Incoming
@@ -78,7 +78,7 @@ following checks:
   IDs (non-negative integers) that SHALL not be used for the 
   signalling channel. The client SHALL store this list for usage 
   during handover.
-* The *max_size* field MUST contain either `0` or a positive integer. 
+* The *max_packet_size* field MUST contain either `0` or a positive integer. 
   If one client's value is `0` but the other client's value is greater 
   than `0`, the larger of the two values SHALL be stored to be used 
   for data channel communication. Otherwise, the minimum of both 
@@ -99,9 +99,9 @@ following way:
 * Outgoing messages MUST be processed and encrypted by following the 
   *Sending a Wrapped Data Channel Message* section. The encrypted 
   messages SHALL be split to chunks using `chunked-dc` message 
-  chunking ONLY in case the negotiated *max_size* parameter from the 
+  chunking ONLY in case the negotiated *max_packet_size* parameter from the
   task's data is greater than `0`; in that case the `chunked-dc` 
-  implementation SHALL use the *max_size* as the maximum chunk size. 
+  implementation SHALL use the *max_packet_size* as the maximum chunk size.
   Otherwise, the encrypted message SHALL be sent as is.
 * Incoming messages SHALL be stitched together using `chunked-dc` 
   message chunking if required (see previous bullet item for details). 

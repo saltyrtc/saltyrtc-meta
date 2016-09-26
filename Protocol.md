@@ -504,10 +504,45 @@ that deviate from the message flow.
 In case that any check fails, the peer MUST close the connection with 
 a close code of `3001` (*Protocol Error*) unless otherwise stated.
 
-## Message Flow
+## Message States (Towards/From Initiator)
 
-TODO
-TODO: Visualise where which key pairs are used
+```
+        +--------------+     +-------------+
+    --->+ server-hello +---->+ client-auth |
+        +--------------+     +------+------+
+                                    |
+                                    v
+                             +------+------+
+                             | server-auth |
+                             +------+------+
+                                    |
+                                    v
+        +---------------------------+-------------+
+        | new-responder/drop-responder/send-error |
+        +-------+-------------------------+-------+
+                |                         ^
+                +-------------------------+
+```
+
+## Message States (Towards/From Responder)
+
+```
+        +--------------+     +-------------+
+    --->+ server-hello |  +->+ client-auth |
+        +------+-------+  |  +------+------+
+               |          |         |
+               v          |         v
+        +------+-------+  |  +------+------+
+        | client-hello +--+  | server-auth |
+        +--------------+     +------+------+
+                                    |
+                                    v
+                       +------------+-------------+
+                       | new-initiator/send-error |
+                       +-------+----------+-------+
+                               |          ^
+                               +----------+
+```
 
 ## 'server-hello' Message
 
@@ -572,8 +607,8 @@ When the server receives a 'client-hello' message, it MUST check that
 the cookie provided in the *your_cookie* field contains the cookie the 
 server has used in its previous messages to that client. The server 
 SHALL go through both the client's `Array` of subprotocols provided in 
-the *subprotocols* field and the server's `Array` of subprotocols it has 
-provided to the WebSocket server implementation for subprotocol 
+the *subprotocols* field and the server's `Array` of subprotocols it 
+has provided to the WebSocket server implementation for subprotocol 
 negotiation. The first common subprotocol found that is present in 
 both `Array`s MUST be equal to the initially negotiated subprotocol.
 
@@ -651,13 +686,14 @@ checks depending on its role:
 * In case the client is the initiator, it SHALL check that the 
   *responders* field is set and contains an `Array` of responder 
   identities. The responder identities MUST be validated and SHALL 
-  neither contain addresses outside the range `0x02.0xff` nor SHALL an 
-  address be repeated in the `Array`. An empty `Array` SHALL be 
+  neither contain addresses outside the range `0x02..0xff` nor SHALL 
+  an address be repeated in the `Array`. An empty `Array` SHALL be 
   considered valid. However, `Nil` SHALL NOT be considered a 
   valid value of that field. It SHOULD store the responder's 
   identities in its internal list of responders. Additionally, the 
-  initiator SHALL drop new responders that have not sent any messages 
-  to the initiator after 60 seconds.
+  initiator MUST drop inactive responders. To achieve that, the 
+  initiator MAY drop responders that have not sent any messages to the 
+  initiator after 60 seconds.
 * In case the client is the responder, it SHALL check that the 
   *initiator_connected* field contains a boolean value. In case the 
   field's value is `true`, the responder MUST proceed with sending a 
@@ -857,9 +893,9 @@ public key and the path securely (note, that this *trusting procedure*
 must be handled by the application).
 
 The API of the clients MUST be able to handle trusted public keys. If a
-trusted key is passed to the client, the initiator SHALL omit generating
-a token and both clients SHALL skip the 'token' message during the
-handshake.
+trusted key is passed to the client, the initiator SHALL omit 
+generating a token and both clients SHALL skip the 'token' message 
+during the handshake.
 
 If one of the clients is out of sync to the other (one has a trusted 
 public key but the other has not), the initiator will receive a 
@@ -879,10 +915,24 @@ Furthermore, the initiator SHALL delete all cached information about
 and for a responder (such as cookies and sequence numbers) in case a 
 responder fails to authenticate itself towards the initiator.
 
-## Message Flow
+## Message States
 
-TODO
-TODO: Visualise where which key pairs are used
+```
+         +-------+    +-----------------+    +------------------+
+    --+->+ token |    | key (initiator) +--->+ auth (responder) |
+      |  +---+---+    +--------+--------+    +---------+--------+
+      |      |                 ^                       |
+      |      |                 |                       v
+      |      |        +--------+--------+    +---------+--------+
+      +------+------->+ key (responder) |    | auth (initiator) |
+                      +-----------------+    +---+----------+---+
+                                                 :          |
+                                                 :          v
+                                                 v      +---+---+
+                                                        | close |
+                                               Task     +-------+
+
+```
 
 ## 'token' Message
 
@@ -956,8 +1006,8 @@ The client MUST set the following fields:
 * A responder MUST set the *tasks* field to an `Array` of SaltyRTC
   task protocol names the responder offers to utilise.
 * An initiator MUST include the *task* field and set it to the name of
-  the SaltyRTC task protocol it has chosen from the `Array` the responder
-  provided.
+  the SaltyRTC task protocol it has chosen from the `Array` the 
+  responder provided.
 * Both clients SHALL set the *data* field to a `Map` 
   containing the selected tasks' names as keys and another 
   `Map` or `Nil` as the task's value. The content 
@@ -971,14 +1021,14 @@ following fields:
 * The cookie provided in the *your_cookie* field SHALL contain the 
   cookie it has used in its previous messages to the other client.
 * An initiator SHALL validate that the *tasks* field contains
-  an `Array` with at least one element. Each element in the `Array` SHALL 
-  be a string. The initiator SHALL continue by comparing the provided 
-  tasks to its own `Array` of available tasks and MUST choose the first 
-  common task from both `Arrays`. In case no common task could be found, 
-  the initiator SHALL send a 'close' message to the responder 
-  containing the close code `3006` (*No Shared Task Found*) as reason 
-  and raise an error event indicating that no common signalling task 
-  could be found.
+  an `Array` with at least one element. Each element in the `Array` 
+  SHALL be a string. The initiator SHALL continue by comparing the 
+  provided tasks to its own `Array` of available tasks and MUST choose 
+  the first common task from both `Arrays`. In case no common task 
+  could be found, the initiator SHALL send a 'close' message to the 
+  responder containing the close code `3006` (*No Shared Task Found*) 
+  as reason and raise an error event indicating that no common 
+  signalling task could be found.
 * A responder SHALL validate that the *task* field is present and
   contains one of the task it has previously offered to the initiator.
 * Both initiator an responder SHALL verify that the *data* field 
@@ -1021,6 +1071,8 @@ session key pair and the other client's session key pair.
 Both initiator and responder SHALL trigger sending this message any 
 time the application or a task requests to terminate the signalling 
 connection between the clients over the server and to the server.
+However, this message SHALL ONLY be sent in case the client-to-client 
+handshakes has been completed
 
 A client who sends a 'close' message MUST set the *reason* field to a 
 valid close code (as enumerated in *Close Code Enumeration*). `1001` 
@@ -1057,6 +1109,49 @@ least one signalling task MUST be selected by the user.
 As soon as the authentication procedure between initiator and 
 responder has been completed sucessfully, the specification of the 
 negotiated task takes over.
+
+# Message Flow Example
+
+This example provides the message flow of an initiator and a responder 
+that connect to the same signalling path. The responder starts 
+communicating with the initiator once it has completed the 
+authentication towards the server. Then, both clients proceed with the 
+client-to-client handshake.
+
+```
+    Initiator                     Server                      Responder
+     |                               |                               :
+     |   wss://saltytc.org/01ff...   |                               :
+     |------------------------------>|                               :
+     |         server-hello          |                               :
+     |<------------------------------|                               |
+     |          client-auth          |   wss://saltytc.org/01ff...   |
+     |------------------------------>|<------------------------------|
+     |          server-auth          |         server-hello          |
+     |<------------------------------|------------------------------>|
+     |                               |         client-hello          |
+     |                               |<------------------------------|
+     |                               |          client-auth          |
+     |                               |<------------------------------|
+     |                               |          server-auth          |
+     |                               |------------------------------>|
+     |                               |             token             |
+     |             token             |<------------------------------|
+     |<------------------------------|              key              |
+     |              key              |<------------------------------|
+     |<------------------------------|                               |
+     |              key              |                               |
+     |------------------------------>|              key              |
+     |                               |------------------------------>|
+     |                               |             auth              |
+     |             auth              |<------------------------------|
+     |<------------------------------|                               |
+     |             auth              |                               |
+     |------------------------------>|             auth              |
+     :                               |------------------------------>|
+     :                               :                               :
+     :                               :                               :
+```
 
 # Errors
 
