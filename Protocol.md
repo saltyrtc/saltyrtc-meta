@@ -934,9 +934,9 @@ The client MUST set the following fields:
 * A responder MUST set the *tasks* field to a list/an array of 
   SaltyRTC task protocol's names (as strings) the responder offers to 
   utilise.
-* An initiator MUST include the *task* (without an *s*) field and set 
-  it to the name of the SaltyRTC task protocol it has chosen from the 
-  list the responder provided.
+* An initiator MUST include the *task* field and set it to the name of
+  the SaltyRTC task protocol it has chosen from the list the responder
+  provided.
 * Both clients SHALL set the *data* field to a dictionary/an object 
   containing the corresponding task's names as keys and another 
   dictionary/object or `null`/`None` as the task's value. The content 
@@ -958,9 +958,8 @@ following fields:
   containing the close code `3006` (*No Shared Task Found*) as reason 
   and raise an error event indicating that no common signalling task 
   could be found.
-* A responder SHALL validate that the *task* (without an *s*) field is 
-  present and contains one of the task it has previously offered to 
-  the initiator.
+* A responder SHALL validate that the *task* field is present and
+  contains one of the task it has previously offered to the initiator.
 * Both initiator an responder SHALL verify that the *data* field 
   contains a dictionary/an object and SHALL look up the chosen task's 
   data value. The value MUST be handed over to the corresponding task 
