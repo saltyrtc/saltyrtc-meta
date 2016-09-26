@@ -78,12 +78,12 @@ following checks:
   IDs (non-negative integers) that SHALL not be used for the 
   signalling channel. The client SHALL store this list for usage 
   during handover.
-* The *max_packet_size* field MUST contain either `0` or a positive integer. 
-  If one client's value is `0` but the other client's value is greater 
-  than `0`, the larger of the two values SHALL be stored to be used 
-  for data channel communication. Otherwise, the minimum of both 
-  clients' maximum size SHALL be stored. The stored value SHALL be 
-  readable by user applications, so a user application can have its 
+* The *max_packet_size* field MUST contain either `0` or a positive 
+  integer. If one client's value is `0` but the other client's value 
+  is greater than `0`, the larger of the two values SHALL be stored to 
+  be used for data channel communication. Otherwise, the minimum of 
+  both clients' maximum size SHALL be stored. The stored value SHALL 
+  be readable by user applications, so a user application can have its 
   own message chunking implementation if desired.
 
 # Wrapped Data Channel
@@ -99,10 +99,11 @@ following way:
 * Outgoing messages MUST be processed and encrypted by following the 
   *Sending a Wrapped Data Channel Message* section. The encrypted 
   messages SHALL be split to chunks using `chunked-dc` message 
-  chunking ONLY in case the negotiated *max_packet_size* parameter from the
-  task's data is greater than `0`; in that case the `chunked-dc` 
-  implementation SHALL use the *max_packet_size* as the maximum chunk size.
-  Otherwise, the encrypted message SHALL be sent as is.
+  chunking ONLY in case the negotiated *max_packet_size* parameter 
+  from the task's data is greater than `0`; in that case the 
+  `chunked-dc` implementation SHALL use the *max_packet_size* as the 
+  maximum chunk size. Otherwise, the encrypted message SHALL be sent 
+  as is.
 * Incoming messages SHALL be stitched together using `chunked-dc` 
   message chunking if required (see previous bullet item for details). 
   Complete messages MUST be processed and decrypted by following the 
