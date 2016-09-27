@@ -297,11 +297,11 @@ destination peer in general:
 * A server SHALL generate a new cryptographically secure random cookie 
   to be used for the client until the connection has been severed.
 * A client SHALL also generate a new cryptographically secure random 
-  cookie to be used for the other peer which is valid for servers 
-  until the connection has been closed. For other clients, this cookie 
-  is valid until the server announces a new initiator or responder 
-  with the same address or until the connection to the server has been 
-  closed.
+  cookie to be used for the other peer. In case the other peer is a 
+  server, the cookie is valid until the connection has been closed. 
+  For other clients, this cookie is valid until the server announces a 
+  new initiator or responder with the same address or until the 
+  connection to the server has been closed.
 
 The cookie SHALL be set to the previously generated cookie.
 
