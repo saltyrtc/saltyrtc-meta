@@ -407,13 +407,11 @@ In case this is the first message received from the sender, the peer:
 * The above number(s) SHALL be stored and updated separately for each 
   other peer by its identity (source address in this case).
 
-Afterwards, a peer MUST check that the 16 byte cookie of the sender has
-not changed.
-
 If the message is received by a client or received by and intended for 
 a server (the destination address is `0x00`), the peer does the
 following checks:
 
+* Ensure that the 16 byte cookie of the sender has not changed.
 * In case that the peer does make use of the combined sequence number,
   it MUST check that the combined sequence number of the source peer 
   has been increased by `1` and has not reset to `0`. Implementations 
