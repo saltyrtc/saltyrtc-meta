@@ -370,7 +370,9 @@ address is sane:
 * A server MUST check that the destination address is `0x00` until the
   sender is authenticated. In case that the sender is authenticated,
   relaying is ONLY allowed between an initiator (`0x01`) and a 
-  responder (`0x02..0xff`).
+  responder (`0x02..0xff`). Note that the server MUST follow the 
+  *Sending a Relay Message* section for relay messages after it has 
+  completed the procedures of this section.
 * A client MUST check that the destination address targets its
   assigned identity (or `0x00` during authentication). The first 
   message received with a destination address different to `0x00` 
@@ -437,6 +439,18 @@ the server when expecting 'client-hello' or 'client-auth'), the peer
 MUST close the connection with a close code of `3001` (*Protocol 
 Error*). Further processing depends on the message type described 
 below.
+
+# Sending a Relay Message
+
+Once a server has received and validated a relay message from an 
+initiator to a responder or the other way around, it SHALL validate 
+that both sender and receiver are authenticated towards the server. It 
+SHALL continue by sending the unmodified relay message to the destined 
+client without going through the *Sending a Signalling Message* 
+procedure. In case the message could not be relayed (e.g. the destined 
+client closed the connection or sending the message timed out), the 
+server MUST send a 'send-error' message back to the original sender of 
+the message.
 
 # Encrypting a Message
 
@@ -837,10 +851,10 @@ messages by looking at the address fields of the nonce. If both fields
 contain a client address (an address different to `0x00`), the message 
 is a client-to-client message.  
 SaltyRTC servers MUST relay these messages to the corresponding 
-destination once the sender is authenticated towards the server and 
-the adress sections in the nonce have been validated. In case the 
-message could not be relayed, the server MUST send a 'send-error' 
-message back to the sender (see previous section).  
+destination once sender and receiver are authenticated towards the 
+server and the adress sections in the nonce have been validated. In 
+case the message could not be relayed, the server MUST send a 'send-
+error' message back to the sender (see previous section).  
 In this section and all its subsections, *authentication* means 
 *authentication towards the other client* unless otherwise stated.
 
