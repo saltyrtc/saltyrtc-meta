@@ -297,11 +297,11 @@ destination peer in general:
 * A server SHALL generate a new cryptographically secure random cookie 
   to be used for the client until the connection has been severed.
 * A client SHALL also generate a new cryptographically secure random 
-  cookie to be used for the other peer which is valid for servers 
-  until the connection has been closed. For other clients, this cookie 
-  is valid until the server announces a new initiator or responder 
-  with the same address or until the connection to the server has been 
-  closed.
+  cookie to be used for the other peer. In case the other peer is a 
+  server, the cookie is valid until the connection has been closed. 
+  For other clients, this cookie is valid until the server announces a 
+  new initiator or responder with the same address or until the 
+  connection to the server has been closed.
 
 The cookie SHALL be set to the previously generated cookie.
 
@@ -370,7 +370,9 @@ address is sane:
 * A server MUST check that the destination address is `0x00` until the
   sender is authenticated. In case that the sender is authenticated,
   relaying is ONLY allowed between an initiator (`0x01`) and a 
-  responder (`0x02..0xff`).
+  responder (`0x02..0xff`). Note that the server MUST follow the 
+  *Sending a Relay Message* section for relay messages after it has 
+  completed the procedures of this section.
 * A client MUST check that the destination address targets its
   assigned identity (or `0x00` during authentication). The first 
   message received with a destination address different to `0x00` 
@@ -407,13 +409,11 @@ In case this is the first message received from the sender, the peer:
 * The above number(s) SHALL be stored and updated separately for each 
   other peer by its identity (source address in this case).
 
-Afterwards, a peer MUST check that the 16 byte cookie of the sender has
-not changed.
-
 If the message is received by a client or received by and intended for 
 a server (the destination address is `0x00`), the peer does the
 following checks:
 
+* Ensure that the 16 byte cookie of the sender has not changed.
 * In case that the peer does make use of the combined sequence number,
   it MUST check that the combined sequence number of the source peer 
   has been increased by `1` and has not reset to `0`. Implementations 
@@ -439,6 +439,18 @@ the server when expecting 'client-hello' or 'client-auth'), the peer
 MUST close the connection with a close code of `3001` (*Protocol 
 Error*). Further processing depends on the message type described 
 below.
+
+# Sending a Relay Message
+
+Once a server has received and validated a relay message from an 
+initiator to a responder or the other way around, it SHALL validate 
+that both sender and receiver are authenticated towards the server. It 
+SHALL continue by sending the unmodified relay message to the destined 
+client without going through the *Sending a Signalling Message* 
+procedure. In case the message could not be relayed (e.g. the destined 
+client closed the connection or sending the message timed out), the 
+server MUST send a 'send-error' message back to the original sender of 
+the message.
 
 # Encrypting a Message
 
@@ -839,10 +851,10 @@ messages by looking at the address fields of the nonce. If both fields
 contain a client address (an address different to `0x00`), the message 
 is a client-to-client message.  
 SaltyRTC servers MUST relay these messages to the corresponding 
-destination once the sender is authenticated towards the server and 
-the adress sections in the nonce have been validated. In case the 
-message could not be relayed, the server MUST send a 'send-error' 
-message back to the sender (see previous section).  
+destination once sender and receiver are authenticated towards the 
+server and the adress sections in the nonce have been validated. In 
+case the message could not be relayed, the server MUST send a 'send-
+error' message back to the sender (see previous section).  
 In this section and all its subsections, *authentication* means 
 *authentication towards the other client* unless otherwise stated.
 
