@@ -959,7 +959,11 @@ The responder MUST set the public key (32 bytes) of the permanent key
 pair in the *key* field of this message.
 
 A receiving initiator MUST check that the message contains a valid 
-NaCl public key (32 bytes) in the *key* field.
+NaCl public key (32 bytes) in the *key* field. In case the initiator 
+expects a 'token' message but could not decrypt the message's content, 
+it SHALL send a 'drop-responder' message containing the id of the 
+responder who sent the message and a close code of `3005` (*Initiator 
+Could Not Decrypt*) in the *reason* field.
 
 The message SHALL be NaCl secret key encrypted by the token the
 initiator created and issued to the responder. In case the initiator
@@ -991,7 +995,11 @@ Once the other client receives a 'key' message, it MUST validate the
 *key* field: The key shall be 32 bytes and SHALL NOT be identical to 
 the other client's public permanent key. Further messages from the
 other client will use the session key pair for encryption unless 
-otherwise specified (e.g. by a task).
+otherwise specified (e.g. by a task). In case an initiator expects a 
+'key' message but could not decrypt the message's content, it SHALL 
+send a 'drop-responder' message containing the id of the responder who 
+sent the message and a close code of `3005` (*Initiator Could Not 
+Decrypt*) in the *reason* field.
 
 The message SHALL be NaCl public-key encrypted by the client's 
 permanent key pair and the other client's permanent key pair.
