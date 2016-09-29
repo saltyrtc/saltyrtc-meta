@@ -1183,23 +1183,23 @@ the error cannot be resolved by the implementation itself.
 
 The following close codes are being used by the protocol:
 
-- 1001: Going Away
-- 1002: No Shared Subprotocol Found
-- 3000: Path Full
-- 3001: Protocol Error
-- 3002: Internal Error
-- 3003: Handover of the Signalling Channel
-- 3004: Dropped by Initiator
-- 3005: Initiator Could Not Decrypt
-- 3006: No Shared Task Found
+* 1001: Going Away
+* 1002: No Shared Subprotocol Found
+* 3000: Path Full
+* 3001: Protocol Error
+* 3002: Internal Error
+* 3003: Handover of the Signalling Channel
+* 3004: Dropped by Initiator
+* 3005: Initiator Could Not Decrypt
+* 3006: No Shared Task Found
 
 The following close codes are available for 'drop-responder' messages:
 
-- 3001: Protocol Error
-- 3002: Internal Error
-- 3004: Dropped by Initiator
-- 3005: Initiator Could Not Decrypt
-- 3006: No Shared Task Found
+* 3001: Protocol Error
+* 3002: Internal Error
+* 3004: Dropped by Initiator
+* 3005: Initiator Could Not Decrypt
+* 3006: No Shared Task Found
 
 # Security Mechanisms
 
