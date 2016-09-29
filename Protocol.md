@@ -1,4 +1,4 @@
-# SaltyRTC - End-to-End-Encrypted Signalling
+# SaltyRTC – End-to-End-Encrypted Signalling
 
 SaltyRTC is a signalling protocol that uses end-to-end encryption
 techniques based on the Networking and Cryptography library (NaCl) and
@@ -373,7 +373,7 @@ address is sane:
   identity (or `0x00` during authentication). The first message received
   with a destination address different to `0x00` SHALL be accepted as
   the client's assigned identity. However, the client MUST validate that
-  the identity fits its role - initiators SHALL ONLY accept `0x01` and
+  the identity fits its role – initiators SHALL ONLY accept `0x01` and
   responders SHALL ONLY an identity from the range `0x02..0xff`. The
   identity MUST be stored as the client's assigned identity.
 
@@ -891,7 +891,7 @@ stated:
 
 Before the client-to-client handshake can take place, the initiator
 SHALL issue a token which is a securely random generated NaCl secret key
-(32 bytes) that is valid for a single successfully decrypted message -
+(32 bytes) that is valid for a single successfully decrypted message –
 the 'token' message. The token MUST be exchanged securely between
 initiator and responder. This specification deliberately does not define
 how the token should be exchanged (however, the token and the public key
