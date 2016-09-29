@@ -618,11 +618,22 @@ the WebSocket client implementation for subprotocol negotiation.
 When the server receives a 'client-hello' message, it MUST check that 
 the cookie provided in the *your_cookie* field contains the cookie the 
 server has used in its previous messages to that client. The server 
-SHALL go through both the client's `Array` of subprotocols provided in 
-the *subprotocols* field and the server's `Array` of subprotocols it 
-has provided to the WebSocket server implementation for subprotocol 
-negotiation. The first common subprotocol found that is present in 
-both `Array`s MUST be equal to the initially negotiated subprotocol.
+SHALL check that the *subprotocols* field contains an `Array` of 
+subprotocol strings, and:
+
+* If the server has access to the subprotocol selection function used 
+  by the underlying WebSocket implementation, SHALL use the same 
+  function to select the subprotocol from the server's list and the 
+  client's list. The resulting selected subprotocol MUST be equal to 
+  the initially negotiated subprotocol.
+* If the server does not have access to the subprotocol selection 
+  function of the underlying WebSocket implementation but it does have 
+  access to the list of subprotocols provided by the client to the 
+  WebSocket implementation, it SHALL validate that the lists contain 
+  the same subprotocol strings in the same order.
+* If the server is not able to apply either of the above mechanisms, 
+  it SHALL validate that the negotiated subprotocol is present in the 
+  *subprotocols* field.
 
 The message SHALL be NaCl public-key encrypted by the server's session 
 key pair (public key sent in 'server-hello') and the client's 
