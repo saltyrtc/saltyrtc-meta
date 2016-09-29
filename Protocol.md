@@ -615,7 +615,7 @@ the 'server-hello' message. It SHALL also set the *subprotocols* field
 to the exact same `Array` of subprotocol strings it has provided to 
 the WebSocket client implementation for subprotocol negotiation.
 
-When the server receives a 'client-hello' message, it MUST check that 
+When the server receives a 'client-auth' message, it MUST check that 
 the cookie provided in the *your_cookie* field contains the cookie the 
 server has used in its previous messages to that client. The server 
 SHALL check that the *subprotocols* field contains an `Array` of 
