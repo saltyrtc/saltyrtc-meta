@@ -1053,13 +1053,14 @@ following fields:
   cookie it has used in its previous messages to the other client.
 * An initiator SHALL validate that the *tasks* field contains
   an `Array` with at least one element. Each element in the `Array` 
-  SHALL be a string. The initiator SHALL continue by comparing the 
-  provided tasks to its own `Array` of available tasks and MUST choose 
-  the first common task from both `Arrays`. In case no common task 
-  could be found, the initiator SHALL send a 'close' message to the 
-  responder containing the close code `3006` (*No Shared Task Found*) 
-  as reason and raise an error event indicating that no common 
-  signalling task could be found.
+  SHALL be a string. The initiator SHALL continue by comparing the
+  provided tasks to its own `Array` of supported tasks. It MUST choose
+  the first task in its own list of supported tasks that is also
+  contained in the list of supported tasks provided by the responder.
+  In case no common task could be found, the initiator SHALL send a
+  'close' message to the responder containing the close code `3006` 
+  (*No Shared Task Found*) as reason and raise an error event 
+  indicating that no common signalling task could be found.
 * A responder SHALL validate that the *task* field is present and
   contains one of the task it has previously offered to the initiator.
 * Both initiator an responder SHALL verify that the *data* field 
