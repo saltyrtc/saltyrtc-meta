@@ -367,7 +367,7 @@ key pair and the other client's session key pair.
 Both clients MAY send ICE candidates at any time to each other. Clients
 SHOULD bundle available candidates.
 
-A client who sends an ICE candidate SHALL set the *candidate* field to
+A client who sends an ICE candidate SHALL set the *candidates* field to
 an `Array` of `Map`s where each `Map` SHALL contain the following
 fields:
 
@@ -393,7 +393,7 @@ key pair and the other client's session key pair.
 ```
 {
   "type": "candidate",
-  "candidate": [
+  "candidates": [
     {
       "candidate": "...",
       "sdpMid": "data",
