@@ -393,15 +393,17 @@ key pair and the other client's session key pair.
 ```
 {
   "type": "candidate",
-  "candidate": [{
-    "candidate": "...",
-    "sdpMid": "data",
-    "sdpMLineIndex": 0
-  }], [{
-    "candidate": "...",
-    "sdpMid": "data",
-    "sdpMLineIndex": 0
-  }], ...
+  "candidate": [
+    {
+      "candidate": "...",
+      "sdpMid": "data",
+      "sdpMLineIndex": 0
+    }, {
+      "candidate": "...",
+      "sdpMid": "data",
+      "sdpMLineIndex": 0
+    }, ...
+  ]
 }
 ```
 
