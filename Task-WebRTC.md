@@ -264,16 +264,16 @@ client-to-client messages is described in the
 ```
              +---------+    +-----------------------------+
              |         v    |                             v
-        +----+---------+----+----+    +----------+    +---+---+
-    --->+ offer/answer/candidate +--->+ handover +--->+ close |
-        +------------------------+    +-----+----+    +---+---+
-                                            |             ^
-                                            v             |
-                        +-------------------+----+        |
-                        | offer/answer/candidate +---------
-                        +----+--------------+----+
-                             |              ^
-                             +--------------+
+        +----+---------+----+----+     +----------+    +---+---+
+    --->+ offer/answer/candidates +--->+ handover +--->+ close |
+        +------------------------+     +-----+----+    +---+---+
+                                             |             ^
+                                             v             |
+                         +-------------------+-----+       |
+                         | offer/answer/candidates +--------
+                         +----+--------------+-----+
+                              |              ^
+                              +--------------+
 ```
 
 ## Message Flow Example (Beyond 'auth')
@@ -285,13 +285,13 @@ client-to-client messages is described in the
      |------------------------------>|
      |             answer            |
      |<------------------------------|
-     |      candidate (n times)      |
+     |      candidates (n times)     |
      |<----------------------------->|
      |            handover           |
      |------------------------------>|
      |            handover           |
      |<------------------------------|
-     |      candidate (m times)      |
+     |      candidates (m times)     |
      |<----------------------------->|
      |             close             |
      |<----------------------------->|
@@ -362,7 +362,7 @@ key pair and the other client's session key pair.
 }
 ```
 
-## 'candidate' Message
+## 'candidates' Message
 
 Both clients MAY send ICE candidates at any time to each other. Clients
 SHOULD bundle available candidates.
@@ -381,9 +381,9 @@ fields:
   WebRTC specification. It's value SHALL be either an unsigned integer
   (16 bits) or `Nil`.
 
-The receiving client SHALL validate that the *candidate* field is an
+The receiving client SHALL validate that the *candidates* field is an
 `Array` containing one or more `Map`s. These `Map`s SHALL contain the
-above mentioned fields value types. It shall continue by adding the
+above mentioned fields value types. It SHALL continue by adding the
 value of each item in the `Array` as a remote candidate to its WebRTC
 `RTCPeerConnection` instance.
 
