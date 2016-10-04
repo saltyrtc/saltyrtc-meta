@@ -373,10 +373,10 @@ fields:
 
 * The *candidate* field SHALL contain an SDP `candidate-attribute` as
   defined in the WebRTC specification in string representation.
-* The *sdpMid* field SHALL contain the *media stream identification*
+* The *sdp_mid* field SHALL contain the *media stream identification*
   as defined in the WebRTC specification in string representation or
   `Nil`.
-* The *sdpMLineIndex* field SHALL contain the index of the media
+* The *sdp_m_line_index* field SHALL contain the index of the media
   description the candidate is associated with as described in the
   WebRTC specification. It's value SHALL be either an unsigned integer
   (16 bits) or `Nil`.
@@ -396,12 +396,12 @@ key pair and the other client's session key pair.
   "candidates": [
     {
       "candidate": "...",
-      "sdpMid": "data",
-      "sdpMLineIndex": 0
+      "sdp_mid": "data",
+      "sdp_m_line_index": 0
     }, {
       "candidate": "...",
-      "sdpMid": "data",
-      "sdpMLineIndex": 0
+      "sdp_mid": "data",
+      "sdp_m_line_index": 0
     }, ...
   ]
 }
