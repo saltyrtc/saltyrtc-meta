@@ -1233,20 +1233,20 @@ public permanent key of the server and the server uses this feature. In
 this case, a valid signature of the server for the keys it signs in 
 'server-auth' authenticates the server.
 
-## Cookie
+## Protection Against Replay Attacks
 
-The cookie is being used for two things at the same time. It resembles a
-challenge that needs to be repeated by the other peer to mitigate replay
-attacks. A peer can thereby prove that it owns the private key for the
-public key it transmitted. Furthermore, it should contain enough
-randomness to ensure that a nonce is not being reused for a shared
-secret as long as the protocol is being followed closely. To ensure that
-nonces are unique per shared secret, peers communicating with one
-another must choose different cookies.
+The cookie resembles a challenge that needs to be repeated by the other 
+peer. A peer can thereby prove that it owns the private key for the 
+public key it transmitted. This technique is being applied for both 
+client-to-server authentication and client-to-client authentication. In 
+combination with the overflow and sequence number, the implementations 
+are able to mitigate replay attacks-
 
-## Overflow Number and Sequence Number
+## Uniqueness of Nonces
 
-Both the overflow number and the sequence number, in combination with
-the cookie, source and destination address, ensure that a nonce remains
-a *number used once*. Furthermore, in conjunction with the cookie, they
-are being used to mitigate replay attacks.
+The random 16 byte cookie should contain enough randomness to ensure 
+that a nonce is not being reused for a shared secret as long as the 
+protocol is being followed closely. To ensure that nonces are unique 
+per shared secret, peers communicating with one another use different 
+cookies.
+
