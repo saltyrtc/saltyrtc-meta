@@ -1203,12 +1203,42 @@ The following close codes are available for 'drop-responder' messages:
 
 # Security Mechanisms
 
+## Authentication
+
+### Client-to-Client
+
+When the authentication token has been exchanged in a secure manner, 
+both peers can assure authentication of each other.
+
+The initiator either authenticates the responder by receiving the 
+responder’s public permanent key via the authentication token, or it 
+already knows the public permanent key of the responder. For both 
+cases, only the initiator and the responder know the shared secret 
+that can decrypt messages.
+
+The other peer, the responder, also knows the public permanent key of 
+the initiator before it connects to the server. Again, only the 
+initiator and the responder know the shared secret to decrypt messages.
+
+### Client-to-Server
+
+Authentication towards the server is only necessary to be able to 
+establish another security layer for transport encryption. However, 
+only the initiator can be authenticated towards the server. The 
+responder is able to claim any public permanent key it has the 
+corresponding private key for.
+
+Clients can only authenticate the server in case the client knows the 
+public permanent key of the server and the server uses this feature. In 
+this case, a valid signature of the server for the keys it signs in 
+'server-auth' authenticates the server.
+
 ## Cookie
 
 The cookie is being used for two things at the same time. It resembles a
 challenge that needs to be repeated by the other peer to mitigate replay
-attacks. A peer can thereby prove that he owns the private key for the
-public key he transmitted. Furthermore, it should contain enough
+attacks. A peer can thereby prove that it owns the private key for the
+public key it transmitted. Furthermore, it should contain enough
 randomness to ensure that a nonce is not being reused for a shared
 secret as long as the protocol is being followed closely. To ensure that
 nonces are unique per shared secret, peers communicating with one
