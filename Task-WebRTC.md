@@ -373,13 +373,19 @@ fields:
 
 * The *candidate* field SHALL contain an SDP `candidate-attribute` as
   defined in the WebRTC specification in string representation.
-* The *sdp_mid* field SHALL contain the *media stream identification*
+* The *sdpMid* field SHALL contain the *media stream identification*
   as defined in the WebRTC specification in string representation or
   `Nil`.
-* The *sdp_m_line_index* field SHALL contain the index of the media
+* The *sdpMLineIndex* field SHALL contain the index of the media
   description the candidate is associated with as described in the
   WebRTC specification. It's value SHALL be either an unsigned integer
   (16 bits) or `Nil`.
+
+*(Note: The naming is inconsistent with the rest of the protocol,
+because it uses camelCase keys instead of under_scores. The reason for
+this is ease of use in browser implementations: When using camelCase
+each `candidates` entry can be passed directly to the JavaScript WebRTC
+implementation.)*
 
 The receiving client SHALL validate that the *candidates* field is an
 `Array` containing one or more `Map`s. These `Map`s SHALL contain the
@@ -396,12 +402,12 @@ key pair and the other client's session key pair.
   "candidates": [
     {
       "candidate": "...",
-      "sdp_mid": "data",
-      "sdp_m_line_index": 0
+      "sdpMid": "data",
+      "sdpMLineIndex": 0
     }, {
       "candidate": "...",
-      "sdp_mid": "data",
-      "sdp_m_line_index": 0
+      "sdpMid": "data",
+      "sdpMLineIndex": 0
     }, ...
   ]
 }
