@@ -1211,10 +1211,10 @@ When the authentication token has been exchanged in a secure manner,
 both peers can assure authentication of each other.
 
 The initiator either authenticates the responder by receiving the
-responder’s public permanent key via the authentication token, or it
-already knows the public permanent key of the responder. For both
-cases, only the initiator and the responder know the shared secret
-that can decrypt messages.
+responder’s public permanent key encrypted with the authentication
+token, or it already knows the public permanent key of the responder.
+For both cases, only the initiator and the responder know the shared
+secret that can decrypt messages.
 
 The other peer, the responder, also knows the public permanent key of
 the initiator before it connects to the server. Again, only the
