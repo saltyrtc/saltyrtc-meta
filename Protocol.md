@@ -1207,46 +1207,67 @@ The following close codes are available for 'drop-responder' messages:
 
 ### Client-to-Client
 
-When the authentication token has been exchanged in a secure manner, 
+When the authentication token has been exchanged in a secure manner,
 both peers can assure authentication of each other.
 
-The initiator either authenticates the responder by receiving the 
-responder’s public permanent key via the authentication token, or it 
-already knows the public permanent key of the responder. For both 
-cases, only the initiator and the responder know the shared secret 
+The initiator either authenticates the responder by receiving the
+responder’s public permanent key via the authentication token, or it
+already knows the public permanent key of the responder. For both
+cases, only the initiator and the responder know the shared secret
 that can decrypt messages.
 
-The other peer, the responder, also knows the public permanent key of 
-the initiator before it connects to the server. Again, only the 
+The other peer, the responder, also knows the public permanent key of
+the initiator before it connects to the server. Again, only the
 initiator and the responder know the shared secret to decrypt messages.
 
 ### Client-to-Server
 
-Authentication towards the server is only necessary to be able to 
-establish another security layer for transport encryption. However, 
-only the initiator can be authenticated towards the server. The 
-responder is able to claim any public permanent key it has the 
+Authentication towards the server is only necessary to be able to
+establish another security layer for transport encryption. However,
+only the initiator can be authenticated towards the server. The
+responder is able to claim any public permanent key it has the
 corresponding private key for.
 
-Clients can only authenticate the server in case the client knows the 
-public permanent key of the server and the server uses this feature. In 
-this case, a valid signature of the server for the keys it signs in 
+Clients can only authenticate the server in case the client knows the
+public permanent key of the server and the server uses this feature. In
+this case, a valid signature of the server for the keys it signs in
 'server-auth' authenticates the server.
+
+## Message Integrity
+
+For unencrypted messages ('server-hello' and 'client-hello'), the
+underlying WebSocket implementation may or may not provide message
+integrity. However, for encrypted messages, the Message Authentication
+Code (*MAC*) of NaCl ensures the message's integrity. Because a
+modified nonce would lead to an error during decryption, the nonce is
+implicitly protected as well.
 
 ## Protection Against Replay Attacks
 
-The cookie resembles a challenge that needs to be repeated by the other 
-peer. A peer can thereby prove that it owns the private key for the 
-public key it transmitted. This technique is being applied for both 
-client-to-server authentication and client-to-client authentication. In 
-combination with the overflow and sequence number, the implementations 
-are able to mitigate replay attacks-
+The cookie resembles a challenge that needs to be repeated by the other
+peer. A peer can thereby prove that it owns the private key for the
+public key it transmitted. This technique is being applied for both
+client-to-server authentication and client-to-client authentication. In
+combination with the overflow and sequence number and the source and
+destination bytes, the implementations are able to mitigate replay
+attacks.
 
 ## Uniqueness of Nonces
 
-The random 16 byte cookie should contain enough randomness to ensure 
-that a nonce is not being reused for a shared secret as long as the 
-protocol is being followed closely. To ensure that nonces are unique 
-per shared secret, peers communicating with one another use different 
+The random 16 byte cookie should contain enough randomness to ensure
+that a nonce is not being reused for a shared secret as long as the
+protocol is being followed closely. To ensure that nonces are unique
+per shared secret, peers communicating with one another use different
 cookies.
+
+## Forward Secrecy
+
+The shared secret of client and server is different each time the
+client connects to the server. Although the permanent key of the client
+does not change, the server always generates a new session key pair.
+
+Two clients that communicate with each other establish a session key
+immediately during the handshake. The long-term (permanent keys) are
+only used for a single message ('key') before the session keys have
+been established.
 
