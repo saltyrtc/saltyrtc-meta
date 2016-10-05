@@ -129,10 +129,6 @@ number, each for incoming and outgoing messages. Both clients SHALL use
 cryptographically secure random numbers for the cookie and the sequence
 number.
 
-Due to a bug in older Chromium-based implementations, the implementation
-MUST check that a newly created data channel does not use the same data
-channel id of another data channel instance that is currently `open`.
-
 # Signalling Channel Handover
 
 As soon as both clients have exchanged the required messages and the
