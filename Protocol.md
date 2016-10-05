@@ -606,10 +606,12 @@ field to the cookie the server has used in the nonce of the
 'server-hello' message. It SHALL also set the *subprotocols* field to
 the exact same `Array` of subprotocol strings it has provided to the
 WebSocket client implementation for subprotocol negotiation. If the
-user application requests to be pinged in a specific interval, the
-client SHALL set the field *ping_interval* to the requested ping
-interval in seconds. Otherwise, *ping_interval* MUST be set to `0`
-indicating that no WebSocket *ping* messages SHALL be sent.
+user application requests to be pinged (see
+[RFC 6455 section 5.5.2](https://tools.ietf.org/html/rfc6455#section-5.5.2))
+in a specific interval, the client SHALL set the field *ping_interval*
+to the requested interval in seconds. Otherwise, *ping_interval* MUST
+be set to `0` indicating that no WebSocket *ping* messages SHALL be
+sent.
 
 When the server receives a 'client-auth' message, it MUST check that the
 cookie provided in the *your_cookie* field contains the cookie the
@@ -634,9 +636,12 @@ subprotocol strings, and:
 Furthermore, the server SHALL validate that the *ping_interval* field
 contains a non-negative integer. If the value is `0`, the server SHALL
 NOT send WebSocket *ping* messages to the client. Otherwise, the server
-SHOULD send a WebSocket *ping* message in the requested interval to the
-client. A timeout of 30 seconds for unanswered *ping* messages is
-RECOMMENDED. An unanswered *ping* shall result in a protocol error.
+SHOULD send a WebSocket *ping* message in the requested interval in
+seconds to the client and wait for a corresponding *pong* message (as
+described in
+[RFC 6455 section 5.5.3](https://tools.ietf.org/html/rfc6455#section-5.5.3)).
+An unanswered *ping* MUST result in a protocol error. A timeout of 30
+seconds for unanswered *ping* messages is RECOMMENDED.
 
 The message SHALL be NaCl public-key encrypted by the server's session
 key pair (public key sent in 'server-hello') and the client's permanent
