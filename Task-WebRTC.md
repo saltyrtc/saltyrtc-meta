@@ -151,19 +151,14 @@ dedicated data channel:
 3. As soon as the data channel is `open`, the client SHALL send a
    'handover' message to the other client. After this message, the
    client SHALL NOT send any messages on the original signalling
-   channel. The sequence number and overflow number for outgoing
-   messages to the other client SHALL be transferred to the new wrapped
-   data channel. The client MAY already send signalling messages over
-   the new signalling channel. If the client has already received a
-   'handover' message from the other client, it MUST continue with the
-   next step, skipping the following sentences. Otherwise, the client
-   MUST accept further messages from the other client on the original
-   signalling channel only and wait for an incoming 'handover' message.
-   Once that 'handover' message has been received, the client SHALL ONLY
-   accept signalling messages over the wrapped data channel.
-   Furthermore, it SHALL transfer the sequence number and overflow
-   number for incoming messages of the other client to the wrapped data
-   channel.
+   channel. The client MAY already send signalling messages over the new
+   signalling channel. If the client has already received a 'handover'
+   message from the other client, it MUST continue with the next step,
+   skipping the following sentences. Otherwise, the client MUST accept
+   further messages from the other client on the original signalling
+   channel only and wait for an incoming 'handover' message. Once that
+   'handover' message has been received, the client SHALL ONLY accept
+   signalling messages over the wrapped data channel.
 4. After both clients have sent each other 'handover' messages, the
    client closes the connection to the server with a close code of
    `3003` (*Handover of the Signalling Channel*).
@@ -240,6 +235,9 @@ the following changes MUST be applied:
   channel's nonce/header.
 * Overflow number and sequence number SHALL NOT be validated to ensure
   unordered and unreliable wrapped data channels can function properly.
+  However, a client SHOULD check that two consecutive incoming messages
+  of the same data channel do not have the exact same overflow and
+  sequence number.
 * A client MUST check that the data channel id field matches the data
   channel's id the message has been received on.
 
@@ -420,18 +418,11 @@ SaltyRTC server. The message SHALL NOT be sent over an already handed
 over signalling channel.
 
 A client who sends a 'handover' message SHALL NOT include any additional
-fields. After sending this message, the client MUST:
-
-* Transfer the overflow number and sequence number for outgoing
-  signalling messages destined at the other client to the new signalling
-  channel (based on the wrapped data channel), and
-* Send further signalling messages over the new signalling channel only.
+fields. After sending this message, the client MUST send further
+signalling messages over the new signalling channel only.
 
 After a client has received a 'handover' message, it SHALL:
 
-* Transfer the overflow number and sequence number for incoming messages
-  of the other client to the new signalling channel (based on the
-  wrapped data channel),
 * Receive incoming signalling messages over the new signalling channel
   only, and
 * In case it receives further signalling messages over the old
