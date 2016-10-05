@@ -394,7 +394,7 @@ key pair and the other client's session key pair.
 
 ```
 {
-  "type": "candidate",
+  "type": "candidates",
   "candidates": [
     {
       "candidate": "...",
