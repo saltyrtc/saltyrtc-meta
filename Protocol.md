@@ -605,7 +605,10 @@ send this message to the server. The client MUST set the *your_cookie*
 field to the cookie the server has used in the nonce of the
 'server-hello' message. It SHALL also set the *subprotocols* field to
 the exact same `Array` of subprotocol strings it has provided to the
-WebSocket client implementation for subprotocol negotiation.
+WebSocket client implementation for subprotocol negotiation. If the
+user application requests to be pinged in a specific interval, the
+client SHALL set the field *ping_interval* to the requested ping
+interval in seconds.
 
 When the server receives a 'client-auth' message, it MUST check that the
 cookie provided in the *your_cookie* field contains the cookie the
@@ -627,6 +630,12 @@ subprotocol strings, and:
   SHALL validate that the negotiated subprotocol is present in the
   *subprotocols* field.
 
+If the *ping_interval* field is present, the server SHALL validate that
+the field contains an integer greater than zero. The server SHOULD send
+a WebSocket *ping* message to the client in the requested interval. A
+timeout of 30 seconds for unanswered *ping* messages is RECOMMENDED. An
+unanswered *ping* shall result in a protocol error.
+
 The message SHALL be NaCl public-key encrypted by the server's session
 key pair (public key sent in 'server-hello') and the client's permanent
 key pair (public key as part of the WebSocket path or sent in
@@ -639,7 +648,8 @@ key pair (public key as part of the WebSocket path or sent in
   "subprotocols": [
     "v1.saltyrtc.org",
     "some.other.protocol"
-  ]
+  ],
+  "ping_interval": 30  // optional
 }
 ```
 
