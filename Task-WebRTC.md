@@ -136,9 +136,10 @@ channel id of another data channel instance that is currently `open`.
 # Signalling Channel Handover
 
 As soon as both clients have exchanged the required messages and the
-WebRTC `RTCPeerConnection` instance informs the client that the
-peer-to-peer connection setup is complete, the client SHALL hand over
-the signalling channel to a dedicated data channel:
+WebRTC `RTCPeerConnection` instance informs the user application that
+the peer-to-peer connection setup is complete, the user application
+SHALL request that the client hands over the signalling channel to a
+dedicated data channel:
 
 1. The client creates a new data channel on the `RTCPeerConnection`
    instance with the `RTCDataChannelInit` object containing only the
@@ -303,9 +304,9 @@ client-to-client messages is described in the
 At any time, the initiator MAY send an 'offer' message to the responder.
 
 The initiator MUST set the *offer* field to the `Map` of its WebRTC
-`RTCPeerConnection`'s local description it has generated with calling
-`createOffer` on the `RTCPeerConnection` instance. The *offer* field
-SHALL be a `Map` and MUST contain:
+`RTCPeerConnection`'s local description the user application has
+generated with calling `createOffer` on the `RTCPeerConnection`
+instance. The *offer* field SHALL be a `Map` and MUST contain:
 
 * The *type* field containing a valid `RTCSdpType` in string
   representation.
@@ -315,8 +316,8 @@ SHALL be a `Map` and MUST contain:
 
 The responder SHALL validate that the *offer* field is a `Map`
 containing the above mentioned fields and value types. It SHALL continue
-by setting the value of that field as the WebRTC `RTCPeerConnection`'s
-remote description and creating an answer.
+by requesting the user application to set the value of that field as the
+WebRTC `RTCPeerConnection`'s remote description and creating an answer.
 
 The message SHALL be NaCl public-key encrypted by the client's session
 key pair and the other client's session key pair.
@@ -333,10 +334,11 @@ key pair and the other client's session key pair.
 
 ## 'answer' Message
 
-Once the responder has set the remote description on its WebRTC
-`RTCPeerConnection` instance and generated an answer by calling
-`createAnswer` on the instance, it SHALL send an 'answer' message. The
-*answer* field SHALL be a `Map` and MUST contain:
+Once the user application of the responder has set the remote
+description on its WebRTC `RTCPeerConnection` instance and generated an
+answer by calling `createAnswer` on the instance, the user application
+SHALL request sending an 'answer' message. The *answer* field SHALL be a
+`Map` and MUST contain:
 
 * The *type* field containing a valid `RTCSdpType` in string
   representation.
@@ -346,8 +348,8 @@ Once the responder has set the remote description on its WebRTC
 
 The initiator SHALL validate that the *answer* field is a `Map`
 containing the above mentioned fields and value types. It SHALL continue
-by setting the value of that field as the WebRTC `RTCPeerConnection`'s
-remote description.
+by requesting the user application to set the value of that field as the
+WebRTC `RTCPeerConnection`'s remote description.
 
 The message SHALL be NaCl public-key encrypted by the client's session
 key pair and the other client's session key pair.
@@ -389,9 +391,9 @@ implementation.)*
 
 The receiving client SHALL validate that the *candidates* field is an
 `Array` containing one or more `Map`s. These `Map`s SHALL contain the
-above mentioned fields value types. It SHALL continue by adding the
-value of each item in the `Array` as a remote candidate to its WebRTC
-`RTCPeerConnection` instance.
+above mentioned fields value types. It SHALL continue by requesting the
+user application to add the value of each item in the `Array` as a
+remote candidate to its WebRTC `RTCPeerConnection` instance.
 
 The message SHALL be NaCl public-key encrypted by the client's session
 key pair and the other client's session key pair.
