@@ -1114,13 +1114,15 @@ valid close code (as enumerated in *Close Code Enumeration*). `1001`
 SHALL be used for normal close cases. Once the message has been sent,
 the client SHALL remove all cached data (such as cookies and sequence
 numbers) of and for the other client. The client SHALL also terminate
-the connection to the server with a close code of `1001` (*Going Away*).
+the connection to the server with a close code of `1001` (*Going Away*)
+if the connection is still open.
 
 A receiving client SHALL validate that the *reason* field contains a
 valid close code (as enumerated in *Close Code Enumeration*). The client
 SHALL remove all cached data (such as cookies and sequence numbers) of
 and for the other client. The client SHALL also terminate the connection
-to the server with a close code of `1001` (*Going Away*).
+to the server with a close code of `1001` (*Going Away*) if the
+connection is still open.
 
 The message SHALL be NaCl public-key encrypted by the client's session
 key pair and the other client's session key pair.
