@@ -79,7 +79,7 @@ The task's data SHALL be a `Map` containing the following items:
   *Detecting the Maximum Message Size* section.
 * The *handover* field SHALL be set to `true` unless the user application
   explicitly requested to turn off the handover feature or the
-  implementation has knowledge that `RTCDataChannel`'s are not supported.
+  implementation has knowledge that `RTCDataChannel`s are not supported.
   In this case, the value SHALL be set to `false`.
 
 ## Incoming
