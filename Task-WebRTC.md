@@ -3,10 +3,10 @@
 This task uses the end-to-end encryption techniques of SaltyRTC to set
 up a secure WebRTC peer-to-peer connection. It also adds another
 security layer for data channels that are available to users. The
-signalling channel will persist after being handed over to a dedicated
-data channel once the peer-to-peer connection has been set up.
-Therefore, further signalling communication between the peers does not
-require a dedicated WebSocket connection over a SaltyRTC server.
+signalling channel will persist and should be handed over to a dedicated
+data channel once the peer-to-peer connection has been set up. Therefore,
+further signalling communication between the peers may not require a
+dedicated WebSocket connection over a SaltyRTC server.
 
 # Conventions
 
@@ -38,8 +38,8 @@ This protocol adds another security layer for WebRTC data channels as we
 want our protocol to sustain broken (D)TLS environments. A data channel
 that uses this security layer will be called *Wrapped Data Channel*.
 Note that the user MAY or MAY NOT choose to use wrapped data channels
-for its purpose. However, the signalling channel MUST be handed over to
-a wrapped data channel.
+for its purpose. However, the handed over signalling channel MUST use a
+wrapped data channel.
 
 # Task Protocol Name
 
@@ -77,6 +77,10 @@ The task's data SHALL be a `Map` containing the following items:
   applications that use specific data channel ids.
 * The *max_packet_size* field MUST be set to the value described by the
   *Detecting the Maximum Message Size* section.
+* The *handover* field SHALL be set to `true` unless the user application
+  explicitly requested to turn off the handover feature or the
+  implementation has knowledge that `RTCDataChannel`'s are not supported.
+  In this case, the value SHALL be set to `false`.
 
 ## Incoming
 
@@ -93,6 +97,9 @@ following checks:
   clients' maximum size SHALL be stored. The stored value SHALL be
   readable by user applications, so a user application can have its own
   message chunking implementation if desired.
+* The *handover* field MUST be either `true` or `false`. If set to
+  `false`, `RTCDataChannel` instances for the signalling handover SHALL
+  NOT be created.
 
 # Wrapped Data Channel
 
@@ -134,7 +141,7 @@ number.
 As soon as both clients have exchanged the required messages and the
 WebRTC `RTCPeerConnection` instance informs the user application that
 the peer-to-peer connection setup is complete, the user application
-SHALL request that the client hands over the signalling channel to a
+SHOULD request that the client hands over the signalling channel to a
 dedicated data channel:
 
 1. The client creates a new data channel on the `RTCPeerConnection`
@@ -162,6 +169,8 @@ dedicated data channel:
 4. After both clients have sent each other 'handover' messages, the
    client closes the connection to the server with a close code of
    `3003` (*Handover of the Signalling Channel*).
+
+If the `RTCDataChannel` could not be created or the created `RTCDataChannel` does not change its state to `open`, the client SHALL continue using the WebSocket-based signalling channel.
 
 # Message Structure
 
