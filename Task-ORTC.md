@@ -156,7 +156,7 @@ channel:
    subclass instance. To be able to create this instance, the client MAY
    need to send additional parameters and capabilities. To be able to
    designate these for handover, the *label* field of each message SHALL
-   be set to *handover*.
+   be set to `handover`.
 2. The client creates a new `RTCDataChannel` instance from the negotiated
    `RTCDataTransport` instance and the `RTCDataChannelParameters` object 
    containing only the following values:
@@ -481,7 +481,7 @@ following fields:
 
 Furthermore, a *label* field MAY be set to a string to be able to
 distinguish `RTCSctpCapabilities` for different SCTP transports. The
-label *handover* is reserved and SHALL NOT be used by user applications.
+label value `handover` is reserved and SHALL NOT be used by user applications.
 
 The receiving client SHALL validate that the *capabilities* field
 contains the amove mentioned fields and their types.
