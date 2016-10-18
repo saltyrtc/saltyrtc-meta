@@ -76,10 +76,6 @@ The task's data SHALL be a `Map` containing the following items:
   (non-negative integers) that SHALL not be used for the signalling
   channel. This `Array` MUST be available to be set from user
   applications that use specific data channel ids.
-* The *handover* field SHALL be set to `true` unless the user application
-  explicitly requested to turn off the handover feature or the
-  implementation has knowledge that `RTCDataChannel`'s are not supported.
-  In this case, the value SHALL be set to `false`.
 * The *handover* field SHALL be set to an `Array` containing supported
   data transport types as defined in the *Data Transport Types* section.
   If the user application explicitly requests to turn off the handover
@@ -94,9 +90,6 @@ following checks:
 * The *exclude* field MUST contain an `Array` of WebRTC data channel IDs
   (non-negative integers) that SHALL not be used for the signalling
   channel. The client SHALL store this list for usage during handover.
-* The *handover* field MUST be either `true` or `false`. If set to
-  `false`, `RTCDataChannel` instances for the signalling handover SHALL
-  NOT be created.
 * The *handover* field MUST be an `Array`. Each element in the `Array`
   SHALL be a string. The client SHALL continue by comparing the provided
   data transport types to its own `Array` of supported data transports
