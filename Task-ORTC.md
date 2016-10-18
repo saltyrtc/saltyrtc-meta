@@ -1,4 +1,4 @@
-w# SaltyRTC ORTC Task
+# SaltyRTC ORTC Task
 
 This task uses the end-to-end encryption techniques of SaltyRTC to set
 up a secure ORTC peer-to-peer connection. It also adds another security
