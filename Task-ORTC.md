@@ -120,8 +120,8 @@ size SHALL be determined by the following procedure:
   `RTCSctpTransport`'s `RTCSctpCapabilities.maxMessageSize` field.
 
 If the determined maximum packet size is greater than `0`, the message
-chunking implementation SHALL use the *max_packet_size* as the maximum
-chunk size. Otherwise, the encrypted message SHALL be sent as is.
+chunking implementation SHALL use that value as the maximum chunk size.
+Otherwise, the encrypted message SHALL be sent as is.
 
 Incoming messages SHALL be stitched together using SaltyRTC message
 chunking if required (see the previous paragraph for details). Complete
