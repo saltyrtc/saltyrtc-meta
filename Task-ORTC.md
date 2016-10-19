@@ -280,11 +280,51 @@ client-to-client messages is described in the
 
 ## Message States (Beyond 'auth')
 
-TODO
+```
+        +------------------------------------+
+        | ice-parameters / ice-candidates    |
+    --->+ dtls-parameters / rtp-capabilities +------+
+        | sctp-capabilities / dc-parameters  |      |
+        +-----------------+------------------+      |
+                          |                         |
+                          v                         v
+                     +----+-----+               +---+---+
+                     | handover +-------------->+ close |
+                     +----+-----+               +---+---+
+                          |                         ^
+                          v                         |
+        +-----------------+------------------+      |
+        | ice-parameters / ice-candidates    |      |
+        | dtls-parameters / rtp-capabilities +------+
+        | sctp-capabilities / dc-parameters  |
+        +------------------------------------+
+```
 
 ## Message Flow Example (Beyond 'auth')
 
-TODO
+```
+    Initiator                 Responder
+     |                               |
+     |        ice-parameters         |
+     |<----------------------------->|
+     |   ice-candidates (n times)    |
+     |<----------------------------->|
+     |        dtls-parameters        |
+     |<----------------------------->|
+     |       rtp-capabilities        |
+     |<----------------------------->|
+     |       sctp-capabilities       |
+     |<----------------------------->|
+     |            handover           |
+     |------------------------------>|
+     |            handover           |
+     |<------------------------------|
+     |         dc-parameters         |
+     |<----------------------------->|
+     |             close             |
+     |<----------------------------->|
+     |                               |
+```
 
 ## 'ice-parameters' Message
 
@@ -481,7 +521,8 @@ following fields:
 
 Furthermore, a *label* field MAY be set to a string to be able to
 distinguish `RTCSctpCapabilities` for different SCTP transports. The
-label value `handover` is reserved and SHALL NOT be used by user applications.
+label value `handover` is reserved and SHALL NOT be used by user
+applications.
 
 The receiving client SHALL validate that the *capabilities* field
 contains the amove mentioned fields and their types.
