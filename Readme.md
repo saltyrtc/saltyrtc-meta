@@ -18,10 +18,12 @@ In this repository, you can find...
 
 If you have implemented a SaltyRTC client or server :+1: and you would like to add it to this list, we will gladly accept a pull request from you.
 
-**Clients**
+**Clients and Tasks**
 
 * [saltyrtc-client-js](https://github.com/saltyrtc/saltyrtc-client-js)
+    - [saltyrtc-task-webrtc-js](https://github.com/saltyrtc/saltyrtc-task-webrtc-js)
 * [saltyrtc-client-java](https://github.com/saltyrtc/saltyrtc-client-java)
+    - [saltyrtc-task-webrtc-java](https://github.com/saltyrtc/saltyrtc-task-webrtc-java)
 
 **Servers**
 
