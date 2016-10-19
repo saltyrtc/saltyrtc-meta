@@ -10,6 +10,8 @@ In this repository, you can find...
 * The [SaltyRTC WebRTC Task Protocol](Task-WebRTC.md) to set up a 
   secure WebRTC peer-to-peer connection by using SaltyRTC's end-to-end 
   encryption techniques.
+* The [SaltyRTC ORTC Task Protocol](Task-ORTC.md) to set up a secure
+  ORTC peer-to-peer connection.
 * The [SaltyRTC Chunking Specification](Chunking.md) used by SaltyRTC's 
   WebRTC task. However, the specification can also be used as a generic 
   message chunking solution.
