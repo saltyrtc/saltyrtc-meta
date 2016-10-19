@@ -16,7 +16,7 @@ In this repository, you can find...
 
 ## Implementations
 
-If you have implemented a SaltyRTC client or server :+1: and you would like to add it to this list, we will gladly accept a pull request from you.
+If you have implemented a SaltyRTC client, task or server :+1: and you would like to add it to this list, we will gladly accept a pull request from you.
 
 **Clients and Tasks**
 
