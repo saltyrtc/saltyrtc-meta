@@ -687,7 +687,7 @@ fields:
   permanent key pair: Its value MUST contain the concatenation of the
   server's public session key and the client's public permanent key (in
   that order). The content of this field SHALL be NaCl public key
-  encrypted using the server's private permanent key and the client's
+  encrypted using the client's private permanent key and the server's
   public permanent key. For encryption, the message's nonce SHALL be
   used.
 * ONLY in case the client is an initiator, the *responders* field SHALL
