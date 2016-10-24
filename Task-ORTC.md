@@ -281,23 +281,25 @@ client-to-client messages is described in the
 ## Message States (Beyond 'auth')
 
 ```
-        +------------------------------------+
-        | ice-parameters / ice-candidates    |
-    --->+ dtls-parameters / rtp-capabilities +------+
-        | sctp-capabilities / dc-parameters  |      |
-        +-----------------+------------------+      |
-                          |                         |
-                          v                         v
-                     +----+-----+               +---+---+
-                     | handover +-------------->+ close |
-                     +----+-----+               +---+---+
-                          |                         ^
-                          v                         |
-        +-----------------+------------------+      |
-        | ice-parameters / ice-candidates    |      |
-        | dtls-parameters / rtp-capabilities +------+
-        | sctp-capabilities / dc-parameters  |
-        +------------------------------------+
+        +--------------------------------------+
+        |  ice-parameters / ice-candidates /   |
+    --->+ dtls-parameters / rtp-capabilities / |
+        | sctp-capabilities / dc-parameters /  +------+
+        |             application              |      |
+        +-----------------+--------------------+      |
+                          |                           |
+                          v                           v
+                     +----+-----+                 +---+---+
+                     | handover +---------------->+ close |
+                     +----+-----+                 +---+---+
+                          |                           ^
+                          v                           |
+        +-----------------+--------------------+      |
+        |  ice-parameters / ice-candidates /   |      |
+        | dtls-parameters / rtp-capabilities / +------+
+        | sctp-capabilities / dc-parameters /  |
+        |             application              |
+        +--------------------------------------+
 ```
 
 ## Message Flow Example (Beyond 'auth')
@@ -623,4 +625,9 @@ channel used for signalling. The user application MAY continue using
 `RTCDataChannel`s. However, wrapped data channels MAY or MAY NOT be
 available once the signalling's data channel has been closed, depending
 on the flexibility of the client's implementation.
+
+## 'application' Message
+
+The message itself and the client's behaviour is described in the
+[SaltyRTC protocol specification](./Protocol.md#application-message).
 

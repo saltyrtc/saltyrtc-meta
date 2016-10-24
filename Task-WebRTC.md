@@ -266,18 +266,20 @@ client-to-client messages is described in the
 ## Message States (Beyond 'auth')
 
 ```
-             +---------+    +------------------------------+
-             |         v    |                              v
-        +----+---------+----+-----+    +----------+    +---+---+
-    --->+ offer/answer/candidates +--->+ handover +--->+ close |
-        +-------------------------+    +-----+----+    +---+---+
-                                             |             ^
-                                             v             |
-                         +-------------------+-----+       |
-                         | offer/answer/candidates +--------
-                         +----+--------------+-----+
-                              |              ^
-                              +--------------+
+             +----------+    +------------------------------+
+             |          v    |                              |
+        +----+----------+----+-----+                        v
+        |      offer / answer      |    +----------+    +---+---+
+    --->+ candidates / application +--->+ handover +--->+ close |
+        +--------------------------+    +-----+----+    +---+---+
+                                              |             ^
+                                              v             |
+                         +--------------------+-----+       |
+                         |      offer / answer      +-------+
+                         | candidates / application |
+                         +-----+--------------+-----+
+                               |              ^
+                               +--------------+
 ```
 
 ## Message Flow Example (Beyond 'auth')
@@ -457,3 +459,9 @@ channel used for signalling. The user application MAY continue using the
 data channels MAY or MAY NOT be available once the signalling's data
 channel has been closed, depending on the flexibility of the client's
 implementation.
+
+## 'application' Message
+
+The message itself and the client's behaviour is described in the
+[SaltyRTC protocol specification](./Protocol.md#application-message).
+
