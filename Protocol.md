@@ -758,7 +758,7 @@ responders on the same path. No additional field needs to be set. The
 server MUST ensure that a 'new-initiator' message has been sent before
 the corresponding initiator is able to send messages to any responder.
 
-A responder who receives a 'new-initiator' message MUST proceed with
+A responder who receives a 'new-initiator' message MUST proceed by
 deleting all currently cached information about and for the previous
 initiator (such as cookies and the sequence numbers) and continue by
 sending a 'token' or 'key' client-to-client message described in the
@@ -785,8 +785,11 @@ is able to send messages to the initiator.
 An initiator who receives a 'new-responder' message SHALL validate that
 the *id* field contains a valid responder address (`0x02..0xff`). It
 SHOULD store the responder's identity in its internal list of
-responders. Furthermore, the initiator MUST drop new responders that
-have not sent any messages to the initiator after 60 seconds.
+responders. If a responder with the same id already exists, all
+currently cached information about and for the previous responder (such
+as cookies and the sequence number) MUST be deleted first. Furthermore,
+the initiator MUST drop new responders that have not sent any messages
+to the initiator after 60 seconds.
 
 The message SHALL be NaCl public-key encrypted by the server's session
 key pair and the initiator's permanent key pair.
