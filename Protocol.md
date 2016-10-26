@@ -1106,7 +1106,8 @@ key pair and the other client's session key pair.
 ## 'application' Message
 
 Once the client-to-client handshake has been completed, the user
-application of a client MAY trigger sending this message.  
+application of a client MAY trigger sending this message.
+
 This message type allows user applications to send simple control
 messages or early data without having to modify an existing task.
 However, this message SHOULD NOT be abused to write custom protocols.
@@ -1246,7 +1247,6 @@ The following close codes are available for 'drop-responder' messages:
 * 3002: Internal Error
 * 3004: Dropped by Initiator
 * 3005: Initiator Could Not Decrypt
-* 3006: No Shared Task Found
 
 # Security Mechanisms
 
