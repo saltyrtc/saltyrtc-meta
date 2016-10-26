@@ -837,10 +837,11 @@ key pair and the initiator's permanent key pair.
 
 ## 'send-error' Message
 
-In case the server could not relay a client-to-client message, the
-server MUST send this message to the original sender of the message that
-should have been relayed. The server SHALL set the *id* field to the
-concatenation of the source address, the destination address, the
+In case the server could not relay a client-to-client message (meaning
+that the connection between server and the receiver has been severed),
+the server MUST send this message to the original sender of the message
+that should have been relayed. The server SHALL set the *id* field to
+the concatenation of the source address, the destination address, the
 overflow number and the sequence number (or the combined sequence
 number) of the nonce section from the original message.
 
