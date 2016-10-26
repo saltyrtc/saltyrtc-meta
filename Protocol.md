@@ -1075,8 +1075,12 @@ fields:
 
 After the above procedure has been followed, the other client has
 successfully authenticated it towards the client. The other client's
-public key MAY be stored as trusted on that path if the application
-desires it. Both initiator and responder MUST continue by following the
+public key MAY be stored as trusted for that path if the application
+desires it. The initiator MUST drop all other connected responders with
+a 'drop-responder' message containing the close code `3004` (*Dropped by
+Initiator*) in the *reason* field.
+
+Both initiator and responder MUST continue by following the
 protocol specification of the chosen task after processing this message
 is complete.
 
