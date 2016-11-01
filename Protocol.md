@@ -610,7 +610,7 @@ user application requests to be pinged (see
 [RFC 6455 section 5.5.2](https://tools.ietf.org/html/rfc6455#section-5.5.2))
 in a specific interval, the client SHALL set the field *ping_interval*
 to the requested interval in seconds. Otherwise, *ping_interval* MUST
-be set to `0` indicating that no WebSocket *ping* messages SHALL be
+be set to `0` indicating that no WebSocket *ping* messages SHOULD be
 sent.
 
 When the server receives a 'client-auth' message, it MUST check that the
@@ -634,7 +634,7 @@ subprotocol strings, and:
   *subprotocols* field.
 
 Furthermore, the server SHALL validate that the *ping_interval* field
-contains a non-negative integer. If the value is `0`, the server SHALL
+contains a non-negative integer. If the value is `0`, the server SHOULD
 NOT send WebSocket *ping* messages to the client. Otherwise, the server
 SHOULD send a WebSocket *ping* message in the requested interval in
 seconds to the client and wait for a corresponding *pong* message (as
