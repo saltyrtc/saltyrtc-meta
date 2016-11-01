@@ -848,10 +848,11 @@ the concatenation of the source address, the destination address, the
 overflow number and the sequence number (or the combined sequence
 number) of the nonce section from the original message.
 
-A receiving client MUST treat this incident as a protocol error towards
-the client the message was destined at. Note that the protocol error
-SHALL be handled as described in the *Client-to-Client Messages*
-section.
+A receiving client MUST treat this incident by raising an error event to
+the user's application and deleting all cached information about and for
+the other client (such as cookies and sequence numbers). The client MAY
+stay on the path and wait for a new initiator/responder to connect.
+However, the client-to-client handshake MUST start from the beginning.
 
 The message SHALL be NaCl public-key encrypted by the server's session
 key pair and the client's permanent key pair.
@@ -902,11 +903,10 @@ stated:
   the responder's address in the *id* field to the server and a close
   code of `3001` (*Protocol Error*) in the *reason* field.  A responder
   SHALL close the connection to the server with a close code of `3001`.
-* If the other client is authenticated and the error cause is not a
-  'send-error' message from the server, the client SHALL send a 'close'
+* If the other client is authenticated, the client SHALL send a 'close'
   message to the other client containing the close code `3001`
-  (*Protocol Error*). In any case, both clients SHALL terminate the
-  connection to the server (normal close code).
+  (*Protocol Error*). Both clients SHALL terminate the connection to the
+  server (normal close code).
 
 ## Client Handshake
 
