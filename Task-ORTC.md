@@ -386,13 +386,15 @@ Each *candidate* field SHALL be a `Map` containing either a single field
 * *protocol* of type string containing one of the protocol types defined
   by `RTCIceProtocol`.
 * *port* of type 16 bit unsigned integer.
-* *type* of type string containing one of the ice candidate types
+* *type* of type string containing one of the ICE candidate types
   defined by `RTCIceCandidateType`.
-* *relatedAddress* of type string. The string MAY be empty in case the
-  candidate has no related address. However, it SHALL NOT be `nil`.
-* *relatedPort* of type 16 bit unsigned integer. The value SHALL be `0`
-  in case the candidate has no related port. However, it SHALL NOT be
-  `nil`.
+* *tcpType* of type string containing one of the ICE TCP candidate types
+  defined by `RTCIceTcpCandidateType`. This field MUST be omitted in
+  case the candidate's protocol is not TCP.
+* *relatedAddress* of type string. This field SHALL be omitted in case
+  the candidate has no related address.
+* *relatedPort* of type 16 bit unsigned integer. The field MUST be
+  omitted in case the candidate has no related port.
 
 The receiving client SHALL validate that the *candidates* field is an
 `Array` containing one or more `Map`s. These `Map`s SHALL contain the
@@ -412,9 +414,29 @@ key pair and the other client's session key pair.
       "protocol": "udp",
       "port": 48765,
       "type": "host",
-      "tcpType": "active" // TODO: https://github.com/w3c/ortc/issues/608
-      "relatedAddress": "",
-      "relatedPort": 0
+    },
+    "label": "echo-service" // optional
+  }, {
+    "candidate": {
+      "foundation": "abcd...",
+      "priority": 1234,
+      "ip": "1.1.1.1",
+      "protocol": "udp",
+      "port": 42354,
+      "type": "srflx",
+      "relatedAddress": "192.168.1.1",
+      "relatedPort": 48766
+    },
+    "label": "echo-service" // optional
+  }, {
+    "candidate": {
+      "foundation": "1111...",
+      "priority": 123,
+      "ip": "192.168.1.1",
+      "protocol": "tcp",
+      "port": 48767,
+      "type": "host",
+      "tcpType": "active"
     },
     "label": "echo-service" // optional
   }, {
