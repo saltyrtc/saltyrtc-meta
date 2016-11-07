@@ -687,7 +687,7 @@ fields:
   permanent key pair: Its value MUST contain the concatenation of the
   server's public session key and the client's public permanent key (in
   that order). The content of this field SHALL be NaCl public key
-  encrypted using the client's private permanent key and the server's
+  encrypted using the server's private permanent key and the client's
   public permanent key. For encryption, the message's nonce SHALL be
   used.
 * ONLY in case the client is an initiator, the *responders* field SHALL
@@ -707,7 +707,7 @@ severed. It MUST check that the cookie provided in the *your_cookie*
 field contains the cookie the client has used in its previous and
 messages to the server. If the client has knowledge of the server's
 public permanent key, it SHALL decrypt the *signed_keys* field by using
-the message's nonce, the server's private permanent key and the client's
+the message's nonce, the client's private permanent key and the server's
 public permanent key. The decrypted message MUST match the concatenation
 of the server's public session key and the client's public permanent key
 (in that order). If the *signed_keys* is present but the client does not
