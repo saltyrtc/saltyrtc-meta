@@ -721,10 +721,14 @@ Moreover, the client MUST do the following checks depending on its role:
   address be repeated in the `Array`. An empty `Array` SHALL be
   considered valid. However, `Nil` SHALL NOT be considered a valid value
   of that field. It SHOULD store the responder's identities in its
-  internal list of responders. Additionally, the initiator MUST drop
-  inactive responders. To achieve that, the initiator MAY drop
+  internal list of responders. Additionally, the initiator MUST keep its
+  path clean by dropping inactive responders (i.e. responders that have
+  not sent a message to the initiator, yet). To achieve that, the
+  initiator MAY store the responders in a FIFO queue and drop the oldest
+  responder that did not send a message to it once the path is congested
+  (253 responders are connected). Another solution would be to drop
   responders that have not sent any messages to the initiator after 60
-  seconds.
+  seconds. However, a combination of both is RECOMMENDED.
 * In case the client is the responder, it SHALL check that the
   *initiator_connected* field contains a boolean value. In case the
   field's value is `true`, the responder MUST proceed with sending a
