@@ -51,7 +51,7 @@ TODO: Switch to `v1` as soon as the spec has been reviewed.
 
 # Detecting the Maximum Message Size
 
-For now, all implementations SHALL use the value `16384` which seems to
+For now, all implementations SHOULD use the value `16384` which seems to
 be the highest amount of kilobytes that can be applied for portable
 WebRTC data channel communication. An implementation MAY use another
 value if it can guarantee delivery and reception for messages of that
