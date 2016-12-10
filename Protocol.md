@@ -173,9 +173,9 @@ server:
 
 Only if the server chose the subprotocol above, this protocol SHALL be
 applied. If another shared subprotocol that is not related to SaltyRTC
-has been found, continue with that subprotocol. Otherwise, close the
-connection to the server with a close code of `1002` (No Shared
-Subprotocol Found).
+has been found, continue with that subprotocol. Otherwise, the
+underlying WebSocket connection will be closed automatically with a
+close code of `1002` (WebSocket Protocol Error).
 
 TODO: Switch to `v1` as soon as the spec has been reviewed.
 
@@ -1161,8 +1161,7 @@ A receiving client SHALL validate that the *reason* field contains a
 valid close code (as enumerated in *Close Code Enumeration*). The client
 SHALL remove all cached data (such as cookies and sequence numbers) of
 and for the other client. The client SHALL also terminate the connection
-to the server with a close code of `1001` (*Going Away*) if the
-connection is still open.
+to the server (no specific close code) if the connection is still open.
 
 The message SHALL be NaCl public-key encrypted by the client's session
 key pair and the other client's session key pair.
@@ -1242,8 +1241,8 @@ the error cannot be resolved by the implementation itself.
 
 The following close codes are being used by the protocol:
 
-* 1001: Going Away
-* 1002: No Shared Subprotocol Found
+* 1001: Going Away (WebSocket internal close code)
+* 1002: Protocol Error (WebSocket internal close code)
 * 3000: Path Full
 * 3001: Protocol Error
 * 3002: Internal Error
