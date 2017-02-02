@@ -627,7 +627,7 @@ send this message to the server.
   set to `0` indicating that no WebSocket *ping* messages SHOULD be
   sent.
 * If the client has stored the server's public permanent key (32 bytes),
-  it SHOULD set it in the *server_key* field.
+  it SHOULD set it in the *your_key* field.
 
 When the server receives a 'client-auth' message, it MUST check that the
 cookie provided in the *your_cookie* field contains the cookie the
@@ -659,7 +659,7 @@ described in
 An unanswered *ping* MUST result in a protocol error. A timeout of 30
 seconds for unanswered *ping* messages is RECOMMENDED.
 
-If the 'client-auth' message contains a *server_key* field, it MUST be
+If the 'client-auth' message contains a *your_key* field, it MUST be
 compared to the list of server public permanent keys. Then:
 
 * If the server does not have a permanent key pair, it SHALL drop the
@@ -671,10 +671,10 @@ compared to the list of server public permanent keys. Then:
   server, then that key pair SHALL be selected for further usage of the
   server's permanent key pair towards that client.
 
-In case the 'client-auth' message did not contain a *server_key* field
-but the server does have at least one permanent key pair, the server
-SHALL select the primary permanent key pair for further usage of the
-server's permanent key pair towards the client.
+In case the 'client-auth' message did not contain a *your_key* field but
+the server does have at least one permanent key pair, the server SHALL
+select the primary permanent key pair for further usage of the server's
+permanent key pair towards the client.
 
 The message SHALL be NaCl public-key encrypted by the server's session
 key pair (public key sent in 'server-hello') and the client's permanent
@@ -690,7 +690,7 @@ key pair (public key as part of the WebSocket path or sent in
     "some.other.protocol"
   ],
   "ping_interval": 30,
-  "server_key": b"2659296ce03993e876d5f2abcaa6d19f92295ff119ee5cb327498d2620efc979"
+  "your_key": b"2659296ce03993e876d5f2abcaa6d19f92295ff119ee5cb327498d2620efc979"
 }
 ```
 
