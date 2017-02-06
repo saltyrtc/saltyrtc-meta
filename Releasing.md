@@ -13,7 +13,7 @@ Signing key: https://lgrahl.de/pgp-key.txt
    export VERSION=protocol|chunking-<version>
    # For tasks:
    export VERSION=task-<task-name>-<version>
-   export GPG=0482ABA6
+   export GPG_KEY=3FDB14868A2B36D638F3C495F98FBED10482ABA6
    ```
    
 3. Update version numbers in the specification.
@@ -22,8 +22,8 @@ Signing key: https://lgrahl.de/pgp-key.txt
 
   ```bash
   git add <spec-file>
-  git commit -S${GPG} -m "Release ${VERSION}"
-  git tag -u ${GPG} -m "Release ${VERSION}" ${VERSION}
+  git commit -S${GPG_KEY} -m "Release ${VERSION}"
+  git tag -u ${GPG_KEY} -m "Release ${VERSION}" ${VERSION}
   ```
 
 5. Pat yourself on the back and celebrate!
