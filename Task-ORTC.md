@@ -280,7 +280,6 @@ client-to-client messages is described in the
 
 ## Message States (Beyond 'auth')
 
-```
         +--------------------------------------+
         |  ice-parameters / ice-candidates /   |
     --->+ dtls-parameters / rtp-capabilities / |
@@ -300,11 +299,9 @@ client-to-client messages is described in the
         | sctp-capabilities / dc-parameters /  |
         |             application              |
         +--------------------------------------+
-```
 
 ## Message Flow Example (Beyond 'auth')
 
-```
     Initiator                 Responder
      |                               |
      |        ice-parameters         |
@@ -326,7 +323,6 @@ client-to-client messages is described in the
      |             close             |
      |<----------------------------->|
      |                               |
-```
 
 ## 'ice-parameters' Message
 

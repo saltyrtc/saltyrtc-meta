@@ -263,7 +263,6 @@ client-to-client messages is described in the
 
 ## Message States (Beyond 'auth')
 
-```
              +----------+    +------------------------------+
              |          v    |                              |
         +----+----------+----+-----+                        v
@@ -278,11 +277,9 @@ client-to-client messages is described in the
                          +-----+--------------+-----+
                                |              ^
                                +--------------+
-```
 
 ## Message Flow Example (Beyond 'auth')
 
-```
     Initiator                 Responder
      |                               |
      |             offer             |
@@ -300,7 +297,6 @@ client-to-client messages is described in the
      |             close             |
      |<----------------------------->|
      |                               |
-```
 
 ## 'offer' Message
 

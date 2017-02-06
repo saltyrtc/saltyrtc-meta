@@ -181,10 +181,8 @@ this document. However, we will provide an idea of how the data can be
 encoded and exchanged by extending the WebSocket URI in the following
 way:
 
-```
-<scheme>://<server-host>:<server-port>/<signalling-path>
-?<server-permanent-public-key>#<authentication-token-hex>
-```
+    <scheme>://<server-host>:<server-port>/<signalling-path>
+    ?<server-permanent-public-key>#<authentication-token-hex>
 
 Note that exchanging the server's permanent public key from initiator
 to responder may or may not be a viable way to distribute the server's
@@ -193,9 +191,7 @@ by the responder or not.
 
 An example of such a URI:
 
-```
-wss://example.com:4567/11c7...0495?afc0...e589#23b7...6564
-```
+    wss://example.com:4567/11c7...0495?afc0...e589#23b7...6564
 
 The initiator could encode this URI into a QR code which the responder
 will decode back to a URI. The responder can then extract
@@ -333,9 +329,7 @@ characters. Initiator and responder connect to the same WebSocket path.
 
 Example of a WebSocket URI including a valid signalling path:
 
-```
-wss://example.com/debc3a6c9a630f27eae6bc3fd962925bdeb63844c09103f609bf7082bc383610
-```
+    wss://example.com/debc3a6c9a630f27eae6bc3fd962925bdeb63844c09103f609bf7082bc383610
 
 # Sending a Signalling Message
 
@@ -565,7 +559,6 @@ close code of `3001` (*Protocol Error*) unless otherwise stated.
 
 ## Message States (Towards/From Initiator)
 
-```
         +--------------+     +-------------+
     --->+ server-hello +---->+ client-auth |
         +--------------+     +------+------+
@@ -581,11 +574,9 @@ close code of `3001` (*Protocol Error*) unless otherwise stated.
         +-------+-------------------------+-------+
                 |                         ^
                 +-------------------------+
-```
 
 ## Message States (Towards/From Responder)
 
-```
         +--------------+     +-------------+
     --->+ server-hello |  +->+ client-auth |
         +------+-------+  |  +------+------+
@@ -601,7 +592,6 @@ close code of `3001` (*Protocol Error*) unless otherwise stated.
                        +-------+----------+-------+
                                |          ^
                                +----------+
-```
 
 ## 'server-hello' Message
 
@@ -1029,7 +1019,6 @@ authenticate itself towards the initiator.
 
 ## Message States
 
-```
          +-----------------+    +------------------+
          | key (initiator) +--->+ auth (responder) |
          +--------+--------+    +---------+--------+
@@ -1045,7 +1034,6 @@ authenticate itself towards the initiator.
          +-------+      +--+-----+--+-+    +-------+  :
                            |     ^  :                 :
                            +-----+  :.................:
-```
 
 ## 'token' Message
 
@@ -1268,7 +1256,6 @@ communicating with the initiator once it has completed the
 authentication towards the server. Then, both clients proceed with the
 client-to-client handshake.
 
-```
     Initiator                     Server                      Responder
      |                               |                               :
      |   wss://saltytc.org/01ff...   |                               :
@@ -1301,7 +1288,6 @@ client-to-client handshake.
      :                               |------------------------------>|
      :                               :                               :
      :                               :                               :
-```
 
 # Errors
 
