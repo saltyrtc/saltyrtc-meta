@@ -21,7 +21,9 @@ In this repository, you can find...
 
 ## Implementations
 
-If you have implemented a SaltyRTC client, task or server :+1: and you would like to add it to this list, we will gladly accept a pull request from you.
+If you have implemented a SaltyRTC client, task or server :+1: and you
+would like to add it to this list, we will gladly accept a pull request
+from you.
 
 **Clients and Tasks**
 
@@ -33,6 +35,18 @@ If you have implemented a SaltyRTC client, task or server :+1: and you would lik
 **Servers**
 
 * [saltyrtc-server-python](https://github.com/saltyrtc/saltyrtc-server-python)
+
+## Releases
+
+When we release a new version of the protocol, a (new) task or the
+chunking specification, a tag will be added in the following format:
+`<protocol|chunking>-<version>` or for tasks
+`task-<task-name>-<version>`.
+
+Note that the specifications' versions are independent from each other.
+In case a new version of a specification breaks backwards compatibility
+to another specification, it will include a section stating how
+compatibility is affected.
 
 ## Credits
 
