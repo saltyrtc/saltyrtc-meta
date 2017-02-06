@@ -45,9 +45,7 @@ wrapped data channel.
 
 The following protocol name SHALL be used for task negotiation:
 
-`v0.webrtc.tasks.saltyrtc.org`
-
-TODO: Switch to `v1` as soon as the spec has been reviewed.
+`v1.webrtc.tasks.saltyrtc.org`
 
 # Detecting the Maximum Message Size
 

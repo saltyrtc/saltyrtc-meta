@@ -181,15 +181,13 @@ generally hardens the protocol against potential attacks.
 It is REQUIRED to provide the following subprotocol when connecting to a
 server:
 
-`v0.saltyrtc.org`
+`v1.saltyrtc.org`
 
 Only if the server chose the subprotocol above, this protocol SHALL be
 applied. If another shared subprotocol that is not related to SaltyRTC
 has been found, continue with that subprotocol. Otherwise, the
 underlying WebSocket connection will be closed automatically with a
 close code of `1002` (WebSocket Protocol Error).
-
-TODO: Switch to `v1` as soon as the spec has been reviewed.
 
 # Message Structure
 
