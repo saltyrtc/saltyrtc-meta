@@ -45,9 +45,7 @@ wrapped data channel.
 
 The following protocol name SHALL be used for task negotiation:
 
-`v0.webrtc.tasks.saltyrtc.org`
-
-TODO: Switch to `v1` as soon as the spec has been reviewed.
+`v1.webrtc.tasks.saltyrtc.org`
 
 # Detecting the Maximum Message Size
 
@@ -265,7 +263,6 @@ client-to-client messages is described in the
 
 ## Message States (Beyond 'auth')
 
-```
              +----------+    +------------------------------+
              |          v    |                              |
         +----+----------+----+-----+                        v
@@ -280,11 +277,9 @@ client-to-client messages is described in the
                          +-----+--------------+-----+
                                |              ^
                                +--------------+
-```
 
 ## Message Flow Example (Beyond 'auth')
 
-```
     Initiator                 Responder
      |                               |
      |             offer             |
@@ -302,7 +297,6 @@ client-to-client messages is described in the
      |             close             |
      |<----------------------------->|
      |                               |
-```
 
 ## 'offer' Message
 

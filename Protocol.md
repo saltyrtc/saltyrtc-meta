@@ -162,6 +162,47 @@ responders, the server MUST dynamically assign identifiers (in the range
 of `0x02..0xff`). A server-assigned address becomes invalid as soon as
 the connection to the server has been severed.
 
+# Exchanging Signalling Information
+
+Please note that this section is informational only.
+
+In order to establish a signalling channel using SaltyRTC, the following
+information has to be available to both peers:
+
+* WebSocket URI scheme (`ws` or `wss`),
+* Server's permanent public key (optional but recommended),
+* Server host (as defined in [RFC3986, 3.2.2](https://tools.ietf.org/html/rfc3986#section-3.2.2))
+* Server port (as defined in [RFC3986, 3.2.3](https://tools.ietf.org/html/rfc3986#section-3.2.3))
+* Signalling path, and
+* Authentication token (only if responder and if not trusted)
+
+How this information should be exchanged is deliberately not defined by
+this document. However, we will provide an idea of how the data can be
+encoded and exchanged by extending the WebSocket URI in the following
+way:
+
+    <scheme>://<server-host>:<server-port>/<signalling-path>
+    ?<server-permanent-public-key>#<authentication-token-hex>
+
+Note that exchanging the server's permanent public key from initiator
+to responder may or may not be a viable way to distribute the server's
+permanent public key depending on whether the initiator is fully trusted
+by the responder or not.
+
+An example of such a URI:
+
+    wss://example.com:4567/11c7...0495?afc0...e589#23b7...6564
+
+The initiator could encode this URI into a QR code which the responder
+will decode back to a URI. The responder can then extract
+the initiator's permanent public key, the server's permanent public key
+and the authentication token from the path. Furthermore, it must strip
+everything that follows `?` away and can then use the result to connect
+to the SaltyRTC server. (If an implementation omits stripping the
+authentication token from the WebSocket URI, most WebSocket
+implementations will raise an error as `#` is not allowed in WebSocket
+URIs. This will help to prevent leakage of an authentication token.)
+
 # WebSocket
 
 The SaltyRTC protocol has been designed to work on top of the WebSocket
@@ -181,15 +222,13 @@ generally hardens the protocol against potential attacks.
 It is REQUIRED to provide the following subprotocol when connecting to a
 server:
 
-`v0.saltyrtc.org`
+`v1.saltyrtc.org`
 
 Only if the server chose the subprotocol above, this protocol SHALL be
 applied. If another shared subprotocol that is not related to SaltyRTC
 has been found, continue with that subprotocol. Otherwise, the
 underlying WebSocket connection will be closed automatically with a
 close code of `1002` (WebSocket Protocol Error).
-
-TODO: Switch to `v1` as soon as the spec has been reviewed.
 
 # Message Structure
 
@@ -290,9 +329,7 @@ characters. Initiator and responder connect to the same WebSocket path.
 
 Example of a WebSocket URI including a valid signalling path:
 
-```
-wss://example.com/debc3a6c9a630f27eae6bc3fd962925bdeb63844c09103f609bf7082bc383610
-```
+    wss://example.com/debc3a6c9a630f27eae6bc3fd962925bdeb63844c09103f609bf7082bc383610
 
 # Sending a Signalling Message
 
@@ -522,7 +559,6 @@ close code of `3001` (*Protocol Error*) unless otherwise stated.
 
 ## Message States (Towards/From Initiator)
 
-```
         +--------------+     +-------------+
     --->+ server-hello +---->+ client-auth |
         +--------------+     +------+------+
@@ -538,11 +574,9 @@ close code of `3001` (*Protocol Error*) unless otherwise stated.
         +-------+-------------------------+-------+
                 |                         ^
                 +-------------------------+
-```
 
 ## Message States (Towards/From Responder)
 
-```
         +--------------+     +-------------+
     --->+ server-hello |  +->+ client-auth |
         +------+-------+  |  +------+------+
@@ -558,7 +592,6 @@ close code of `3001` (*Protocol Error*) unless otherwise stated.
                        +-------+----------+-------+
                                |          ^
                                +----------+
-```
 
 ## 'server-hello' Message
 
@@ -953,8 +986,7 @@ SHALL issue a token which is a securely random generated NaCl secret key
 (32 bytes) that is valid for a single successfully decrypted message –
 the 'token' message. The token MUST be exchanged securely between
 initiator and responder. This specification deliberately does not define
-how the token should be exchanged (however, the token and the public key
-of the initiator easily fit into a medium size QR code).
+how the token should be exchanged.
 
 Once the authentication process of the two clients has been completed
 (after both clients have sent each other a valid 'auth' message), the
@@ -987,7 +1019,6 @@ authenticate itself towards the initiator.
 
 ## Message States
 
-```
          +-----------------+    +------------------+
          | key (initiator) +--->+ auth (responder) |
          +--------+--------+    +---------+--------+
@@ -1003,7 +1034,6 @@ authenticate itself towards the initiator.
          +-------+      +--+-----+--+-+    +-------+  :
                            |     ^  :                 :
                            +-----+  :.................:
-```
 
 ## 'token' Message
 
@@ -1226,7 +1256,6 @@ communicating with the initiator once it has completed the
 authentication towards the server. Then, both clients proceed with the
 client-to-client handshake.
 
-```
     Initiator                     Server                      Responder
      |                               |                               :
      |   wss://saltytc.org/01ff...   |                               :
@@ -1259,7 +1288,6 @@ client-to-client handshake.
      :                               |------------------------------>|
      :                               :                               :
      :                               :                               :
-```
 
 # Errors
 
