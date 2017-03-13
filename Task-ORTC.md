@@ -169,16 +169,15 @@ channel:
 3. The newly created `RTCDataChannel` instance shall be wrapped by
    following the *Wrapped Data Channel* section.
 4. As soon as the data channel is `open`, the client SHALL send a
-   'handover' message to the other client. After this message, the
-   client SHALL NOT send any messages on the original signalling
-   channel. The client MAY already send signalling messages over the new
-   signalling channel. If the client has already received a 'handover'
-   message from the other client, it MUST continue with the next step,
-   skipping the following sentences. Otherwise, the client MUST accept
-   further messages from the other client on the original signalling
-   channel only and wait for an incoming 'handover' message. Once that
-   'handover' message has been received, the client SHALL ONLY accept
-   signalling messages over the wrapped data channel.
+   'handover' message on the WebSocket-based signalling channel (*WS
+   channel*) to the other client. Subsequent outgoing messages MUST be
+   sent over the data channel based signalling channel (*DC channel*).
+   Incoming messages on the DC channel MUST be buffered. Incoming
+   messages on the WS channel SHALL be accepted until a 'handover'
+   message has been received on the WS channel. Once that message has
+   been received, the client SHALL process the buffered messages from
+   the DC channel. Subsequent signalling messages SHALL ONLY be accepted
+   over the DC channel.
 5. After both clients have sent each other 'handover' messages, the
    client closes the connection to the server with a close code of
    `3003` (*Handover of the Signalling Channel*).
