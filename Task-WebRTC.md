@@ -369,7 +369,8 @@ Both clients MAY send ICE candidates at any time to each other. Clients
 SHOULD bundle available candidates.
 
 A client who sends an ICE candidate SHALL set the *candidates* field to
-an `Array` of `Map`s where each `Map` SHALL contain the following
+an `Array`. Elements of this array SHALL either be `Nil` to indicate the
+end of candidates towards WebRTC or a `Map` containing the following
 fields:
 
 * The *candidate* field SHALL contain an SDP `candidate-attribute` as
