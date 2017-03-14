@@ -95,9 +95,11 @@ following checks:
   clients' maximum size SHALL be stored. The stored value SHALL be
   readable by user applications, so a user application can have its own
   message chunking implementation if desired.
-* The *handover* field MUST be either `true` or `false`. If set to
-  `false`, a handover requested by the user application SHALL be
-  rejected (see the *Signalling Channel Handover* section for details).
+* The *handover* field MUST be either `true` or `false`. If both
+  client's values are `true`, the negotiated value is `true`. In any
+  other case, the negotiated value is `false` and a handover requested
+  by the user application SHALL be rejected (see the *Signalling Channel
+  Handover* section for details).
 
 # Wrapped Data Channel
 
