@@ -384,9 +384,8 @@ fields:
   description the candidate is associated with as described in the
   WebRTC specification. It's value SHALL be either an unsigned integer
   (16 bits) or `Nil`.
-* If the OPTIONAL *ufrag* field is present, it SHALL contain the ICE
-  user fragment as defined in the WebRTC specification in string
-  representation.
+* The *ufrag* field SHALL contain the ICE user fragment as defined in
+  the WebRTC specification in string representation or `Nil`.
 
 *(Note: The naming is inconsistent with the rest of the protocol,
 because it uses camelCase keys instead of under_scores. The reason for
