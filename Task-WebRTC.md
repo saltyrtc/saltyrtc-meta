@@ -370,12 +370,12 @@ Both clients MAY send ICE candidates at any time to each other. Clients
 SHOULD bundle available candidates.
 
 A client who sends an ICE candidate SHALL set the *candidates* field to
-an `Array`. Elements of this array SHALL either be `Nil` to indicate the
-end of candidates towards WebRTC or a `Map` containing the following
+an `Array` of `Map`s where each `Map` SHALL contain the following
 fields:
 
-* The *candidate* field SHALL contain an SDP `candidate-attribute` as
-  defined in the WebRTC specification in string representation.
+* The *candidate* field SHALL contain an SDP `candidate-attribute` or an
+  empty string as defined in the WebRTC specification in string
+  representation.
 * The *sdpMid* field SHALL contain the *media stream identification*
   as defined in the WebRTC specification in string representation or
   `Nil`.
@@ -383,6 +383,8 @@ fields:
   description the candidate is associated with as described in the
   WebRTC specification. It's value SHALL be either an unsigned integer
   (16 bits) or `Nil`.
+* The *ufrag* field SHALL contain the ICE user fragment as defined in
+  the WebRTC specification in string representation or `Nil`.
 
 *(Note: The naming is inconsistent with the rest of the protocol,
 because it uses camelCase keys instead of under_scores. The reason for
