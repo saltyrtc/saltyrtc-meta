@@ -95,9 +95,11 @@ following checks:
   clients' maximum size SHALL be stored. The stored value SHALL be
   readable by user applications, so a user application can have its own
   message chunking implementation if desired.
-* The *handover* field MUST be either `true` or `false`. If set to
-  `false`, `RTCDataChannel` instances for the signalling handover SHALL
-  NOT be created.
+* The *handover* field MUST be either `true` or `false`. If both
+  client's values are `true`, the negotiated value is `true`. In any
+  other case, the negotiated value is `false` and a handover requested
+  by the user application SHALL be rejected (see the *Signalling Channel
+  Handover* section for details).
 
 # Wrapped Data Channel
 
@@ -136,11 +138,15 @@ number.
 
 # Signalling Channel Handover
 
-As soon as both clients have exchanged the required messages and the
-WebRTC `RTCPeerConnection` instance informs the user application that
-the peer-to-peer connection setup is complete, the user application
-SHOULD request that the client hands over the signalling channel to a
-dedicated data channel:
+As soon as the user application has created a WebRTC `RTCPeerConnection`
+instance which intends to use this task for its signalling, the user
+application SHOULD request that the client hands over the signalling
+channel to a dedicated data channel before *offer* or *answer* of the
+`RTCPeerConnection` have been created. If the negotiated *handover*
+parameter from the task's data is `false` or the necessary
+`RTCDataChannel` instance could not be created, the user application
+SHALL be informed that a handover cannot take place. Otherwise, the
+handover process SHALL be started:
 
 1. The client creates a new data channel on the `RTCPeerConnection`
    instance with the `RTCDataChannelInit` object containing only the
@@ -167,9 +173,8 @@ dedicated data channel:
    client closes the connection to the server with a close code of
    `3003` (*Handover of the Signalling Channel*).
 
-If the `RTCDataChannel` could not be created or the created
-`RTCDataChannel` does not change its state to `open`, the client SHALL
-continue using the WebSocket-based signalling channel.
+If the `RTCDataChannel` does not change its state to `open`, the client
+SHALL continue using the WebSocket-based signalling channel.
 
 # Message Structure
 
@@ -422,16 +427,17 @@ key pair and the other client's session key pair.
 
 Both clients SHALL send this message once the wrapped data channel
 dedicated for the signalling is `open`. However, the message MUST be
-sent on the signalling channel that has been established over the
-SaltyRTC server. The message SHALL NOT be sent over an already handed
-over signalling channel.
+sent over the WebSocket-based signalling channel.
 
 A client who sends a 'handover' message SHALL NOT include any additional
 fields. After sending this message, the client MUST send further
-signalling messages over the new signalling channel only.
+signalling messages over the new data channel based signalling channel
+only.
 
 After a client has received a 'handover' message, it SHALL:
 
+* Validate that the negotiated *handover* parameter is `true` and
+  otherwise treat this incident as a protocol error,
 * Receive incoming signalling messages over the new signalling channel
   only, and
 * In case it receives further signalling messages over the old
