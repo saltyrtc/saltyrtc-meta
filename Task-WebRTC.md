@@ -413,12 +413,15 @@ key pair and the other client's session key pair.
     {
       "candidate": "...",
       "sdpMid": "data",
-      "sdpMLineIndex": 0
+      "sdpMLineIndex": 0,
+      "ufrag": "abcdefgh"
     }, {
       "candidate": "...",
       "sdpMid": "data",
-      "sdpMLineIndex": 0
-    }, ...
+      "sdpMLineIndex": null, // Nil
+      "ufrag": null // Nil
+    },
+    null // Nil
   ]
 }
 ```
