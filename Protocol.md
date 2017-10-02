@@ -207,7 +207,7 @@ URIs. This will help to prevent leakage of an authentication token.)
 
 The SaltyRTC protocol has been designed to work on top of the WebSocket
 protocol. For more information about the WebSocket protocol, see
-[RFC 6455 [RFC6455]](https://tools.ietf.org/html/rfc6445).
+[RFC 6455](https://tools.ietf.org/html/rfc6445).
 
 ## Security Recommendation
 
