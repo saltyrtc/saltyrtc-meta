@@ -65,15 +65,16 @@ MessagePack is an object serialisation format very similar to JSON but
 uses a binary format. The MessagePack specification can be found
 [here](https://github.com/msgpack/msgpack/blob/0b8f5ac67cdd130f4d4d4fe6afb839b989fdb86a/spec.md).
 
-## `Object`, `Array`, `Map` and `Nil`
+## `Object`, `Array`, `Map`, `Bin` and `Nil`
 
 As we are using MessagePack for data serialisation, the terms `Object`,
-`Array`, `Map` and `Nil` represent the terms from the [MessagePack
+`Array`, `Map`, `Bin` and `Nil` represent the terms from the [MessagePack
 specification](https://github.com/msgpack/msgpack/blob/master/spec.md):
 
 * `Object` represents a value of any type.
 * `Array` represents a sequence of objects.
 * `Map` represents a key-value pair of objects
+* `Bin` represents arbitrary binary data
 * `Nil` represents `nil` (`null` or `None` in other programming
   languages)
 
@@ -543,16 +544,16 @@ SHALL NOT be repeated.
 
 The messages are serialised MessagePack objects. We will provide an
 example for each message in an extended JSON format where a string value
-denoted with 'b' indicates that the content is binary data. For ease of
-reading, binary data of the examples is represented as a hex-encoded
-string. However, binary data SHALL NOT be hex-encoded in
-implementations. Unless otherwise noted, all non-binary strings MUST be
-interpreted as UTF-8 encoded strings. Furthermore, field values SHALL
-NOT be `Nil`. The *type* field is REQUIRED for all messages. Other
-required fields will be described in the messages' section. In case a
-field is missing or contains invalid data, the incident MUST be treated
-as a protocol error. This also applies to unexpected messages that
-deviate from the message flow.
+denoted with 'b' indicates that the content is binary data (MessagePack
+`Bin` format). For ease of reading, binary data of the examples is
+represented as a hex-encoded string. However, binary data SHALL NOT be
+hex-encoded in implementations. Unless otherwise noted, all non-binary
+strings MUST be interpreted as UTF-8 encoded strings. Furthermore, field
+values SHALL NOT be `Nil`. The *type* field is REQUIRED for all
+messages. Other required fields will be described in the messages'
+section. In case a field is missing or contains invalid data, the
+incident MUST be treated as a protocol error. This also applies to
+unexpected messages that deviate from the message flow.
 
 In case that any check fails, the peer MUST close the connection with a
 close code of `3001` (*Protocol Error*) unless otherwise stated.
@@ -960,15 +961,16 @@ means *authentication towards the other client* unless otherwise stated.
 Identical to client-to-server messages, the messages are serialised
 MessagePack objects. We will provide an example for each message in an
 extended JSON format where a string value denoted with 'b' indicates
-that the content is binary data. For ease of reading, binary data of the
-examples is represented as a hex-encoded string. However, binary data
-SHALL NOT be hex-encoded in implementations. Unless otherwise noted, all
-non-binary strings MUST be interpreted as UTF-8 encoded strings.
-Furthermore, field values SHALL NOT be `Nil`. The *type* field is
-REQUIRED for all messages. Other required fields will be described in
-the messages' section. In case a field is missing or contains invalid
-data, the incident MUST be treated as a protocol error. This also
-applies to unexpected messages that deviate from the message flow.
+that the content is binary data (MessagePack `Bin` format). For ease of
+reading, binary data of the examples is represented as a hex-encoded
+string. However, binary data SHALL NOT be hex-encoded in
+implementations. Unless otherwise noted, all non-binary strings MUST be
+interpreted as UTF-8 encoded strings.  Furthermore, field values SHALL
+NOT be `Nil`. The *type* field is REQUIRED for all messages. Other
+required fields will be described in the messages' section. In case a
+field is missing or contains invalid data, the incident MUST be treated
+as a protocol error. This also applies to unexpected messages that
+deviate from the message flow.
 
 Compared to client-to-server messages, protocol errors for
 client-to-client message MUST be handled differently. In case that any
