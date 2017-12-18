@@ -1147,7 +1147,7 @@ fields:
   reason and raise an error event indicating that no common signalling
   task could be found.
 * A responder SHALL validate that the *task* field is present and
-  contains one of the task it has previously offered to the initiator.
+  contains one of the tasks it has previously offered to the initiator.
 * Both initiator an responder SHALL verify that the *data* field
   contains a `Map` and SHALL look up the chosen task's data value. The
   value MUST be handed over to the corresponding task after processing
