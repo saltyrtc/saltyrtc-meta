@@ -1,5 +1,7 @@
 # SaltyRTC
 
+[![Join our chat on Gitter](https://badges.gitter.im/saltyrtc/Lobby.svg)](https://gitter.im/saltyrtc/Lobby)
+
 <img src="media/try_our_rtc_300px.png" align="right" />
 
 SaltyRTC is an **end-to-end encrypted signalling protocol**. It offers
