@@ -12,8 +12,8 @@ dedicated WebSocket connection over a SaltyRTC server.
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
-document are to be interpreted as described in [RFC 2119
-[RFC2119]](https://tools.ietf.org/html/rfc2119).
+document are to be interpreted as described in
+[RFC 2119](https://tools.ietf.org/html/rfc2119).
 
 # Terminology
 
@@ -158,7 +158,7 @@ channel:
    designate these for handover, the *label* field of each message SHALL
    be set to `handover`.
 2. The client creates a new `RTCDataChannel` instance from the negotiated
-   `RTCDataTransport` instance and the `RTCDataChannelParameters` object 
+   `RTCDataTransport` instance and the `RTCDataChannelParameters` object
    containing only the following values:
    * *ordered* SHALL be set to `true`,
    * *protocol* and *label* SHALL be set to the same subprotocol that has
