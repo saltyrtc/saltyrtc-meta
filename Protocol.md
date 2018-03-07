@@ -1215,7 +1215,8 @@ application of a client MAY trigger sending this message.
 This message type allows user applications to send simple control
 messages or early data without having to modify an existing task.
 However, this message SHOULD NOT be abused to write custom protocols.
-Tasks SHOULD support this message to be sent at any time.
+Tasks MUST support this message type and SHOULD support a message of
+this type to be sent or received at any time.
 
 A client who sends an 'application' message SHALL set the *data* field
 to whatever data the user application provided. Therefore, *data* MAY be

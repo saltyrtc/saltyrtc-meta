@@ -39,22 +39,23 @@ Once the task has taken over, user data MAY be sent using 'data'
 messages.
 
 If one of the sides wants to terminate the connection, the 'close'
-Message SHALL be sent as described in the [SaltyRTC protocol
+message SHALL be sent as described in the [SaltyRTC protocol
 specification](./Protocol.md#close-message).
 
-Other message types (including the
-['application' message](./Protocol.md#application-message))
-SHALL NOT be used in the Relayed Data task.
+The ['application' message](./Protocol.md#application-message) MAY be
+used for control messages.
+
+Other message types SHALL NOT be used in the Relayed Data task.
 
 ## Message States (Beyond 'auth')
 
-          +--+
-          |  v
-        +-+----+    +-------+
-    -+->+ data +--->+ close |
-     |  +------+    +-------+
-     |                  ^
-     +------------------+
+                 +--+
+                 |  v
+        +--------+-----------+    +-------+
+    -+->+ data / application +--->+ close |
+     |  +--------------------+    +-------+
+     |                                ^
+     +--------------------------------+
 
 ## 'data' messages
 
@@ -78,6 +79,11 @@ the payload inside that field to the user application.
   "p": ...
 }
 ```
+
+## 'application' Message
+
+The message itself and the client's behaviour is described in the
+[SaltyRTC protocol specification](./Protocol.md#application-message).
 
 # Sending a Message
 
