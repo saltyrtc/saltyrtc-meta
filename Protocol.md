@@ -582,9 +582,9 @@ seconds. However, a combination of both is RECOMMENDED.
                              +------+------+
                                     |
                                     v
-        +---------------------------+-------------+
-        | new-responder/drop-responder/send-error |
-        +-------+-------------------------+-------+
+  +---------------------------------+--------------------+
+  | new-responder/drop-responder/send-error/disconnected |
+  +-------------+-------------------------+--------------+
                 |                         ^
                 +-------------------------+
 
@@ -600,9 +600,9 @@ seconds. However, a combination of both is RECOMMENDED.
         +--------------+     +------+------+
                                     |
                                     v
-                       +------------+-------------+
-                       | new-initiator/send-error |
-                       +-------+----------+-------+
+                +-------------------+-------------------+
+                | new-initiator/send-error/disconnected |
+                +--------------+----------+-------------+
                                |          ^
                                +----------+
 
@@ -914,6 +914,26 @@ key pair and the initiator's permanent key pair.
   "type": "drop-responder",
   "id": 0x02,
   "reason": 3005
+}
+```
+
+## 'disconnected' Message
+
+If an initiator that has been authenticated towards the server
+terminates the connection with the server, the server SHALL send this
+message towards all connected and authenticated responders.
+
+If a responder that has been authenticated towards the server
+terminates the connection with the server, the server SHALL send this
+message towards the initiator (if present).
+
+The message SHALL be NaCl public-key encrypted by the server's session
+key pair and the client's permanent key pair.
+
+```
+{
+  "type": "disconnected",
+  "id": 0x02
 }
 ```
 
@@ -1399,4 +1419,3 @@ Two clients that communicate with each other establish a session key
 immediately during the handshake. The long-term (permanent keys) are
 only used for a single message ('key') before the session keys have
 been established.
-
