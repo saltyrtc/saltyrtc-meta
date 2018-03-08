@@ -107,7 +107,7 @@ connection.
 
 A SaltyRTC complicant server SHOULD have at least one permanent NaCl key
 pair for public key authenticated encryption. If the server has such a
-key pair, it will be used to sign<sup>1</sup> the server's session key
+key pair, it will be used to sign¹ the server's session key
 and the client's permanent key to mitigate man-in-the-middle attacks. In
 order to validate this signature, a client that connects to a server
 SHOULD know the server's public permanent key.
@@ -1165,13 +1165,24 @@ fields:
   could be found, the initiator SHALL send a 'close' message to the
   responder containing the close code `3006` (*No Shared Task Found*) as
   reason and raise an error event indicating that no common signalling
-  task could be found.
+  task could be found². The initiator SHALL then proceed with the
+  termination of the connection as described in the section *'close'
+  Message*.
 * A responder SHALL validate that the *task* field is present and
   contains one of the tasks it has previously offered to the initiator.
 * Both initiator an responder SHALL verify that the *data* field
   contains a `Map` and SHALL look up the chosen task's data value. The
   value MUST be handed over to the corresponding task after processing
   this message is complete.
+
+<sub>2: SaltyRTC is designed with the expectation that two peers will
+attempt to establish an 1:1 connection. While there is a mechanism for
+dropping invalid responders without disconnecting (using the
+'drop-responder' message) to prevent simple DoS schemes, by the time
+the proposed tasks are compared the responder has already authenticated
+itself towards the initiator. Thus, we can expect that this was a
+serious connection attempt, not a spammer trying to flood random
+WebSocket endpoints with connections.</sub>
 
 After the above procedure has been followed, the other client has
 successfully authenticated it towards the client. The other client's
