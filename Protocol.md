@@ -572,21 +572,21 @@ seconds. However, a combination of both is RECOMMENDED.
 
 ## Message States (Towards/From Initiator)
 
-        +--------------+     +-------------+
-    --->+ server-hello +---->+ client-auth |
-        +--------------+     +------+------+
-                                    |
-                                    v
-                             +------+------+
-                             | server-auth |
-                             +------+------+
-                                    |
-                                    v
-  +---------------------------------+--------------------+
-  | new-responder/drop-responder/send-error/disconnected |
-  +-------------+-------------------------+--------------+
-                |                         ^
-                +-------------------------+
+          +--------------+     +-------------+
+      --->+ server-hello +---->+ client-auth |
+          +--------------+     +------+------+
+                                      |
+                                      v
+                               +------+------+
+                               | server-auth |
+                               +------+------+
+                                      |
+                                      v
+    +---------------------------------+--------------------+
+    | new-responder/drop-responder/send-error/disconnected |
+    +-------------+-------------------------+--------------+
+                  |                         ^
+                  +-------------------------+
 
 ## Message States (Towards/From Responder)
 
