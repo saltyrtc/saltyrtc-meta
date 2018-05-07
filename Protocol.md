@@ -172,7 +172,7 @@ In order to establish a signalling channel using SaltyRTC, the following
 information has to be available to both peers:
 
 * WebSocket URI scheme (`ws` or `wss`),
-* Server's permanent public key (optional but recommended),
+* Server's public permanent key (optional but recommended),
 * Server host (as defined in [RFC3986, 3.2.2](https://tools.ietf.org/html/rfc3986#section-3.2.2))
 * Server port (as defined in [RFC3986, 3.2.3](https://tools.ietf.org/html/rfc3986#section-3.2.3))
 * Signalling path, and
@@ -186,9 +186,9 @@ way:
     <scheme>://<server-host>:<server-port>/<signalling-path>
     ?<server-permanent-public-key>#<authentication-token-hex>
 
-Note that exchanging the server's permanent public key from initiator
+Note that exchanging the server's public permanent key from initiator
 to responder may or may not be a viable way to distribute the server's
-permanent public key depending on whether the initiator is fully trusted
+public permanent key depending on whether the initiator is fully trusted
 by the responder or not.
 
 An example of such a URI:
@@ -197,7 +197,7 @@ An example of such a URI:
 
 The initiator could encode this URI into a QR code which the responder
 will decode back to a URI. The responder can then extract
-the initiator's permanent public key, the server's permanent public key
+the initiator's public permanent key, the server's public permanent key
 and the authentication token from the path. Furthermore, it must strip
 everything that follows `?` away and can then use the result to connect
 to the SaltyRTC server. (If an implementation omits stripping the
