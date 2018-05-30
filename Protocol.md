@@ -1353,6 +1353,7 @@ the error cannot be resolved by the implementation itself.
 
 The following close codes are being used by the protocol:
 
+* 1000: Normal closure (WebSocket internal close code)
 * 1001: Going Away (WebSocket internal close code)
 * 1002: Protocol Error (WebSocket internal close code)
 * 3000: Path Full
