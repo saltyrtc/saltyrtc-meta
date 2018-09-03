@@ -702,8 +702,9 @@ SHOULD send a WebSocket *ping* message in the requested interval in
 seconds to the client and wait for a corresponding *pong* message (as
 described in
 [RFC 6455 section 5.5.3](https://tools.ietf.org/html/rfc6455#section-5.5.3)).
-An unanswered *ping* MUST result in a protocol error. A timeout of 30
-seconds for unanswered *ping* messages is RECOMMENDED.
+An unanswered *ping* MUST result in a protocol error and the connection SHALL
+be closed with a close code of 3008 (*Timeout*). A timeout of 30 seconds for
+unanswered *ping* messages is RECOMMENDED.
 
 If the 'client-auth' message contains a *your_key* field, it MUST be
 compared to the list of server public permanent keys. Then:
@@ -1364,6 +1365,7 @@ The following close codes are being used by the protocol:
 * 3005: Initiator Could Not Decrypt
 * 3006: No Shared Task Found
 * 3007: Invalid Key
+* 3008: Timeout
 
 The following close codes are available for 'drop-responder' messages:
 
