@@ -42,6 +42,7 @@ from you.
 **Servers**
 
 * [saltyrtc-server-python](https://github.com/saltyrtc/saltyrtc-server-python)
+* [saltyrtc-server-go](https://github.com/OguzhanE/saltyrtc-server-go) (work in progress)
 
 ## Releases
 
