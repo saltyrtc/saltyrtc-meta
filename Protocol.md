@@ -905,7 +905,8 @@ generate an informational logging entry. If the WebSocket connection has
 been found, the connection SHALL be closed with the provided close code
 of the *reason* field. If no *reason* field has been provided, the
 connection SHALL be closed with a close code of `3004` (*Dropped by
-Initiator*).
+Initiator*). Closing the connection MUST NOT trigger a 'disconnected'
+message.
 
 The message SHALL be NaCl public-key encrypted by the server's session
 key pair and the initiator's permanent key pair.
