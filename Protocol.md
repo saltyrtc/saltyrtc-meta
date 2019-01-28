@@ -435,11 +435,11 @@ Furthermore, a peer checks that the source address is sane:
   authenticated, the server MUST check that the source address equals
   the sender's assigned identity.
 * An initiator SHALL ONLY process messages from the server (`0x00`). As
-  soon as the initiator has been assigned an identity, it MAY ALSO
+  soon as the initiator has been assigned an identity, it SHALL also
   accept messages from other responders (`0x02..0xff`). Other messages
   SHALL be discarded and SHOULD trigger a warning.
 * A responder SHALL ONLY process messages from the server (`0x00`). As
-  soon as the responder has been assigned an identity, it MAY ALSO
+  soon as the responder has been assigned an identity, it SHALL also
   accept messages from the initiator (`0x01`). Other messages SHALL be
   discarded and SHOULD trigger a warning.
 
