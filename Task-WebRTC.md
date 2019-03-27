@@ -29,8 +29,6 @@ The
 makes it possible to split a message into chunks and reassemble the
 message on the receiver's side while allowing any combination of
 ordered/unordered and reliable/unreliable transport channel underneath.
-Depending on the WebRTC data channel implementation, message chunking
-may or may not be applied to all wrapped data channels.
 
 ## Wrapped Data Channel
 
@@ -46,15 +44,6 @@ wrapped data channel.
 The following protocol name SHALL be used for task negotiation:
 
 `v1.webrtc.tasks.saltyrtc.org`
-
-# Detecting the Maximum Message Size
-
-For now, all implementations SHOULD use the value `16384` which seems to
-be the highest amount of kilobytes that can be applied for portable
-WebRTC data channel communication. An implementation MAY use another
-value if it can guarantee delivery and reception for messages of that
-size. A value of `0` indicates that the implementation is able to handle
-messages of arbitrary length (hooray!).
 
 # Task Data
 
@@ -73,8 +62,6 @@ The task's data SHALL be a `Map` containing the following items:
   (non-negative integers) that SHALL not be used for the signalling
   channel. This `Array` MUST be available to be set from user
   applications that use specific data channel ids.
-* The *max_packet_size* field MUST be set to the value described by the
-  *Detecting the Maximum Message Size* section.
 * The *handover* field SHALL be set to `true` unless the user application
   explicitly requested to turn off the handover feature or the
   implementation has knowledge that `RTCDataChannel`s are not supported.
@@ -88,13 +75,6 @@ following checks:
 * The *exclude* field MUST contain an `Array` of WebRTC data channel IDs
   (non-negative integers) that SHALL not be used for the signalling
   channel. The client SHALL store this list for usage during handover.
-* The *max_packet_size* field MUST contain either `0` or a positive
-  integer. If one client's value is `0` but the other client's value is
-  greater than `0`, the larger of the two values SHALL be stored to be
-  used for data channel communication. Otherwise, the minimum of both
-  clients' maximum size SHALL be stored. The stored value SHALL be
-  readable by user applications, so a user application can have its own
-  message chunking implementation if desired.
 * The *handover* field MUST be either `true` or `false`. If both
   client's values are `true`, the negotiated value is `true`. In any
   other case, the negotiated value is `false` and a handover requested
@@ -114,17 +94,14 @@ if necessary.
 
 Outgoing messages MUST be processed and encrypted by following the
 *Sending a Wrapped Data Channel Message* section. The encrypted messages
-SHALL be split into chunks using SaltyRTC message chunking ONLY in case
-the negotiated *max_packet_size* parameter from the task's data is
-greater than `0`; in that case the message chunking implementation SHALL
-use the *max_packet_size* as the maximum chunk size. Otherwise, the
-encrypted message SHALL be sent as is.
+SHALL be split into chunks using SaltyRTC message chunking. The maximum
+chunk size MUST be determined by querying the `maxMessageSize` attribute
+of the associated `RTCPeerConnection`'s `RTCSctpTransport`.
 
 Incoming messages SHALL be stitched together using SaltyRTC message
-chunking if required (see the previous paragraph for details). Complete
-messages MUST be processed and decrypted by following the *Receiving a
-Wrapped Data Channel Message* section. The resulting complete message
-SHALL raise a corresponding message event.
+chunking. Complete messages MUST be processed and decrypted by following
+the *Receiving a Wrapped Data Channel Message* section. The resulting
+complete message SHALL raise a corresponding message event.
 
 As described in the *Sending a Wrapped Data Channel Message* and the
 *Receiving a Wrapped Data Channel Message* section, each new wrapped
