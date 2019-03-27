@@ -30,14 +30,14 @@ makes it possible to split a message into chunks and reassemble the
 message on the receiver's side while allowing any combination of
 ordered/unordered and reliable/unreliable transport channel underneath.
 
-## Wrapped Data Channel
+## Secure Data Channel
 
 This protocol adds another security layer for WebRTC data channels as we
 want our protocol to sustain broken (D)TLS environments. A data channel
-that uses this security layer will be called *Wrapped Data Channel*.
-Note that the user MAY or MAY NOT choose to use wrapped data channels
+that uses this security layer will be called *Secure Data Channel*.
+Note that the user MAY or MAY NOT choose to use secure data channels
 for its purpose. However, the handed over signalling channel MUST use a
-wrapped data channel.
+secure data channel.
 
 # Task Protocol Name
 
@@ -59,71 +59,56 @@ MUST be validated and potentially stored.
 The task's data SHALL be a `Map` containing the following items:
 
 * The *exclude* field MUST contain an `Array` of WebRTC data channel ids
-  (non-negative integers) that SHALL not be used for the signalling
-  channel. This `Array` MUST be available to be set from user
-  applications that use specific data channel ids.
+  (non-negative integers less than `65535`) that SHALL not be used for
+  the signalling channel. This `Array` MUST be available to be set from
+  user applications that use pre-negotiated data channel ids.
 * The *handover* field SHALL be set to `true` unless the user application
-  explicitly requested to turn off the handover feature or the
-  implementation has knowledge that `RTCDataChannel`s are not supported.
-  In this case, the value SHALL be set to `false`.
+  explicitly requested to turn off the handover feature in which case it
+  SHALL be set to `false`.
 
 ## Incoming
 
-A client who receives the task's data from the other peer MUST do the
+A client who receives the task's data from the remote peer MUST do the
 following checks:
 
 * The *exclude* field MUST contain an `Array` of WebRTC data channel IDs
-  (non-negative integers) that SHALL not be used for the signalling
-  channel. The client SHALL store this list for usage during handover.
+  (non-negative integers less than `65535`) that SHALL not be used for
+  the signalling channel. The client SHALL store this list for usage
+  during handover.
 * The *handover* field MUST be either `true` or `false`. If both
   client's values are `true`, the negotiated value is `true`. In any
   other case, the negotiated value is `false` and a handover requested
   by the user application SHALL be rejected (see the *Signalling Channel
   Handover* section for details).
 
-# Wrapped Data Channel
+# Secure Data Channel
 
-This protocol adds another security layer to WebRTC's data channels. To
-allow both the user's application and the handed over signalling channel
-to easily utilise this security layer, it is RECOMMENDED to provide a
-wrapper/proxy to the `RTCDataChannel` interface. Underneath, the wrapped
-data channel MUST use NaCl for encryption/decryption and chunk messages
-as specified in the
-[SaltyRTC chunking specification](https://github.com/saltyrtc/saltyrtc-meta/blob/master/Chunking.md)
-if necessary.
+This protocol adds another security layer to WebRTC's data channels
+which the handed over signalling channel SHALL use. It MUST be possible
+for the user application to utilise this security layer for further data
+channels. The secure data channel MUST use NaCl for
+encryption/decryption of messages.
 
 Outgoing messages MUST be processed and encrypted by following the
-*Sending a Wrapped Data Channel Message* section. The encrypted messages
-SHALL be split into chunks using SaltyRTC message chunking. The maximum
-chunk size MUST be determined by querying the `maxMessageSize` attribute
-of the associated `RTCPeerConnection`'s `RTCSctpTransport`.
+*Sending a Secure Data Channel Message* section.
 
-Incoming messages SHALL be stitched together using SaltyRTC message
-chunking. Complete messages MUST be processed and decrypted by following
-the *Receiving a Wrapped Data Channel Message* section. The resulting
-complete message SHALL raise a corresponding message event.
+Incoming messages MUST be processed and decrypted by following the
+*Receiving a Secure Data Channel Message* section.
 
-As described in the *Sending a Wrapped Data Channel Message* and the
-*Receiving a Wrapped Data Channel Message* section, each new wrapped
-data channel instance is being treated as a new peer from the nonce's
-perspective and independent of the underlying data channel id. To
-prevent nonce reuse, it is absolutely vital that each wrapped data
-channel instance has its own cookie, sequence number and overflow
+As described in the *Sending a Secure Data Channel Message* and the
+*Receiving a Secure Data Channel Message* section, each new secure
+data channel instance is being treated as a distinct remote peer from
+the nonce's perspective and independent of the underlying data channel
+id. To prevent nonce reuse, it is absolutely vital that each secure
+data channel instance has its own cookie, sequence number and overflow
 number, each for incoming and outgoing messages. Both clients SHALL use
-cryptographically secure random numbers for the cookie and the sequence
-number.
+cryptographically secure random numbers for generating the cookie and
+the sequence number.
 
 # Signalling Channel Handover
 
-As soon as the user application has created a WebRTC `RTCPeerConnection`
-instance which intends to use this task for its signalling, the user
-application SHOULD request that the client hands over the signalling
-channel to a dedicated data channel before *offer* or *answer* of the
-`RTCPeerConnection` have been created. If the negotiated *handover*
-parameter from the task's data is `false` or the necessary
-`RTCDataChannel` instance could not be created, the user application
-SHALL be informed that a handover cannot take place. Otherwise, the
-handover process SHALL be started:
+If the negotiated *handover* parameter is `true`, the user application
+SHOULD initiate the handover process:
 
 1. The client creates a new data channel on the `RTCPeerConnection`
    instance with the `RTCDataChannelInit` object containing only the
@@ -134,8 +119,8 @@ handover process SHALL be started:
    * *negotiated* MUST be set to `true`, and
    * *id* SHALL be set to the lowest possible number, starting from `0`,
      that is not excluded by both clients as negotiated.
-2. The newly created `RTCDataChannel` instance shall be wrapped by
-   following the *Wrapped Data Channel* section.
+2. The newly created `RTCDataChannel` instance SHALL be secured by
+   following the *Secure Data Channel* section.
 3. As soon as the data channel is `open`, the client SHALL send a
    'handover' message on the WebSocket-based signalling channel (*WS
    channel*) to the other client. Subsequent outgoing messages MUST be
@@ -160,7 +145,7 @@ structure as defined in the
 [SaltyRTC protocol specification](./Protocol.md#message-structure)
 SHALL be used.
 
-For all messages that are being exchanged over wrapped data channels
+For all messages that are being exchanged over secure data channels
 (such as the handed over signalling channel), the nonce/header MUST be
 slightly changed:
 
@@ -183,12 +168,12 @@ Contains the data channel id of the data channel that is being used for
 a message.
 
 The cookie field remains the same as in the SaltyRTC protocol
-specification. Each new wrapped data channel SHALL have a new
+specification. Each new secure data channel SHALL have a new
 cryptographically secure random cookie, one for incoming messages and
 one for outgoing messages.
 
 Overflow Number and Sequence Number SHALL remain the same as in the
-SaltyRTC protocol specification. Each new wrapped data channel instance
+SaltyRTC protocol specification. Each new secure data channel instance
 SHALL have its own overflow number and sequence number, each for
 outgoing and incoming messages.
 
@@ -197,13 +182,12 @@ Data Channel ID field. As there can be only communication between the
 peers that set up the peer-to-peer connection, dedicated addresses are
 no longer required.
 
-# Sending a Wrapped Data Channel Message
+# Sending a Secure Data Channel Message
 
 The same procedure as described in the
 [SaltyRTC protocol specification](./Protocol.md#sending-a-signalling-message)
 SHALL be followed. However, for all messages that are being exchanged
-over wrapped data channels (such as the handed over signalling channel),
-the following changes MUST be applied:
+over secure data channels, the following changes MUST be applied:
 
 * Each data channel instance SHALL have its own cookie, overflow number
   and sequence number for outgoing messages.
@@ -211,20 +195,32 @@ the following changes MUST be applied:
 * The data channel id MUST be set to the id of the data channel the
   message will be sent on.
 
-# Receiving a Wrapped Data Channel Message
+For the handed over
+signalling channel, the encrypted message MUST be fragmented into
+chunks using
+[SaltyRTC chunking](https://github.com/saltyrtc/saltyrtc-meta/blob/master/Chunking.md)
+in *unreliable/unordered* mode (for legacy reasons) after encryption.
+The chunk size MUST be less or equal to the `maxMessageSize` value of the
+`RTCPeerConnection`'s `RTCSctpTransport`.
+
+# Receiving a Secure Data Channel Message
+
+For the handed over signalling channel, the encrypted message MUST be
+reassembled into a complete signalling message using
+[SaltyRTC chunking](https://github.com/saltyrtc/saltyrtc-meta/blob/master/Chunking.md)
+in *unreliable/unordered* mode (for legacy reasons) before decryption.
 
 The same procedure as described in the
 [SaltyRTC protocol specification](./Protocol.md#receiving-a-signalling-message)
 SHALL be followed. However, for all messages that are being exchanged
-over wrapped data channels (such as the handed over signalling channel),
-the following changes MUST be applied:
+over secure data channels, the following changes MUST be applied:
 
 * Each data channel instance SHALL have its own cookie, overflow number
   and sequence number for incoming messages.
-* Source and destination addresses are not present in the wrapped data
+* Source and destination addresses are not present in the secure data
   channel's nonce/header.
 * Overflow number and sequence number SHALL NOT be validated to ensure
-  unordered and unreliable wrapped data channels can function properly.
+  unordered and unreliable secure data channels can function properly.
   However, a client SHOULD check that two consecutive incoming messages
   of the same data channel do not have the exact same overflow and
   sequence number.
@@ -235,10 +231,10 @@ the following changes MUST be applied:
 
 The following messages are new messages that will be exchanged between
 two clients (initiator and responder) over the signalling channel. Note
-that the signalling channel may be handed over to a data channel anytime
-which is REQUIRED to be supported by the implementation. Furthermore,
-the handed over signalling channel MUST support all existing
-client-to-client message types.
+that the signalling channel may be handed over to a data channel any
+time which is RECOMMENDED to be supported by the implementation.
+Furthermore, the handed over signalling channel MUST support all
+existing client-to-client message types.
 
 Other messages, general behaviour and error handling for
 client-to-client messages is described in the
@@ -365,11 +361,11 @@ containing the following fields:
   description the candidate is associated with as described in the
   WebRTC specification. It's value SHALL be either an unsigned integer
   (16 bits) or `Nil`.
-* The *usernameFragment* field SHALL contain the ICE user fragment as defined in
-  the WebRTC specification in string representation or `Nil`.
+* The *usernameFragment* field SHALL contain the ICE user fragment as
+  defined in the WebRTC specification in string representation or `Nil`.
 
 *(Note: The naming is inconsistent with the rest of the protocol,
-because it uses camelCase keys instead of under_scores. The reason for
+since it uses camelCase keys instead of under_scores. The reason for
 this is ease of use in browser implementations: When using camelCase
 each `candidates` entry can be passed directly to the JavaScript WebRTC
 implementation.)*
@@ -405,7 +401,7 @@ key pair and the other client's session key pair.
 
 ## 'handover' Message
 
-Both clients SHALL send this message once the wrapped data channel
+Both clients SHALL send this message once the secure data channel
 dedicated for the signalling is `open`. However, the message MUST be
 sent over the WebSocket-based signalling channel.
 
@@ -436,10 +432,10 @@ key pair and the other client's session key pair.
 
 The message itself and the client's behaviour is described in the
 [SaltyRTC protocol specification](./Protocol.md#close-message). Once the
-signalling channel has been handed over to a wrapped data channel, sent
+signalling channel has been handed over to a secure data channel, sent
 and received 'close' messages SHALL trigger closing the underlying data
 channel used for signalling. The user application MAY continue using the
-`RTCPeerConnection` instance and its data channels. However, wrapped
+`RTCPeerConnection` instance and its data channels. However, secure
 data channels MAY or MAY NOT be available once the signalling's data
 channel has been closed, depending on the flexibility of the client's
 implementation.
