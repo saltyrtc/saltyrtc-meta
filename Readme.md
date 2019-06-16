@@ -38,6 +38,8 @@ from you.
     - [saltyrtc-task-webrtc-js](https://github.com/saltyrtc/saltyrtc-task-webrtc-js)
 * [saltyrtc-client-java](https://github.com/saltyrtc/saltyrtc-client-java)
     - [saltyrtc-task-webrtc-java](https://github.com/saltyrtc/saltyrtc-task-webrtc-java)
+* [saltyrtc-client-rs](https://github.com/saltyrtc/saltyrtc-client-rs)
+    - [saltyrtc-task-relayed-data-rs](https://github.com/saltyrtc/saltyrtc-task-relayed-data-rs)
 
 **Servers**
 
