@@ -935,8 +935,13 @@ the *id* field contains a valid responder address (`0x02..0xff`).
 A responder who receives a 'disconnected' message SHALL validate that
 the *id* field contains a valid initiator address (`0x01`).
 
-A receiving client MUST notify the user application about the incoming
-'disconnected' message, along with the *id* field.
+A receiving client MUST delete all cached information about and for the
+other client with the identity of the *id* field (such as cookies and
+sequence numbers). The client MAY stay on the path and wait for a new
+initiator/responder to connect. However, the client-to-client handshake
+MUST start from the beginning. In addition, the client MUST notify the
+user application that the client with the identity *id* has
+disconnected.
 
 The message SHALL be NaCl public-key encrypted by the server's session
 key pair and the client's permanent key pair.
